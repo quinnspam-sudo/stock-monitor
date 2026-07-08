@@ -308,6 +308,23 @@ justifications, and output the matching Template.
     the monitored universe; F-Score 8-9 strong / 0-2 weak (Piotroski); PEG <= 1
     attractive per Lynch GARP (ignore for cyclicals); 6-12 mo momentum is the
     Carhart UMD factor; quality gates are Buffett-style quantitative tells.
+    Graham Number/margin of safety is asset-and-earnings based (1934-era value
+    investing) — expect it to look deeply "overvalued" for asset-light,
+    high-multiple growth/tech names; that's the methodology working as
+    designed, not a flaw, and should be weighted down for this watchlist's
+    growth names accordingly. CANSLIM (O'Neil) is a 7-criterion growth+
+    breakout+market-regime checklist, not a continuous score — read the
+    per-criterion breakdown, not just the count. Dividend quality only
+    applies to actual payers (GAPPED for non-payers, not penalized). Fama-
+    French Size/Value tilts are descriptive only and deliberately excluded
+    from the conviction blend (a small-cap/cheap-book-to-market tilt would
+    bias against this watchlist's mega-cap growth names) — Profitability/
+    Investment legs are folded into Quality Minus Junk (AQR-style) instead.
+    Insider signal only means something as a cluster (3+ distinct buyers,
+    zero sales in 90 days per Lakonishok & Lee) — a single insider trade is
+    noise. Analyst revision momentum compares current-quarter/next-year EPS
+    estimates to 90 days ago; the 52-week breakout check is O'Neil/Darvas-
+    style and distinct from the 3-month-high check in the momentum score above.
 
 ## Raw data fields (yfinance)
 {field_lines}
