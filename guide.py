@@ -26,10 +26,6 @@ GUIDE = """\
 **Means:** the day is archived — score gainers/losers, rating changes, market regime.
 **Do:** low urgency. Review tonight or pre-market. Only names with **rating changes** deserve action; everything else is record-keeping.
 
-🛎️ **EDGAR IPO SCAN** (5:30 AM PT daily)
-**Means:** new S-1s (IPO intent), S-1/As (terms updates), or 424B4s (priced — imminent). SPACs/shells are auto-demoted. Lock-up expiries within 14 days are listed as potential entry windows.
-**Do:** never buy an IPO at the open (the avg 19% first-day pop goes to allocated institutions). Interested? → Template B triage in Claude Pro. Default verdict: WAIT for 2-4 quarters of earnings + the ~180-day lock-up expiry, then screen normally.
-
 📊 **WEEKLY REVIEW** (Friday close)
 **Means:** verdict-journal scorecard — how past committee calls performed vs SPY.
 **Do:** read for calibration. If buy-side verdicts consistently lag SPY, tighten the threshold or revisit the committee prompt — this is the system's feedback loop.

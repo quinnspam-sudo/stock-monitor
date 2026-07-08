@@ -59,7 +59,6 @@ rotating before then or the jobs will start failing with 401s).
 - `monitor.yml` — every 15 min, ~6:00–13:00 PT Mon–Fri: scores, delta triggers, Template A payloads
 - `pulse.yml` — hourly ~7:00–12:00 PT Mon–Fri: Template C intraday pulse payload
 - `close.yml` — ~13:35 PT: Template D closing bell payload
-- `ipo.yml` — ~5:30 AM PT daily: EDGAR scan for S-1/S-1A/424B4 filings → Template B triage payload
 - `weekly.yml` — Friday ~13:45 PT: weekly performance review payload (verdicts vs SPY)
 - `backtest.yml` — Saturday ~09:00 PT: backtests the *local scoring engine's* calls
   (not committee verdicts — that's `weekly.py`) against what each ticker actually

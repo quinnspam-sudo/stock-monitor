@@ -29,7 +29,7 @@ def load_config():
 
     Two channels, two webhooks:
       - discord_webhook_url          — BUY-only channel (send_alert's target)
-      - discord_updates_webhook_url  — everything else: pulse/close/ipo/weekly/
+      - discord_updates_webhook_url  — everything else: pulse/close/weekly/
         backtest/payload-ready notices (send_message's target)
     Each resolves env var > secrets.json > legacy config.json key, same
     precedence as before. If discord_updates_webhook_url isn't set, updates
