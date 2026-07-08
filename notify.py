@@ -35,10 +35,18 @@ def load_config():
       - discord_sell_webhook_url     — sell/exit alerts: CANSLIM stop-loss/
         take-profit, Darvas box breakdown, Magic Formula rebalance-due
         (send_sell_alert's target)
+    Plus two bot credentials for buy_intake.py's inbound channel polling
+    (not a webhook — a real Discord Bot Token, since reading messages
+    requires the bot REST API, not a webhook):
+      - discord_bot_token             — Bot Token from the Discord Developer Portal
+      - discord_buy_log_channel_id    — channel ID buy_intake.py polls for buy-log messages
     Each resolves env var > secrets.json > legacy config.json key, same
     precedence as before. If discord_updates_webhook_url or
     discord_sell_webhook_url isn't set, they fall back to the BUY webhook
-    (single-channel setups keep working).
+    (single-channel setups keep working). On GitHub Actions there's no
+    secrets.json file at all (gitignored, never committed) — only these
+    explicit env var mappings make secrets reachable there; a key merged
+    only via secrets.json would silently work locally and fail in CI.
     """
     cfg = json.loads(CONFIG_PATH.read_text())
     if SECRETS_PATH.exists():
@@ -49,6 +57,10 @@ def load_config():
         cfg["discord_updates_webhook_url"] = os.environ["DISCORD_UPDATES_WEBHOOK_URL"]
     if os.environ.get("DISCORD_SELL_WEBHOOK_URL"):
         cfg["discord_sell_webhook_url"] = os.environ["DISCORD_SELL_WEBHOOK_URL"]
+    if os.environ.get("DISCORD_BOT_TOKEN"):
+        cfg["discord_bot_token"] = os.environ["DISCORD_BOT_TOKEN"]
+    if os.environ.get("DISCORD_BUY_LOG_CHANNEL_ID"):
+        cfg["discord_buy_log_channel_id"] = os.environ["DISCORD_BUY_LOG_CHANNEL_ID"]
     cfg.setdefault("discord_updates_webhook_url", cfg.get("discord_webhook_url"))
     cfg.setdefault("discord_sell_webhook_url", cfg.get("discord_webhook_url"))
     return cfg

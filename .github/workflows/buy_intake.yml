@@ -1,0 +1,46 @@
+name: buy_intake
+
+# Triggered externally via cron-job.org calling this workflow's
+# workflow_dispatch REST endpoint on a schedule (see README) — GitHub's
+# native `schedule:` trigger was silently not firing on this new
+# account/repo (a known GitHub anti-abuse throttle on brand-new accounts),
+# while manual/API dispatch worked reliably, so scheduling is now driven
+# externally instead.
+
+# Polls the Discord buy-log channel every 15 min, ALL DAY (not just market
+# hours) — logging a trade isn't tied to market hours, and the whole point
+# is a quick in-channel confirmation reply, not a next-market-session delay.
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: stock-monitor-state
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python buy_intake.py
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_BUY_LOG_CHANNEL_ID: ${{ secrets.DISCORD_BUY_LOG_CHANNEL_ID }}
+      - name: Commit updated state
+        run: |
+          git config user.name "stock-monitor-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "buy_intake: state update [skip ci]"
+          for i in 1 2 3 4 5; do
+            git pull --rebase --autostash && git push && break
+            echo "push attempt $i failed, retrying..."
+            sleep $((i * 5))
+          done

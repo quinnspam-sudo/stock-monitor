@@ -71,6 +71,16 @@ rotating before then or the jobs will start failing with 401s).
   (`discord_sell_webhook_url`), independent of the buy/updates split above.
   Only covers tickers with a recorded verdict — there's no broader position
   tracking in this system.
+- `buy_intake.yml` — every 15 min, all day (not just market hours): polls a
+  Discord `#buy-log` channel via a real Discord **Bot** (not a webhook —
+  reading messages requires the bot REST API) for messages like
+  `Bought $20 of NVDA at $374`, and records them into `verdicts.json` the
+  same as `verdict.py add` would — automatically visible to `sell_check.py`
+  and `weekly.py`. Requires the actual ticker symbol in the message (no
+  company-name fuzzy-matching — a misparse there would silently record the
+  wrong stock). Replies in-channel with a ✅/❌ confirming exactly what was
+  parsed. Credentials: `discord_bot_token` (Bot Token from the Discord
+  Developer Portal, **not** a webhook secret) + `discord_buy_log_channel_id`.
 
 Cron times assume PDT (UTC-7); during standard time (~Nov–Mar) runs land about
 an hour later than the equivalent PT time — harmless slack given the

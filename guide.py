@@ -44,6 +44,11 @@ GUIDE = """\
 **Do:** STOP_LOSS is the one rule in this whole system meant to be followed mechanically, not judged — that's the point of a stop-loss. The others are decision inputs, same as everything else here: read, don't auto-execute. Note this only covers positions you've recorded a verdict for; it has no visibility into anything you hold that was never logged.
 
 ━━━━━━━━━━━━━━━━━━
+📝 **BUY-LOG CHANNEL** (#buy-log — message it directly, checked every 15 min)
+**Means:** type `Bought $<amount> of <TICKER> at $<price>` (e.g. `Bought $20 of NVDA at $374`) and it's recorded the same as `verdict.py add` — automatically visible to sell-signal checks, the weekly review, and `verdict.py review`. Needs the actual ticker symbol, not a company name — a ✅ reply + reaction confirms exactly what was recorded; a ❌ means it didn't parse (format hint included) or the ticker didn't resolve.
+**Do:** double-check the ✅ confirmation matches what you meant to log — this is the one input in the whole system that's you typing a trade in free text, so it's worth a glance before trusting it silently.
+
+━━━━━━━━━━━━━━━━━━
 **House rules:** the system *recommends only* — every trade goes through you. One alert = information; committee verdict = decision input; your judgment = final. Alerts are noise-gated: silence is normal and good."""
 
 if __name__ == "__main__":
