@@ -92,6 +92,22 @@ Instructions: Paste into the Investment Committee session. Output Template D onl
     print(f"Close payload: {path.name}")
 
     if "--quiet-discord" not in sys.argv:
+        # Compact top-10 scoreboard — Discord is the mobile UI (dashboard.html
+        # is a local file on the Mac). Blend/tier come from the ledger when the
+        # monitor has computed them.
+        try:
+            top = sorted(ledger.items(), key=lambda kv: -(kv[1].get("blend") or kv[1].get("overall", 0)))[:10]
+            board = ["📊 **Daily scoreboard — top 10 by blend** (blend = 55% momentum + 45% factor conviction)"]
+            for i, (t, e) in enumerate(top, 1):
+                blend = e.get("blend")
+                tier = e.get("tier") or "?"
+                dte = e.get("days_to_earnings")
+                board.append(f"`{i:>2}. {t:<6}` blend **{blend if blend is not None else '—'}** · "
+                             f"{e.get('rating', '?')} · conviction {tier}"
+                             + (f" · earnings {dte}d" if isinstance(dte, int) and 0 <= dte <= 7 else ""))
+            send_message("\n".join(board), kind="SCOREBOARD")
+        except Exception as e:
+            print(f"Discord scoreboard failed (continuing): {e}")
         try:
             send_message(f"🔔 **Closing bell summary ready** — `{path.name}`\n"
                          + (f"Rating changes: {', '.join(rating_shifts)}" if rating_shifts

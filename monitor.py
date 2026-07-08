@@ -16,6 +16,11 @@ import factors
 
 STATE_PATH = Path(__file__).parent / "alert_state.json"
 
+# No BUY alert fires this close to a confirmed earnings date — the report is a
+# coin flip that can invalidate the setup overnight. Suppressed alerts go to
+# the updates channel instead so the signal itself isn't lost.
+EARNINGS_BLACKOUT_DAYS = 3
+
 
 def rsi(closes, period=14):
     deltas = closes.diff().dropna()
@@ -133,6 +138,10 @@ def main():
         if cur and cur.get("factors"):
             conv, tier = factors.conviction(cur["factors"])
         score = round(momentum_score * 0.55 + conv * 0.45) if conv is not None else momentum_score
+        if cur is not None:  # persist what actually gates alerts, for the dashboard
+            cur["blend"] = score
+            cur["conviction"] = conv
+            cur["tier"] = tier
         action = "BUY" if score >= cfg["alert_threshold"] else "WATCH" if score >= 60 else "HOLD"
         breakdown = f"(momentum {momentum_score}, factors {conv} {tier})" if conv is not None else "(factors GAPPED)"
         print(f"{ticker:<8}{result['price']:>10,.2f}{score:>7}  {action}  {breakdown}")
@@ -155,9 +164,23 @@ def main():
     # just a label stapled onto the same alert. LOW/UNRATED gets downgraded to
     # a quiet updates-channel note instead of a pinged BUY alert.
     for ticker, score, result in buy_queue:
-        f = evaluations.get(ticker, ({}, None))[0].get("factors", {})
+        cur_eval = evaluations.get(ticker, ({}, None))[0]
+        f = cur_eval.get("factors", {})
         conv, tier = factors.conviction(f) if f else (None, "UNRATED")
         state[ticker] = now  # cooldown applies regardless of outcome — don't re-evaluate every run either way
+        dte = cur_eval.get("days_to_earnings")
+        if isinstance(dte, int) and 0 <= dte <= EARNINGS_BLACKOUT_DAYS:
+            note = (f"📅 **{ticker}** hit the BUY threshold (score {score}/100 at "
+                    f"${result['price']:,.2f}, conviction {tier}) but earnings are in "
+                    f"**{dte} day(s)** — BUY alert suppressed (earnings blackout, "
+                    f"≤{EARNINGS_BLACKOUT_DAYS}d). Entering right before a report is a "
+                    "coin flip on the print, not a setup; re-evaluate after earnings.")
+            try:
+                send_message(note, kind="EARNINGS_BLACKOUT")
+                print(f"{ticker}: BUY suppressed — earnings in {dte}d (blackout) — updates channel only")
+            except Exception as e:
+                print(f"{ticker}: Discord notice failed (continuing): {e}")
+            continue
         if tier in ("HIGH", "MEDIUM"):
             details = dict(result["details"])
             details["Factor conviction"] = f"{tier}" + (f" ({conv}/100)" if conv is not None else "")
@@ -208,6 +231,8 @@ def main():
         ledger[ticker] = {"overall": cur["overall"], "timing": cur["timing"],
                           "confidence": cur["confidence"], "rating": cur["rating"],
                           "days_to_earnings": cur["days_to_earnings"], "sector": cur["sector"],
+                          "blend": cur.get("blend"), "conviction": cur.get("conviction"),
+                          "tier": cur.get("tier"),
                           "date": time.strftime("%Y-%m-%d %H:%M")}
     if not dry_run:
         committee.save_ledger(ledger)

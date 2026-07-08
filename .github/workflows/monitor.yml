@@ -21,6 +21,8 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      TZ: America/Los_Angeles
     permissions:
       contents: write
     steps:

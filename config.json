@@ -19,13 +19,11 @@
     "AMAT",
     "KLAC",
     "MP",
-    "USAR",
     "FCX",
     "CRWD",
     "PANW",
     "ZS",
     "RKLB",
-    "ASTS",
     "IRDM",
     "IONQ",
     "QBTS",
@@ -61,8 +59,16 @@
     "NB",
     "UUUU",
     "PL",
-    "RDW",
-    "LUNR"
+    "LUNR",
+    "TSM",
+    "MU",
+    "ANET",
+    "MRVL",
+    "ETN",
+    "GD",
+    "V",
+    "COST",
+    "JPM"
   ],
   "alert_threshold": 76,
   "cooldown_hours": 24,
@@ -74,7 +80,11 @@
       "SMCI",
       "ORCL",
       "DELL",
-      "ALAB"
+      "ALAB",
+      "TSM",
+      "MU",
+      "ANET",
+      "MRVL"
     ],
     "Power & Grid": [
       "CEG",
@@ -82,7 +92,8 @@
       "GEV",
       "CCJ",
       "TLN",
-      "NEE"
+      "NEE",
+      "ETN"
     ],
     "Defense & Aerospace": [
       "LMT",
@@ -90,7 +101,8 @@
       "PLTR",
       "AVAV",
       "KTOS",
-      "NOC"
+      "NOC",
+      "GD"
     ],
     "Healthcare & Biotech": [
       "LLY",
@@ -115,7 +127,6 @@
     ],
     "Critical Minerals & Rare Earths": [
       "MP",
-      "USAR",
       "FCX",
       "NB",
       "UUUU"
@@ -130,10 +141,8 @@
     ],
     "Space Economy": [
       "RKLB",
-      "ASTS",
       "IRDM",
       "PL",
-      "RDW",
       "LUNR"
     ],
     "Quantum Computing": [
@@ -152,6 +161,11 @@
       "AAPL",
       "GOOGL",
       "AMZN"
+    ],
+    "Quality Compounders": [
+      "V",
+      "COST",
+      "JPM"
     ]
   }
 }
