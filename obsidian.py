@@ -21,6 +21,9 @@ import re
 import shutil
 from datetime import datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
+
+PACIFIC = ZoneInfo("America/Los_Angeles")
 
 CONFIG_PATH = Path(__file__).parent / "config.json"
 VERDICTS_PATH = Path(__file__).parent / "verdicts.json"
@@ -73,17 +76,22 @@ def _month_id(d):
     return d.strftime("%Y-%m")
 
 
-def log_ping(kind, text):
-    """Append a timestamped ping to today's daily note. kind: BUY / PAYLOAD / PULSE / CLOSE / INFO."""
+def log_ping(kind, text, when=None):
+    """Append a timestamped ping to today's daily note. kind: BUY / PAYLOAD / PULSE / CLOSE / INFO.
+
+    `when` (a Pacific-time datetime) lets replayed CI events file under the
+    day/week/month they actually happened on, not the day they were synced.
+    """
+    when = when or datetime.now(PACIFIC)
     if IS_CI:
         _enqueue({"type": "ping", "kind": kind, "text": text,
-                  "ts": datetime.now().strftime("%Y-%m-%d %H:%M")})
+                  "ts": when.strftime("%Y-%m-%d %H:%M")})
         return
     try:
         base = _base()
         if base is None:
             return
-        d = datetime.now().date()
+        d = when.date()
         day = d.strftime("%Y-%m-%d")
         note = base / "Pings" / f"{day}.md"
         if not note.exists():
@@ -105,7 +113,7 @@ Part of [[Weeks/{week_id}|Week {d.isocalendar()[1]}, {d.year}]] ·
 
 """)
         with note.open("a") as f:
-            f.write(f"- **{datetime.now():%H:%M}** `{kind}` — {text}\n")
+            f.write(f"- **{when:%H:%M}** `{kind}` — {text}\n")
         _sync_hierarchy(d)
     except Exception:
         pass  # never let vault issues break monitoring
@@ -202,6 +210,28 @@ Part of [[Stock Monitor Hub]].
         pass
 
 
+PAYLOAD_DATE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:_(\d{4}))?")
+
+
+def _payload_when(filename):
+    """Payload filenames are prefixed YYYY-MM-DD_HHMM_... — use that as the
+    true event time instead of 'now', so catch-up replays after the Mac
+    was off file under the day (and time) the analysis actually happened."""
+    m = PAYLOAD_DATE_RE.match(filename)
+    if m:
+        try:
+            date_part = datetime.strptime(m.group(1), "%Y-%m-%d").date()
+            hhmm = m.group(2) or "0000"
+            return datetime.combine(date_part, datetime.strptime(hhmm, "%H%M").time(), tzinfo=PACIFIC)
+        except ValueError:
+            pass
+    return datetime.now(PACIFIC)
+
+
+def _payload_day(filename):
+    return _payload_when(filename).date()
+
+
 def mirror_payload(payload_path):
     """Copy a committee payload into the vault with frontmatter prepended."""
     if IS_CI:
@@ -218,7 +248,7 @@ def mirror_payload(payload_path):
         src = Path(payload_path)
         dest = base / "Committee Payloads" / src.name
         body = src.read_text()
-        day = datetime.now().strftime("%Y-%m-%d")
+        day = _payload_day(src.name).strftime("%Y-%m-%d")
         dest.write_text(f"""---
 title: "{src.stem}"
 date: {day}
@@ -236,7 +266,7 @@ Logged same day in [[Pings/{day}|today's ping log]].
 ---
 
 {body}""")
-        log_ping("PAYLOAD", f"[[{src.stem}]] mirrored to vault")
+        log_ping("PAYLOAD", f"[[{src.stem}]] mirrored to vault", when=_payload_when(src.name))
         ticker = _ticker_from_filename(src.name)
         if ticker:
             update_ticker_page(ticker)

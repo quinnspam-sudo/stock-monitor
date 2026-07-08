@@ -172,3 +172,7 @@ SPY return this week: {spy_ret:+.1%}
 
 if __name__ == "__main__":
     main()
+    import notify
+    if notify.had_failures():
+        print(f"{len(notify.FAILURES)} Discord post(s) failed this run — failing job so CI surfaces it.")
+        sys.exit(1)

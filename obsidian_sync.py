@@ -8,9 +8,11 @@ Expects the repo to already be pulled (a wrapper script/launchd job should
 `git pull` first, then run this, then commit+push the cleared queue file).
 """
 import json
+from datetime import datetime
 from pathlib import Path
 
 import obsidian
+from obsidian import PACIFIC
 
 QUEUE_PATH = Path(__file__).parent / "obsidian_queue.jsonl"
 
@@ -26,7 +28,9 @@ def main():
         event = json.loads(line)
         try:
             if event["type"] == "ping":
-                obsidian.log_ping(event["kind"], event["text"])
+                when = datetime.strptime(event["ts"], "%Y-%m-%d %H:%M").replace(tzinfo=PACIFIC) \
+                    if event.get("ts") else None
+                obsidian.log_ping(event["kind"], event["text"], when=when)
             elif event["type"] == "mirror_payload":
                 p = Path(__file__).parent / event["path"]
                 if p.exists():

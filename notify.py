@@ -11,6 +11,18 @@ GREEN = 0x2ECC71
 YELLOW = 0xF1C40F
 GREY = 0x95A5A6
 
+# Populated whenever a Discord post fails. Callers often catch send_alert/
+# send_message exceptions per-item so one bad ticker doesn't abort a whole
+# run — but that means failures can go completely unnoticed run after run
+# (e.g. a revoked webhook). Scripts check had_failures() at exit and fail
+# the process so CI shows red and GitHub's default failure email fires,
+# even though the alerting channel itself is what broke.
+FAILURES = []
+
+
+def had_failures():
+    return bool(FAILURES)
+
 
 def load_config():
     """Merge config.json with secrets.json (gitignored) and env var overrides.
@@ -46,8 +58,12 @@ def send_alert(ticker, score, action, price, details, webhook_url=None):
         "fields": [{"name": k, "value": str(v), "inline": True} for k, v in details.items()],
         "footer": {"text": "stock-monitor · not financial advice · verify before trading"},
     }
-    resp = requests.post(url, json={"embeds": [embed]}, timeout=15)
-    resp.raise_for_status()
+    try:
+        resp = requests.post(url, json={"embeds": [embed]}, timeout=15)
+        resp.raise_for_status()
+    except Exception as e:
+        FAILURES.append(f"send_alert({ticker}): {e}")
+        raise
 
 
 def send_message(text, webhook_url=None, kind="INFO"):
@@ -75,8 +91,12 @@ def send_message_raw(text, webhook_url=None):
     url = webhook_url or cfg["discord_webhook_url"]
     if "PASTE_YOUR" in url:
         raise RuntimeError("Set discord_webhook_url in config.json first.")
-    resp = requests.post(url, json={"content": text[:2000]}, timeout=15)
-    resp.raise_for_status()
+    try:
+        resp = requests.post(url, json={"content": text[:2000]}, timeout=15)
+        resp.raise_for_status()
+    except Exception as e:
+        FAILURES.append(f"send_message: {e}")
+        raise
 
 
 if __name__ == "__main__":
