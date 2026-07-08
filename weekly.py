@@ -28,7 +28,10 @@ def main():
         print("Market closed today — skipping weekly review. Use --force to override.")
         return
     ledger = load_ledger()
-    verdicts = load_verdicts()
+    # recommendations.json now also holds buy_alert/sell_signal entries
+    # (see performance.py) — this review is specifically about committee
+    # verdict accuracy, so filter to that kind only.
+    verdicts = [r for r in load_verdicts() if r.get("kind", "committee_verdict") == "committee_verdict"]
 
     # 5y, not 1y: a verdict recorded >1y ago would otherwise get silently
     # mismatched against a truncated SPY window (no error, just wrong alpha).

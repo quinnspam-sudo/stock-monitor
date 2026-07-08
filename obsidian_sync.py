@@ -37,6 +37,13 @@ def main():
                     obsidian.mirror_payload(p)
                 else:
                     print(f"  skip (payload file missing): {event['path']}")
+            elif event["type"] == "recommendation":
+                obsidian.log_recommendation(event["kind"], event["ticker"], event["detail"],
+                                            event["price"], date=event.get("date"))
+            elif event["type"] == "actual_trade":
+                obsidian.log_actual_trade(event["action"], event["ticker"], event["amount"],
+                                          event["price"], event["shares"], date=event.get("date"),
+                                          note=event.get("note", ""))
             replayed += 1
         except Exception as e:
             print(f"  skip (error replaying {event}): {e}")

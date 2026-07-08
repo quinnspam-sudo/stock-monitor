@@ -1,6 +1,7 @@
-"""Sell/exit alert methodologies — checks recorded verdicts (actual buy
-decisions with an entry price) against three explicit, mechanical sell
-rules that come paired with their buy-side methodologies in the literature:
+"""Sell/exit alert methodologies — checks REAL open positions (from
+actual_trades.json, the Discord buy-log ledger) against three explicit,
+mechanical sell rules that come paired with their buy-side methodologies
+in the literature:
 
   - CANSLIM (O'Neil) stop-loss: cut every loss at -7% to -8% from entry,
     no exceptions — arguably O'Neil's most famous rule, more so than his
@@ -20,23 +21,26 @@ quality gates have no formal price-based sell rule at all (a qualitative
 script can check), and insider selling isn't used as a mirrored signal
 since the literature treats it as far noisier than insider buying.
 
-Only checks tickers with a recorded verdict (verdicts.json) and an entry
-price — there's no separate portfolio/position tracking in this system,
-so a recorded verdict is the closest thing to "a position actually acted
-on." Run this after using verdict.py add to start tracking a new one.
+Checks actual_trades.json's open positions (average-cost-basis accounting
+via performance.compute_open_positions) — NOT recommendations.json. A
+stop-loss only makes sense against a real position with a real entry price;
+checking it against a committee verdict or a BUY alert (a recommendation,
+not a confirmed action) was the original design's conflation, fixed here.
+Every firing is itself logged as a "sell_signal" recommendation, alongside
+the Discord alert.
 
 Run: ./venv/bin/python sell_check.py [--force] [--quiet-discord]
 """
 import json
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 import yfinance as yf
 
 from notify import send_sell_alert
 from committee import market_open_today
-from verdict import load as load_verdicts
+from performance import compute_open_positions
 
 STATE_PATH = Path(__file__).parent / "sell_alert_state.json"
 STOP_LOSS_PCT = -0.07
@@ -76,15 +80,19 @@ def main():
         print("Market closed today — skipping sell check. Use --force to override.")
         return
 
-    verdicts = load_verdicts()
+    positions = compute_open_positions()
     state = load_state()
     now = datetime.now()
     cooldown = COOLDOWN_HOURS * 3600
     checked = 0
 
-    for v in verdicts:
-        ticker = v["ticker"]
-        entry = v.get("suggested_entry") or v.get("price_at_verdict")
+    if not positions:
+        print("No open positions in actual_trades.json — nothing to check. "
+              "Log a buy via the Discord buy-log bot to start tracking one.")
+        return
+
+    for ticker, pos in positions.items():
+        entry = pos["avg_cost"]
         if not entry:
             continue
         try:
@@ -97,10 +105,10 @@ def main():
 
         alerts = []
         if pct_move <= STOP_LOSS_PCT:
-            alerts.append(("STOP_LOSS", f"down {pct_move:+.1%} from entry ${entry:,.2f} — "
+            alerts.append(("STOP_LOSS", f"down {pct_move:+.1%} from avg cost ${entry:,.2f} — "
                             "CANSLIM rule: cut every loss at -7% to -8%, no exceptions."))
         elif pct_move >= TAKE_PROFIT_PCT:
-            alerts.append(("TAKE_PROFIT", f"up {pct_move:+.1%} from entry ${entry:,.2f} — "
+            alerts.append(("TAKE_PROFIT", f"up {pct_move:+.1%} from avg cost ${entry:,.2f} — "
                             "CANSLIM rule: take profits at +20-25% unless the stock shows "
                             "explosive characteristics justifying a longer hold."))
 
@@ -110,15 +118,16 @@ def main():
                             + (f" on {vol_ratio:.2f}x average volume" if vol_ratio else "")
                             + " — Darvas box breakdown, the sell-side mirror of a breakout."))
 
-        try:
-            verdict_date = datetime.strptime(v["date"], "%Y-%m-%d")
-            days_held = (now - verdict_date).days
-            if days_held >= REBALANCE_DAYS:
-                alerts.append(("REBALANCE_DUE", f"held {days_held} days (>= {REBALANCE_DAYS}) — "
-                                "Magic Formula rule: mechanical annual rebalance regardless of "
-                                "current conviction (Greenblatt's tax-driven hold discipline)."))
-        except (KeyError, ValueError):
-            pass
+        if pos["held_since"]:
+            try:
+                held_date = datetime.strptime(pos["held_since"], "%Y-%m-%d")
+                days_held = (now - held_date).days
+                if days_held >= REBALANCE_DAYS:
+                    alerts.append(("REBALANCE_DUE", f"held {days_held} days (>= {REBALANCE_DAYS}) — "
+                                    "Magic Formula rule: mechanical annual rebalance regardless of "
+                                    "current conviction (Greenblatt's tax-driven hold discipline)."))
+            except ValueError:
+                pass
 
         for kind, reason in alerts:
             key = f"{ticker}:{kind}"
@@ -132,11 +141,13 @@ def main():
                 send_sell_alert(ticker, kind, price, entry, pct_move, reason)
                 state[key] = now.timestamp()
                 print(f"{ticker}: → Discord SELL alert sent ({kind})")
+                import obsidian
+                obsidian.log_recommendation("sell_signal", ticker, f"{kind}: {reason}", price)
             except Exception as e:
                 print(f"{ticker}: Discord sell alert failed (continuing): {e}")
 
     save_state(state)
-    print(f"Checked {checked}/{len(verdicts)} recorded verdicts.")
+    print(f"Checked {checked}/{len(positions)} open position(s).")
 
 
 if __name__ == "__main__":

@@ -36,17 +36,17 @@ GUIDE = """\
 
 ━━━━━━━━━━━━━━━━━━
 🔴 **SELL SIGNAL** (posts to the separate #sell-alerts channel — hourly, market hours)
-**Means:** one of three mechanical exit rules fired against a *recorded verdict* (something you logged with `verdict.py add`, not the whole watchlist):
-  - **STOP_LOSS** — down 7%+ from your recorded entry. CANSLIM's signature rule: cut every loss at -7% to -8%, no exceptions, no "it'll come back."
-  - **TAKE_PROFIT** — up 20%+ from entry. CANSLIM's "sell into strength" rule for a normal (non-explosive) mover — a nudge to consider trimming, not a hard rule like the stop-loss.
+**Means:** one of three mechanical exit rules fired against a *real open position* (something you actually logged as bought via #buy-log and haven't fully sold yet — not the whole watchlist, and not a committee verdict either):
+  - **STOP_LOSS** — down 7%+ from your average cost. CANSLIM's signature rule: cut every loss at -7% to -8%, no exceptions, no "it'll come back."
+  - **TAKE_PROFIT** — up 20%+ from average cost. CANSLIM's "sell into strength" rule for a normal (non-explosive) mover — a nudge to consider trimming, not a hard rule like the stop-loss.
   - **BOX_BREAKDOWN** — price broke below its trailing 20-day low on above-average volume. The sell-side mirror of the breakout buy signal (Darvas box theory).
   - **REBALANCE_DUE** — held 365+ days. Magic Formula's mechanical annual rotation, regardless of current conviction — this one fires on time elapsed, not price action.
-**Do:** STOP_LOSS is the one rule in this whole system meant to be followed mechanically, not judged — that's the point of a stop-loss. The others are decision inputs, same as everything else here: read, don't auto-execute. Note this only covers positions you've recorded a verdict for; it has no visibility into anything you hold that was never logged.
+**Do:** STOP_LOSS is the one rule in this whole system meant to be followed mechanically, not judged — that's the point of a stop-loss. The others are decision inputs, same as everything else here: read, don't auto-execute. Note this only covers real positions logged via #buy-log — it has no visibility into anything you hold that was never logged there, and it deliberately ignores committee verdicts/BUY alerts (those are recommendations, not confirmed positions).
 
 ━━━━━━━━━━━━━━━━━━
 📝 **BUY-LOG CHANNEL** (#buy-log — message it directly, checked every 15 min)
-**Means:** type `Bought $<amount> of <TICKER> at $<price>` (e.g. `Bought $20 of NVDA at $374`) and it's recorded the same as `verdict.py add` — automatically visible to sell-signal checks, the weekly review, and `verdict.py review`. Needs the actual ticker symbol, not a company name — a ✅ reply + reaction confirms exactly what was recorded; a ❌ means it didn't parse (format hint included) or the ticker didn't resolve.
-**Do:** double-check the ✅ confirmation matches what you meant to log — this is the one input in the whole system that's you typing a trade in free text, so it's worth a glance before trusting it silently.
+**Means:** type `Bought $<amount> of <TICKER> at $<price>` or `Sold $<amount> of <TICKER> at $<price>` (e.g. `Bought $20 of NVDA at $374`) and it's recorded into the *actual trades* ledger — separate from anything the system recommends — automatically visible to sell-signal checks and `performance.py actual`. Needs the actual ticker symbol, not a company name — a ✅ reply + reaction confirms exactly what was recorded; a ❌ means it didn't parse (format hint included) or the ticker didn't resolve.
+**Do:** double-check the ✅ confirmation matches what you meant to log — this is the one input in the whole system that's you typing a trade in free text, so it's worth a glance before trusting it silently. Use `performance.py recommendations` vs `performance.py actual` (or just ask Claude) to compare what the system suggested against what you actually did.
 
 ━━━━━━━━━━━━━━━━━━
 **House rules:** the system *recommends only* — every trade goes through you. One alert = information; committee verdict = decision input; your judgment = final. Alerts are noise-gated: silence is normal and good."""

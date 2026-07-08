@@ -1,6 +1,6 @@
-"""Pushes local edits to tracked state files (config.json, verdicts.json,
-scores.json) straight to GitHub, so hand-run commands like `verdict.py add`
-and `watchlist.py add/remove` don't silently diverge from the repo that
+"""Pushes local edits to tracked state files (config.json, recommendations.json,
+actual_trades.json, scores.json) straight to GitHub, so hand-run commands like
+`verdict.py add`, `buy_intake.py`, and `watchlist.py add/remove` don't silently diverge from the repo that
 GitHub Actions actually reads on every scheduled run. Without this, a locally
 recorded verdict or watchlist change would sit invisible on the Mac until
 someone remembered to `git add && commit && push` by hand.

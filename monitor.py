@@ -169,6 +169,9 @@ def main():
             try:
                 send_alert(ticker, score, "BUY", result["price"], details)
                 print(f"{ticker}: → Discord BUY alert sent (conviction {tier})")
+                import obsidian
+                obsidian.log_recommendation("buy_alert", ticker,
+                                            f"score {score}/100, conviction {tier}", result["price"])
             except Exception as e:
                 print(f"{ticker}: Discord alert failed (continuing): {e}")
         else:

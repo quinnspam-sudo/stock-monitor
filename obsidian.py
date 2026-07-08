@@ -29,7 +29,8 @@ PACIFIC = ZoneInfo("America/Los_Angeles")
 
 CONFIG_PATH = Path(__file__).parent / "config.json"
 SECRETS_PATH = Path(__file__).parent / "secrets.json"
-VERDICTS_PATH = Path(__file__).parent / "verdicts.json"
+RECOMMENDATIONS_PATH = Path(__file__).parent / "recommendations.json"
+ACTUAL_TRADES_PATH = Path(__file__).parent / "actual_trades.json"
 QUEUE_PATH = Path(__file__).parent / "obsidian_queue.jsonl"
 
 # On GitHub Actions there is no local Jarbis vault to write into — queue the
@@ -65,7 +66,18 @@ def _base():
 
 
 def _load_verdicts():
-    return json.loads(VERDICTS_PATH.read_text()) if VERDICTS_PATH.exists() else []
+    """Committee-verdict-kind recommendations only — see _load_recommendations
+    for the full ledger (also holds buy_alert/sell_signal entries)."""
+    recs = json.loads(RECOMMENDATIONS_PATH.read_text()) if RECOMMENDATIONS_PATH.exists() else []
+    return [r for r in recs if r.get("kind", "committee_verdict") == "committee_verdict"]
+
+
+def _load_recommendations():
+    return json.loads(RECOMMENDATIONS_PATH.read_text()) if RECOMMENDATIONS_PATH.exists() else []
+
+
+def _load_actual_trades():
+    return json.loads(ACTUAL_TRADES_PATH.read_text()) if ACTUAL_TRADES_PATH.exists() else []
 
 
 def _ticker_from_filename(name):
@@ -342,6 +354,83 @@ def record_verdict(ticker, rating, price, entry, note, date):
         update_ticker_page(ticker)
     except Exception:
         pass
+
+
+def log_recommendation(kind, ticker, detail, price, date=None):
+    """Append a 'what the system said to do' entry to the running
+    Recommendations Log — committee verdicts (verdict.py), real BUY alerts
+    (monitor.py), and sell signals (sell_check.py). Deliberately separate
+    from log_actual_trade: this is what was RECOMMENDED, not what happened."""
+    if IS_CI:
+        _enqueue({"type": "recommendation", "kind": kind, "ticker": ticker,
+                  "detail": detail, "price": price, "date": date or datetime.now(PACIFIC).strftime("%Y-%m-%d")})
+        return
+    try:
+        base = _base()
+        if base is None:
+            return
+        path = base / "Recommendations Log.md"
+        d = date or datetime.now(PACIFIC).strftime("%Y-%m-%d")
+        if not path.exists():
+            path.write_text("""---
+title: "Recommendations Log"
+type: code
+folder: "Claude-Code"
+tags: [ai-archive, stock-monitor, recommendations]
+---
+
+# [[Recommendations Log]]
+
+Every "the system said to do X" event — committee verdicts, real BUY alerts,
+and sell signals. NOT what you actually did — see [[Actual Trades Log]] for
+that. Compare the two with `performance.py`.
+
+| Date | Ticker | Kind | Detail | Price |
+|---|---|---|---|---|
+""")
+        with path.open("a") as f:
+            f.write(f"| {d} | [[{ticker}]] | {kind} | {detail} | ${price:,.2f} |\n")
+    except Exception:
+        pass  # never let vault issues break monitoring
+
+
+def log_actual_trade(action, ticker, amount, price, shares, date=None, note=""):
+    """Append a 'what I actually did' entry to the running Actual Trades
+    Log — real buys/sells logged via the Discord buy-log bot. Deliberately
+    separate from log_recommendation: this is ground truth, not a suggestion."""
+    if IS_CI:
+        _enqueue({"type": "actual_trade", "action": action, "ticker": ticker, "amount": amount,
+                  "price": price, "shares": shares, "note": note,
+                  "date": date or datetime.now(PACIFIC).strftime("%Y-%m-%d")})
+        return
+    try:
+        base = _base()
+        if base is None:
+            return
+        path = base / "Actual Trades Log.md"
+        d = date or datetime.now(PACIFIC).strftime("%Y-%m-%d")
+        if not path.exists():
+            path.write_text("""---
+title: "Actual Trades Log"
+type: code
+folder: "Claude-Code"
+tags: [ai-archive, stock-monitor, actual-trades]
+---
+
+# [[Actual Trades Log]]
+
+Every real trade you've actually made, logged via the Discord buy-log bot
+(`Bought`/`Sold $X of TICKER at $Y`). NOT recommendations — see
+[[Recommendations Log]] for what the system suggested. Compare the two
+with `performance.py`.
+
+| Date | Ticker | Action | Amount | Price | Shares | Note |
+|---|---|---|---|---|---|---|
+""")
+        with path.open("a") as f:
+            f.write(f"| {d} | [[{ticker}]] | {action} | ${amount:,.2f} | ${price:,.2f} | {shares:.4f} | {note} |\n")
+    except Exception:
+        pass  # never let vault issues break monitoring
 
 
 def write_hub(day_date=None):

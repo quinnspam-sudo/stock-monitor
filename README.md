@@ -63,24 +63,49 @@ rotating before then or the jobs will start failing with 401s).
 - `backtest.yml` — Saturday ~09:00 PT: backtests the *local scoring engine's* calls
   (not committee verdicts — that's `weekly.py`) against what each ticker actually
   did over the Mon–Fri just finished, using `history.json` snapshots
-- `sell_check.yml` — hourly ~7:00–12:00 PT Mon–Fri: checks recorded verdicts
-  (`verdicts.json`) against three mechanical sell rules — CANSLIM stop-loss
+- `sell_check.yml` — hourly ~7:00–12:00 PT Mon–Fri: checks REAL open positions
+  (`actual_trades.json`, computed via average-cost-basis accounting in
+  `performance.py`) against three mechanical sell rules — CANSLIM stop-loss
   (-7% to -8%, no exceptions) / take-profit (+20-25%), Darvas box breakdown
   (price below its 20-day low on volume), Magic Formula annual rebalance
   (365+ days held). Posts to a third, separate `#sell-alerts` channel/webhook
   (`discord_sell_webhook_url`), independent of the buy/updates split above.
-  Only covers tickers with a recorded verdict — there's no broader position
-  tracking in this system.
+  Every firing is also logged to `recommendations.json` (kind="sell_signal").
+  Only covers tickers with an open position in `actual_trades.json` — not
+  recommendations, since a stop-loss only makes sense against a real entry.
 - `buy_intake.yml` — every 15 min, all day (not just market hours): polls a
   Discord `#buy-log` channel via a real Discord **Bot** (not a webhook —
   reading messages requires the bot REST API) for messages like
-  `Bought $20 of NVDA at $374`, and records them into `verdicts.json` the
-  same as `verdict.py add` would — automatically visible to `sell_check.py`
-  and `weekly.py`. Requires the actual ticker symbol in the message (no
-  company-name fuzzy-matching — a misparse there would silently record the
-  wrong stock). Replies in-channel with a ✅/❌ confirming exactly what was
-  parsed. Credentials: `discord_bot_token` (Bot Token from the Discord
-  Developer Portal, **not** a webhook secret) + `discord_buy_log_channel_id`.
+  `Bought $20 of NVDA at $374` / `Sold $20 of NVDA at $400`, and records
+  them into `actual_trades.json` — the "what did I actually do" ledger,
+  automatically visible to `sell_check.py` and `performance.py`. Requires
+  the actual ticker symbol in the message (no company-name fuzzy-matching —
+  a misparse there would silently record the wrong stock). Replies
+  in-channel with a ✅/❌ confirming exactly what was parsed. Credentials:
+  `discord_bot_token` (Bot Token from the Discord Developer Portal, **not**
+  a webhook secret) + `discord_buy_log_channel_id`.
+
+### Two separate ledgers — recommendations vs actual trades (2026-07-08)
+
+`recommendations.json` ("what did the system say to do") and
+`actual_trades.json` ("what did I actually do") are deliberately never
+merged:
+  - `recommendations.json` — committee verdicts (`verdict.py add`, kind
+    `committee_verdict`), real BUY alerts (`monitor.py`, kind `buy_alert`),
+    and sell signals (`sell_check.py`, kind `sell_signal`)
+  - `actual_trades.json` — real buys/sells logged via the Discord
+    `#buy-log` bot only
+
+Compare the two anytime with `performance.py`:
+```bash
+./venv/bin/python performance.py actual                       # open positions (unrealized) + closed lots (realized)
+./venv/bin/python performance.py recommendations               # every recommendation's % change vs price now
+./venv/bin/python performance.py recommendations --kind buy_alert
+```
+Both are also mirrored into Obsidian as two separate running logs:
+`Recommendations Log.md` and `Actual Trades Log.md` (under
+`Claude-Code/Stock Monitor/`), so browsing the vault keeps the same
+never-merged separation.
 
 Cron times assume PDT (UTC-7); during standard time (~Nov–Mar) runs land about
 an hour later than the equivalent PT time — harmless slack given the
@@ -191,10 +216,15 @@ week-to-week.
 - `config.json` — watchlist, thresholds, Discord webhook
 - `scores.json` — ledger of last proxy scores per ticker (delta baseline)
 - `history.json` — intraday score history, last 30 days (feeds close.py)
-- `verdicts.json` — committee verdict journal
+- `recommendations.json` — "what did the system say to do": committee verdicts,
+  real BUY alerts, sell signals (see performance.py)
+- `actual_trades.json` — "what did I actually do": real buys/sells from the
+  Discord buy-log bot only (see performance.py)
 - `backtest_log.json` — weekly scoring-accuracy history (from `backtest.py`)
 - `committee_prompts/` — generated payloads for Claude Pro (auto-pruned after 14 days)
 - `alert_state.json` — Discord alert cooldowns
+- `sell_alert_state.json` — sell-signal cooldowns (per ticker+kind)
+- `discord_intake_state.json` — buy-log bot's last-processed Discord message ID
 
 ## Committee pipeline (manual Claude Pro workflow)
 
