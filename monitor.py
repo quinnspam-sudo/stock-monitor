@@ -103,13 +103,15 @@ def main():
         if result is None:
             print(f"{ticker:<8}  insufficient data")
             continue
-        score = result["score"]
-        action = "BUY" if score >= cfg["alert_threshold"] else "WATCH" if score >= 60 else "HOLD"
-        print(f"{ticker:<8}{result['price']:>10,.2f}{score:>7}  {action}")
+        momentum_score = result["score"]
 
-        # Committee noise gate: compute proxy scores, diff vs ledger, emit payload on breach
+        # Committee noise gate + factor screen — computed BEFORE the buy/watch/
+        # hold decision now (used to just confirm a decision already made on
+        # momentum alone). This is what makes the new methodologies a real
+        # entry-filter input, not just a downstream confirmation gate.
+        cur = None
         try:
-            cur = committee.gather(ticker, score)
+            cur = committee.gather(ticker, momentum_score)
             try:
                 cur["factors"] = factors.compute(ticker)
             except Exception as e:
@@ -119,6 +121,21 @@ def main():
                 committee.append_history(ticker, cur)
         except Exception as e:
             print(f"         committee error: {e}")
+
+        # Blended score: 60% momentum (the timing/entry signal) + 40% factor
+        # conviction (the 11-methodology confirmation blend). A stock can no
+        # longer coast to BUY on momentum alone — weak factor support pulls
+        # the blended score down even before the downstream conviction-tier
+        # gate (below) gets a chance to downgrade it. Falls back to pure
+        # momentum only if factors are entirely gapped (UNRATED), same as
+        # before this change.
+        conv = tier = None
+        if cur and cur.get("factors"):
+            conv, tier = factors.conviction(cur["factors"])
+        score = round(momentum_score * 0.6 + conv * 0.4) if conv is not None else momentum_score
+        action = "BUY" if score >= cfg["alert_threshold"] else "WATCH" if score >= 60 else "HOLD"
+        breakdown = f"(momentum {momentum_score}, factors {conv} {tier})" if conv is not None else "(factors GAPPED)"
+        print(f"{ticker:<8}{result['price']:>10,.2f}{score:>7}  {action}  {breakdown}")
 
         if action == "BUY" and not dry_run:
             if now - state.get(ticker, 0) < cooldown:
