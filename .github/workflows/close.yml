@@ -12,7 +12,7 @@ on:
   workflow_dispatch: {}
 
 concurrency:
-  group: stock-monitor-state
+  group: stock-monitor-${{ github.workflow }}
   cancel-in-progress: false
 
 jobs:
