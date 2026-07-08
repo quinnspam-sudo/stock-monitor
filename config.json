@@ -68,7 +68,8 @@
     "GD",
     "V",
     "COST",
-    "JPM"
+    "JPM",
+    "TTWO"
   ],
   "alert_threshold": 76,
   "cooldown_hours": 24,
@@ -166,6 +167,9 @@
       "V",
       "COST",
       "JPM"
+    ],
+    "Uncategorized": [
+      "TTWO"
     ]
   }
 }
