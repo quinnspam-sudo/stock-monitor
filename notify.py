@@ -81,14 +81,11 @@ def send_alert(ticker, score, action, price, details, webhook_url=None):
         raise
 
 
-def send_message(text, webhook_url=None, kind="INFO", mention=True):
-    """Post a plain text message (used for daily summaries / test).
-
-    mention=True (default) prepends @here so the message notifies regardless
-    of the channel's notification-level setting — see send_alert's comment.
-    Pass mention=False only for non-actionable/reference posts (e.g. guide.py's
-    field guide) that don't need to interrupt anyone.
-    """
+def send_message(text, webhook_url=None, kind="INFO", mention=False):
+    """Post a plain text message — always targets the updates channel (see
+    load_config), which is meant to be checked at leisure, not pinged.
+    Only send_alert's BUY channel pings via @here. Pass mention=True to
+    override for a specific updates message that's unusually urgent."""
     import obsidian
     obsidian.log_ping(kind, text.replace("\n", " · "))
     if mention:
