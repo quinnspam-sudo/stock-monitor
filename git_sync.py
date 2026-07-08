@@ -9,6 +9,7 @@ Best-effort: failures print a clear manual-recovery instruction rather than
 raising, so a git hiccup never blocks the CLI command that triggered it.
 """
 import subprocess
+import time
 from pathlib import Path
 
 REPO_DIR = Path(__file__).parent
@@ -29,13 +30,24 @@ def commit_and_push(paths, message):
         r = _run(["commit", "-m", message])
         if r.returncode != 0:
             raise RuntimeError(r.stderr.strip())
-        r = _run(["pull", "--rebase", "--autostash"])
-        if r.returncode != 0:
-            raise RuntimeError(r.stderr.strip())
-        r = _run(["push"])
-        if r.returncode != 0:
-            raise RuntimeError(r.stderr.strip())
-        print(f"  (synced to GitHub: {message})")
+
+        # A scheduled GitHub Actions run can push at the same moment — retry
+        # the pull/push cycle a few times before giving up, same as the
+        # workflows' own retry loop.
+        last_err = None
+        for attempt in range(5):
+            r = _run(["pull", "--rebase", "--autostash"])
+            if r.returncode != 0:
+                last_err = r.stderr.strip()
+                time.sleep((attempt + 1) * 2)
+                continue
+            r = _run(["push"])
+            if r.returncode == 0:
+                print(f"  (synced to GitHub: {message})")
+                return
+            last_err = r.stderr.strip()
+            time.sleep((attempt + 1) * 2)
+        raise RuntimeError(last_err or "push failed after retries")
     except Exception as e:
         print(f"  WARNING: saved locally but git sync failed ({e}).\n"
               f"  GitHub Actions won't see this change until you push by hand:\n"
