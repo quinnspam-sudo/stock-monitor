@@ -44,6 +44,8 @@ def cmd_add(args):
     print(f"Recorded: {ticker} {rating} @ ${price:,.2f} on {date}")
     import obsidian
     obsidian.record_verdict(ticker, rating, price, entry, note, date)
+    import git_sync
+    git_sync.commit_and_push(["verdicts.json"], f"verdict: {ticker} {rating} @ {price:,.2f}")
 
 
 def cmd_review(_args):

@@ -38,6 +38,8 @@ def main():
         cfg["watchlist"].append(ticker)
         cfg.setdefault("categories", {}).setdefault("Uncategorized", []).append(ticker)
         CONFIG_PATH.write_text(json.dumps(cfg, indent=2))
+        import git_sync
+        git_sync.commit_and_push(["config.json"], f"watchlist: add {ticker}")
         print(f"Added {ticker} (last close ${float(hist['Close'].iloc[-1]):,.2f}) — "
               "filed under 'Uncategorized' in config.json's categories map (move it "
               "into a real theme by hand if you like). "
@@ -55,6 +57,8 @@ def main():
         ledger = load_ledger()
         if ledger.pop(ticker, None):
             save_ledger(ledger)
+        import git_sync
+        git_sync.commit_and_push(["config.json", "scores.json"], f"watchlist: remove {ticker}")
         print(f"Removed {ticker} from watchlist, categories, and ledger.")
     else:
         print(__doc__)
