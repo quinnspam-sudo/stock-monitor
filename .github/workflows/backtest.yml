@@ -1,10 +1,15 @@
 name: backtest
 
+# Triggered externally via cron-job.org calling this workflow's
+# workflow_dispatch REST endpoint on a schedule (see README) — GitHub's
+# native `schedule:` trigger was silently not firing on this new
+# account/repo (a known GitHub anti-abuse throttle on brand-new accounts),
+# while manual/API dispatch worked reliably, so scheduling is now driven
+# externally instead.
+
 # Mirrors com.stockmonitor.backtest.plist (if present locally): Saturday 09:00 PT
 # — backtests the local scoring engine's calls for the week just finished.
 on:
-  schedule:
-    - cron: "0 16 * * 6"
   workflow_dispatch: {}
 
 concurrency:
