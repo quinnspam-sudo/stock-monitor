@@ -33,7 +33,7 @@ to a private Discord server via webhook. Recommends only — never trades.
 
 Secrets (`discord_webhook_url`) live in `secrets.json`, not `config.json` — see Setup above.
 
-## Scheduled jobs (GitHub Actions, runs even when the Mac is off — 2026-07-07)
+## Scheduled jobs (GitHub Actions + cron-job.org, runs even when the Mac is off — 2026-07-08)
 
 As of 2026-07-07 the actual monitoring runs entirely on GitHub Actions
 (`.github/workflows/*.yml` in the private repo `quinnspam-sudo/stock-monitor`),
@@ -41,6 +41,20 @@ not on this Mac — so alerts fire whether or not this machine is on, awake, or
 connected to WiFi. Each workflow scores/checks, posts to Discord, then commits
 updated state (`scores.json`, `history.json`, `committee_prompts/`, etc.) back
 to the repo so the next run picks up where the last one left off.
+
+**Trigger mechanism (as of 2026-07-08):** the workflows' own `on: schedule:`
+cron triggers never fired — GitHub silently throttles native scheduled
+workflow runs on brand-new accounts/repos as an anti-abuse measure (manual
+`workflow_dispatch` worked reliably the whole time; 0 of dozens of scheduled
+tick opportunities ever ran). There's no visible toggle for this and no
+guaranteed clear time, so scheduling was moved to **cron-job.org** (free
+external scheduler) calling each workflow's `workflow_dispatch` REST endpoint
+directly — 7 jobs (`monitor.yml` needs two, for its two different
+minute-patterns) on the exact same schedule the removed `schedule:` blocks
+had. Manage/inspect the jobs at cron-job.org's console (account is Quinn's);
+the API token used is a fine-grained GitHub PAT scoped only to this repo's
+Actions permission, expiring ~2026-08-07 (30 days from creation — needs
+rotating before then or the jobs will start failing with 401s).
 
 - `monitor.yml` — every 15 min, ~6:00–13:00 PT Mon–Fri: scores, delta triggers, Template A payloads
 - `pulse.yml` — hourly ~7:00–12:00 PT Mon–Fri: Template C intraday pulse payload
