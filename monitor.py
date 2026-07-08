@@ -180,11 +180,29 @@ def main():
         except Exception as e:
             print(f"dashboard render failed: {e}")
 
-    # Housekeeping: prune payload files older than 14 days
+    # Housekeeping: prune payload files older than 14 days — but never one
+    # still referenced by an unreplayed obsidian_queue.jsonl mirror_payload
+    # event. If the Mac has been off longer than the prune window, deleting
+    # (and committing the deletion of) that file would silently drop the
+    # payload from Obsidian forever once obsidian_sync.py finally catches up
+    # and finds it missing.
     if committee.PROMPTS_DIR.exists():
+        queue_path = Path(__file__).parent / "obsidian_queue.jsonl"
+        referenced = set()
+        if queue_path.exists():
+            for line in queue_path.read_text().splitlines():
+                if not line.strip():
+                    continue
+                try:
+                    event = json.loads(line)
+                    if event.get("type") == "mirror_payload":
+                        referenced.add(event["path"])
+                except Exception:
+                    pass
         cutoff = now - 14 * 86400
         for f in committee.PROMPTS_DIR.glob("*.md"):
-            if f.stat().st_mtime < cutoff:
+            rel = str(f.relative_to(Path(__file__).parent))
+            if f.stat().st_mtime < cutoff and rel not in referenced:
                 f.unlink()
 
     if payloads and not dry_run:
