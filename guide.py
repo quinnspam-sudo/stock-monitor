@@ -42,5 +42,5 @@ GUIDE = """\
 **House rules:** the system *recommends only* — every trade goes through you. One alert = information; committee verdict = decision input; your judgment = final. Alerts are noise-gated: silence is normal and good."""
 
 if __name__ == "__main__":
-    send_message(GUIDE, kind="GUIDE")
+    send_message(GUIDE, kind="GUIDE", mention=False)
     print("Field guide posted to Discord (pin it in the channel).")

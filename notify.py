@@ -59,17 +59,32 @@ def send_alert(ticker, score, action, price, details, webhook_url=None):
         "footer": {"text": "stock-monitor · not financial advice · verify before trading"},
     }
     try:
-        resp = requests.post(url, json={"embeds": [embed]}, timeout=15)
+        # "content": "@here" alongside the embed — a mention bypasses a
+        # channel's "Only @Mentions" notification setting, which otherwise
+        # silently suppresses pings for every alert without ever failing or
+        # showing up as an error (confirmed live: alerts were posting fine,
+        # Quinn just never got notified because the channel wasn't set to
+        # "All Messages"). This makes real notification delivery not depend
+        # on every device having Discord settings configured correctly.
+        resp = requests.post(url, json={"content": "@here", "embeds": [embed]}, timeout=15)
         resp.raise_for_status()
     except Exception as e:
         FAILURES.append(f"send_alert({ticker}): {e}")
         raise
 
 
-def send_message(text, webhook_url=None, kind="INFO"):
-    """Post a plain text message (used for daily summaries / test)."""
+def send_message(text, webhook_url=None, kind="INFO", mention=True):
+    """Post a plain text message (used for daily summaries / test).
+
+    mention=True (default) prepends @here so the message notifies regardless
+    of the channel's notification-level setting — see send_alert's comment.
+    Pass mention=False only for non-actionable/reference posts (e.g. guide.py's
+    field guide) that don't need to interrupt anyone.
+    """
     import obsidian
     obsidian.log_ping(kind, text.replace("\n", " · "))
+    if mention:
+        text = "@here " + text
     cfg = load_config()
     # Discord hard limit is 2000 chars — send in chunks on line boundaries
     if len(text) > 1900:
