@@ -10,8 +10,11 @@ verdict. The pasted payload lets the real committee (Claude) do the judgment.
 import json
 from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import yfinance as yf
+
+PACIFIC = ZoneInfo("America/Los_Angeles")
 
 ROOT = Path(__file__).parent
 LEDGER_PATH = ROOT / "scores.json"
@@ -34,10 +37,17 @@ RATING_BANDS = [(88, "Strong Buy"), (75, "Buy"), (60, "Watch"), (45, "Hold"), (3
 
 
 def market_open_today():
-    """True if NYSE traded today — guards cron runs on market holidays."""
+    """True if NYSE traded today — guards cron runs on market holidays.
+
+    Uses Pacific time explicitly rather than naive datetime.now(): on GitHub
+    Actions the runner's system tz is UTC, so a naive "today" would be wrong
+    for roughly a third of the day (any UTC time before ~13:00, i.e. still
+    the prior evening in PT) — e.g. a manual/off-schedule trigger in early
+    UTC morning would compare SPY's last close against the wrong calendar day.
+    """
     try:
         h = yf.Ticker("SPY").history(period="5d")
-        return h.index[-1].date() == datetime.now().date()
+        return h.index[-1].date() == datetime.now(PACIFIC).date()
     except Exception:
         return True  # fail open: better a wasted run than a missed session
 
