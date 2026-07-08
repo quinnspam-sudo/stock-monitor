@@ -20,10 +20,13 @@ from verdict import load as load_verdicts
 
 
 def main():
+    now = datetime.now()
+    if "--force" not in sys.argv and now.weekday() != 4:
+        print("Not Friday — skipping weekly review. Use --force to override.")
+        return
     if "--force" not in sys.argv and not market_open_today():
         print("Market closed today — skipping weekly review. Use --force to override.")
         return
-    now = datetime.now()
     ledger = load_ledger()
     verdicts = load_verdicts()
 
