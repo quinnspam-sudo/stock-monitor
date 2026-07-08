@@ -36,7 +36,33 @@
     "TSLA",
     "AAPL",
     "GOOGL",
-    "AMZN"
+    "AMZN",
+    "SMCI",
+    "ORCL",
+    "DELL",
+    "ALAB",
+    "CCJ",
+    "TLN",
+    "NEE",
+    "AVAV",
+    "KTOS",
+    "NOC",
+    "FTNT",
+    "NET",
+    "CHKP",
+    "IBM",
+    "QUBT",
+    "VKTX",
+    "PFE",
+    "SYM",
+    "PATH",
+    "ENTG",
+    "TER",
+    "NB",
+    "UUUU",
+    "PL",
+    "RDW",
+    "LUNR"
   ],
   "alert_threshold": 75,
   "cooldown_hours": 24,
@@ -44,52 +70,78 @@
     "AI Infrastructure": [
       "NVDA",
       "AVGO",
-      "VRT"
+      "VRT",
+      "SMCI",
+      "ORCL",
+      "DELL",
+      "ALAB"
     ],
     "Power & Grid": [
       "CEG",
       "VST",
-      "GEV"
+      "GEV",
+      "CCJ",
+      "TLN",
+      "NEE"
     ],
     "Defense & Aerospace": [
       "LMT",
       "RTX",
-      "PLTR"
+      "PLTR",
+      "AVAV",
+      "KTOS",
+      "NOC"
     ],
     "Healthcare & Biotech": [
       "LLY",
       "NVO",
-      "ISRG"
+      "ISRG",
+      "VKTX",
+      "PFE"
     ],
     "Automation & Robotics": [
       "ROK",
       "ABBNY",
-      "FANUY"
+      "FANUY",
+      "SYM",
+      "PATH"
     ],
     "Semiconductor Equipment": [
       "ASML",
       "AMAT",
-      "KLAC"
+      "KLAC",
+      "ENTG",
+      "TER"
     ],
     "Critical Minerals & Rare Earths": [
       "MP",
       "USAR",
-      "FCX"
+      "FCX",
+      "NB",
+      "UUUU"
     ],
     "Cybersecurity": [
       "CRWD",
       "PANW",
-      "ZS"
+      "ZS",
+      "FTNT",
+      "NET",
+      "CHKP"
     ],
     "Space Economy": [
       "RKLB",
       "ASTS",
-      "IRDM"
+      "IRDM",
+      "PL",
+      "RDW",
+      "LUNR"
     ],
     "Quantum Computing": [
       "IONQ",
       "QBTS",
-      "RGTI"
+      "RGTI",
+      "IBM",
+      "QUBT"
     ],
     "Mega-cap Tech (original)": [
       "NVDA",
