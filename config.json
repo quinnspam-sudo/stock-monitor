@@ -36,7 +36,8 @@
     "TSLA",
     "AAPL",
     "GOOGL",
-    "AMZN"
+    "AMZN",
+    "IBM"
   ],
   "alert_threshold": 75,
   "cooldown_hours": 24,
@@ -100,6 +101,9 @@
       "AAPL",
       "GOOGL",
       "AMZN"
+    ],
+    "Uncategorized": [
+      "IBM"
     ]
   }
 }
