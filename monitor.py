@@ -122,17 +122,17 @@ def main():
         except Exception as e:
             print(f"         committee error: {e}")
 
-        # Blended score: 60% momentum (the timing/entry signal) + 40% factor
-        # conviction (the 11-methodology confirmation blend). A stock can no
-        # longer coast to BUY on momentum alone — weak factor support pulls
-        # the blended score down even before the downstream conviction-tier
-        # gate (below) gets a chance to downgrade it. Falls back to pure
-        # momentum only if factors are entirely gapped (UNRATED), same as
-        # before this change.
+        # Blended score: 55% momentum (the timing/entry signal) + 45% factor
+        # conviction (the 11-methodology confirmation blend) — factors weighted
+        # slightly above momentum so a stock can't coast to BUY on price action
+        # alone; weak factor support pulls the blended score down even before
+        # the downstream conviction-tier gate (below) gets a chance to
+        # downgrade it. Falls back to pure momentum only if factors are
+        # entirely gapped (UNRATED), same as before this change.
         conv = tier = None
         if cur and cur.get("factors"):
             conv, tier = factors.conviction(cur["factors"])
-        score = round(momentum_score * 0.6 + conv * 0.4) if conv is not None else momentum_score
+        score = round(momentum_score * 0.55 + conv * 0.45) if conv is not None else momentum_score
         action = "BUY" if score >= cfg["alert_threshold"] else "WATCH" if score >= 60 else "HOLD"
         breakdown = f"(momentum {momentum_score}, factors {conv} {tier})" if conv is not None else "(factors GAPPED)"
         print(f"{ticker:<8}{result['price']:>10,.2f}{score:>7}  {action}  {breakdown}")
