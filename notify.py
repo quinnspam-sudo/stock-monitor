@@ -27,14 +27,22 @@ def had_failures():
 def load_config():
     """Merge config.json with secrets.json (gitignored) and env var overrides.
 
-    Webhook URL resolution order: DISCORD_WEBHOOK_URL env var > secrets.json >
-    legacy discord_webhook_url in config.json (for back-compat with older setups).
+    Two channels, two webhooks:
+      - discord_webhook_url          — BUY-only channel (send_alert's target)
+      - discord_updates_webhook_url  — everything else: pulse/close/ipo/weekly/
+        backtest/payload-ready notices (send_message's target)
+    Each resolves env var > secrets.json > legacy config.json key, same
+    precedence as before. If discord_updates_webhook_url isn't set, updates
+    fall back to the BUY webhook (single-channel setups keep working).
     """
     cfg = json.loads(CONFIG_PATH.read_text())
     if SECRETS_PATH.exists():
         cfg.update(json.loads(SECRETS_PATH.read_text()))
     if os.environ.get("DISCORD_WEBHOOK_URL"):
         cfg["discord_webhook_url"] = os.environ["DISCORD_WEBHOOK_URL"]
+    if os.environ.get("DISCORD_UPDATES_WEBHOOK_URL"):
+        cfg["discord_updates_webhook_url"] = os.environ["DISCORD_UPDATES_WEBHOOK_URL"]
+    cfg.setdefault("discord_updates_webhook_url", cfg.get("discord_webhook_url"))
     return cfg
 
 
@@ -103,7 +111,7 @@ def send_message(text, webhook_url=None, kind="INFO", mention=True):
 
 def send_message_raw(text, webhook_url=None):
     cfg = load_config()
-    url = webhook_url or cfg["discord_webhook_url"]
+    url = webhook_url or cfg["discord_updates_webhook_url"]
     if "PASTE_YOUR" in url:
         raise RuntimeError("Set discord_webhook_url in config.json first.")
     try:

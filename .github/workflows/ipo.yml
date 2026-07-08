@@ -30,6 +30,7 @@ jobs:
       - run: python ipo.py
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_UPDATES_WEBHOOK_URL: ${{ secrets.DISCORD_UPDATES_WEBHOOK_URL }}
       - name: Commit updated state
         run: |
           git config user.name "stock-monitor-bot"
