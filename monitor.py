@@ -241,6 +241,11 @@ def main():
             dashboard.render()
         except Exception as e:
             print(f"dashboard render failed: {e}")
+        try:
+            import ecosystem
+            ecosystem.render()
+        except Exception as e:
+            print(f"ecosystem render failed: {e}")
 
     # Housekeeping: prune payload files older than 14 days — but never one
     # still referenced by an unreplayed obsidian_queue.jsonl mirror_payload
