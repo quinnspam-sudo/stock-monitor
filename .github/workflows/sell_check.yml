@@ -1,0 +1,46 @@
+name: sell_check
+
+# Triggered externally via cron-job.org calling this workflow's
+# workflow_dispatch REST endpoint on a schedule (see README) — GitHub's
+# native `schedule:` trigger was silently not firing on this new
+# account/repo (a known GitHub anti-abuse throttle on brand-new accounts),
+# while manual/API dispatch worked reliably, so scheduling is now driven
+# externally instead.
+
+# Checks recorded verdicts (verdicts.json) against three mechanical sell
+# rules: CANSLIM stop-loss/take-profit, Darvas box breakdown, Magic Formula
+# annual rebalance. Same hourly cadence as pulse.yml, 7:00-12:00 PT Mon-Fri.
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: stock-monitor-state
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python sell_check.py
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_SELL_WEBHOOK_URL: ${{ secrets.DISCORD_SELL_WEBHOOK_URL }}
+      - name: Commit updated state
+        run: |
+          git config user.name "stock-monitor-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "sell_check: state update [skip ci]"
+          for i in 1 2 3 4 5; do
+            git pull --rebase --autostash && git push && break
+            echo "push attempt $i failed, retrying..."
+            sleep $((i * 5))
+          done

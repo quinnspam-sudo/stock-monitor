@@ -35,6 +35,15 @@ GUIDE = """\
 **Do:** read for calibration on the scoring engine, not individual trades. If "signal failed" recurs for several weeks running, the momentum/factor weights need revisiting, not just that week's picks.
 
 ━━━━━━━━━━━━━━━━━━
+🔴 **SELL SIGNAL** (posts to the separate #sell-alerts channel — hourly, market hours)
+**Means:** one of three mechanical exit rules fired against a *recorded verdict* (something you logged with `verdict.py add`, not the whole watchlist):
+  - **STOP_LOSS** — down 7%+ from your recorded entry. CANSLIM's signature rule: cut every loss at -7% to -8%, no exceptions, no "it'll come back."
+  - **TAKE_PROFIT** — up 20%+ from entry. CANSLIM's "sell into strength" rule for a normal (non-explosive) mover — a nudge to consider trimming, not a hard rule like the stop-loss.
+  - **BOX_BREAKDOWN** — price broke below its trailing 20-day low on above-average volume. The sell-side mirror of the breakout buy signal (Darvas box theory).
+  - **REBALANCE_DUE** — held 365+ days. Magic Formula's mechanical annual rotation, regardless of current conviction — this one fires on time elapsed, not price action.
+**Do:** STOP_LOSS is the one rule in this whole system meant to be followed mechanically, not judged — that's the point of a stop-loss. The others are decision inputs, same as everything else here: read, don't auto-execute. Note this only covers positions you've recorded a verdict for; it has no visibility into anything you hold that was never logged.
+
+━━━━━━━━━━━━━━━━━━
 **House rules:** the system *recommends only* — every trade goes through you. One alert = information; committee verdict = decision input; your judgment = final. Alerts are noise-gated: silence is normal and good."""
 
 if __name__ == "__main__":

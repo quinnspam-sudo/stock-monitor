@@ -10,6 +10,7 @@ SECRETS_PATH = Path(__file__).parent / "secrets.json"
 GREEN = 0x2ECC71
 YELLOW = 0xF1C40F
 GREY = 0x95A5A6
+RED = 0xE74C3C
 
 # Populated whenever a Discord post fails. Callers often catch send_alert/
 # send_message exceptions per-item so one bad ticker doesn't abort a whole
@@ -27,13 +28,17 @@ def had_failures():
 def load_config():
     """Merge config.json with secrets.json (gitignored) and env var overrides.
 
-    Two channels, two webhooks:
+    Three channels, three webhooks:
       - discord_webhook_url          — BUY-only channel (send_alert's target)
       - discord_updates_webhook_url  — everything else: pulse/close/weekly/
         backtest/payload-ready notices (send_message's target)
+      - discord_sell_webhook_url     — sell/exit alerts: CANSLIM stop-loss/
+        take-profit, Darvas box breakdown, Magic Formula rebalance-due
+        (send_sell_alert's target)
     Each resolves env var > secrets.json > legacy config.json key, same
-    precedence as before. If discord_updates_webhook_url isn't set, updates
-    fall back to the BUY webhook (single-channel setups keep working).
+    precedence as before. If discord_updates_webhook_url or
+    discord_sell_webhook_url isn't set, they fall back to the BUY webhook
+    (single-channel setups keep working).
     """
     cfg = json.loads(CONFIG_PATH.read_text())
     if SECRETS_PATH.exists():
@@ -42,7 +47,10 @@ def load_config():
         cfg["discord_webhook_url"] = os.environ["DISCORD_WEBHOOK_URL"]
     if os.environ.get("DISCORD_UPDATES_WEBHOOK_URL"):
         cfg["discord_updates_webhook_url"] = os.environ["DISCORD_UPDATES_WEBHOOK_URL"]
+    if os.environ.get("DISCORD_SELL_WEBHOOK_URL"):
+        cfg["discord_sell_webhook_url"] = os.environ["DISCORD_SELL_WEBHOOK_URL"]
     cfg.setdefault("discord_updates_webhook_url", cfg.get("discord_webhook_url"))
+    cfg.setdefault("discord_sell_webhook_url", cfg.get("discord_webhook_url"))
     return cfg
 
 
@@ -78,6 +86,36 @@ def send_alert(ticker, score, action, price, details, webhook_url=None):
         resp.raise_for_status()
     except Exception as e:
         FAILURES.append(f"send_alert({ticker}): {e}")
+        raise
+
+
+def send_sell_alert(ticker, kind, price, entry, pct_move, reason, webhook_url=None):
+    """Post a sell/exit-methodology alert to the sell-alerts channel.
+
+    kind: STOP_LOSS / TAKE_PROFIT / BOX_BREAKDOWN / REBALANCE_DUE — see
+    sell_check.py for the mechanical rules behind each (CANSLIM stop-loss/
+    take-profit, Darvas box breakdown, Magic Formula annual rebalance).
+    """
+    cfg = load_config()
+    url = webhook_url or cfg["discord_sell_webhook_url"]
+    if "PASTE_YOUR" in url:
+        raise RuntimeError("Set discord_sell_webhook_url in secrets.json first.")
+    color = RED if kind in ("STOP_LOSS", "BOX_BREAKDOWN") else YELLOW if kind == "TAKE_PROFIT" else GREY
+    import obsidian
+    obsidian.log_ping(kind, f"**{ticker}** {kind.replace('_', ' ')} at ${price:,.2f} "
+                      f"(entry ${entry:,.2f}, {pct_move:+.1%}) — {reason}")
+    embed = {
+        "title": f"SELL SIGNAL — {ticker} ({kind.replace('_', ' ')})",
+        "description": f"**${price:,.2f}** ({pct_move:+.1%} from entry ${entry:,.2f})",
+        "color": color,
+        "fields": [{"name": "Methodology", "value": reason, "inline": False}],
+        "footer": {"text": "stock-monitor · not financial advice · verify before trading"},
+    }
+    try:
+        resp = requests.post(url, json={"content": "@here", "embeds": [embed]}, timeout=15)
+        resp.raise_for_status()
+    except Exception as e:
+        FAILURES.append(f"send_sell_alert({ticker}): {e}")
         raise
 
 

@@ -63,6 +63,14 @@ rotating before then or the jobs will start failing with 401s).
 - `backtest.yml` — Saturday ~09:00 PT: backtests the *local scoring engine's* calls
   (not committee verdicts — that's `weekly.py`) against what each ticker actually
   did over the Mon–Fri just finished, using `history.json` snapshots
+- `sell_check.yml` — hourly ~7:00–12:00 PT Mon–Fri: checks recorded verdicts
+  (`verdicts.json`) against three mechanical sell rules — CANSLIM stop-loss
+  (-7% to -8%, no exceptions) / take-profit (+20-25%), Darvas box breakdown
+  (price below its 20-day low on volume), Magic Formula annual rebalance
+  (365+ days held). Posts to a third, separate `#sell-alerts` channel/webhook
+  (`discord_sell_webhook_url`), independent of the buy/updates split above.
+  Only covers tickers with a recorded verdict — there's no broader position
+  tracking in this system.
 
 Cron times assume PDT (UTC-7); during standard time (~Nov–Mar) runs land about
 an hour later than the equivalent PT time — harmless slack given the
