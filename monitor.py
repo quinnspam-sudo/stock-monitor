@@ -130,25 +130,42 @@ def main():
     factors.rank_universe({t: cur["factors"] for t, (cur, _) in evaluations.items()
                            if "factors" in cur})
 
-    # BUY alerts fire post-ranking so each carries a factor-conviction verdict
+    # BUY alerts fire post-ranking so each carries a factor-conviction verdict.
+    # Hitting the momentum threshold only earns a spot in this queue — reaching
+    # the actual BUY channel additionally requires HIGH/MEDIUM factor
+    # conviction (the 10-methodology blend in factors.conviction()). This is
+    # the whole point of having more methodologies: they're a real gate, not
+    # just a label stapled onto the same alert. LOW/UNRATED gets downgraded to
+    # a quiet updates-channel note instead of a pinged BUY alert.
     for ticker, score, result in buy_queue:
         f = evaluations.get(ticker, ({}, None))[0].get("factors", {})
         conv, tier = factors.conviction(f) if f else (None, "UNRATED")
-        details = dict(result["details"])
-        details["Factor conviction"] = f"{tier}" + (f" ({conv}/100)" if conv is not None else "")
-        if f.get("magic_rank"):
-            details["Magic Formula"] = f"#{f['magic_rank']}/{f['magic_universe']}"
-        if f.get("f_score") is not None:
-            details["F-Score"] = f"{f['f_score']}/9"
-        details["Next step"] = ("Paste this ticker's payload into Claude Pro for a committee verdict "
-                                "before acting" if tier in ("HIGH", "MEDIUM")
-                                else "Momentum-only signal; factors weak — treat as watch, not buy")
-        try:
-            send_alert(ticker, score, "BUY", result["price"], details)
-            state[ticker] = now
-            print(f"{ticker}: → Discord BUY alert sent (conviction {tier})")
-        except Exception as e:
-            print(f"{ticker}: Discord alert failed (continuing): {e}")
+        state[ticker] = now  # cooldown applies regardless of outcome — don't re-evaluate every run either way
+        if tier in ("HIGH", "MEDIUM"):
+            details = dict(result["details"])
+            details["Factor conviction"] = f"{tier}" + (f" ({conv}/100)" if conv is not None else "")
+            if f.get("magic_rank"):
+                details["Magic Formula"] = f"#{f['magic_rank']}/{f['magic_universe']}"
+            if f.get("f_score") is not None:
+                details["F-Score"] = f"{f['f_score']}/9"
+            details["Next step"] = "Paste this ticker's payload into Claude Pro for a committee verdict before acting"
+            try:
+                send_alert(ticker, score, "BUY", result["price"], details)
+                print(f"{ticker}: → Discord BUY alert sent (conviction {tier})")
+            except Exception as e:
+                print(f"{ticker}: Discord alert failed (continuing): {e}")
+        else:
+            note = (f"📉 **{ticker}** hit the momentum BUY threshold (score {score}/100 at "
+                    f"${result['price']:,.2f}) but factor conviction is **{tier}**"
+                    + (f" ({conv}/100)" if conv is not None else " (insufficient factor data)")
+                    + " — downgraded to watch-only, not sent as a BUY alert. Momentum without "
+                    "factor confirmation is the weakest signal; see the committee payload "
+                    "(if one triggered) for the full factor breakdown.")
+            try:
+                send_message(note, kind="WATCH_DOWNGRADE")
+                print(f"{ticker}: momentum BUY downgraded to watch (conviction {tier}) — updates channel only")
+            except Exception as e:
+                print(f"{ticker}: Discord notice failed (continuing): {e}")
 
     save_state(state)
 
