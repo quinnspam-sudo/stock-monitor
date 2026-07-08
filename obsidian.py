@@ -460,6 +460,10 @@ Part of the broader [[Claude AI Master Index]].
 - This week: [[Weeks/{week_id}|Week {d.isocalendar()[1]}, {d.year}]]
 - This month: [[Months/{month_id}|{d.strftime('%B %Y')}]]
 
+## Ledgers
+- [[Recommendations Log]] — what the system said to do (verdicts, buy alerts, sell signals)
+- [[Actual Trades Log]] — what you actually did (from the Discord #buy-log bot)
+
 ## Related
 - [[Claude AI Master Index]]
 - Sibling folders: [[Claude-Chats]] · [[Claude-Cowork]]

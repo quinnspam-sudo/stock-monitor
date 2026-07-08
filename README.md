@@ -29,7 +29,10 @@ to a private Discord server via webhook. Recommends only — never trades.
 - `watchlist` — tickers to monitor
 - `alert_threshold` — score (0–100) required to trigger a BUY alert (default 75)
 - `cooldown_hours` — suppress repeat alerts for the same ticker (default 24)
-- `obsidian_vault` — path to the Obsidian vault to mirror payloads into
+
+`obsidian_vault` (path to the Obsidian vault to mirror payloads into) lives in
+`secrets.json` — a local absolute path stays out of git history (legacy
+config.json fallback still works).
 
 Secrets (`discord_webhook_url`) live in `secrets.json`, not `config.json` — see Setup above.
 
