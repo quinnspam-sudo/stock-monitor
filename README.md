@@ -33,25 +33,48 @@ to a private Discord server via webhook. Recommends only — never trades.
 
 Secrets (`discord_webhook_url`) live in `secrets.json`, not `config.json` — see Setup above.
 
-## Scheduled jobs (launchd LaunchAgents, Pacific time)
+## Scheduled jobs (GitHub Actions, runs even when the Mac is off — 2026-07-07)
 
-Jobs run via `~/Library/LaunchAgents/com.stockmonitor.*.plist` (not cron):
-launchd fires missed jobs when the Mac wakes, so closing the lid no longer
-silently kills a day of monitoring. Caveat: nothing runs while asleep — a
-catch-up fires on wake. For true market-hours coverage, keep the Mac plugged
-in with lid open or enable a scheduled wake (`sudo pmset repeat wakeorpoweron
-MTWRF 05:25:00`).
+As of 2026-07-07 the actual monitoring runs entirely on GitHub Actions
+(`.github/workflows/*.yml` in the private repo `quinnspam-sudo/stock-monitor`),
+not on this Mac — so alerts fire whether or not this machine is on, awake, or
+connected to WiFi. Each workflow scores/checks, posts to Discord, then commits
+updated state (`scores.json`, `history.json`, `committee_prompts/`, etc.) back
+to the repo so the next run picks up where the last one left off.
 
-## Legacy schedule reference (same times, now in launchd)
-
-- `monitor.py` — every 15 min, 6:00–12:45 PT Mon–Fri: scores, delta triggers, Template A payloads
-- `pulse.py` — hourly 7:00–12:00 PT (10 AM–3 PM ET): Template C intraday pulse payload
-- `close.py` — 13:35 PT (post 4:30 ET bell): Template D closing bell payload
-- `ipo.py` — 5:30 AM PT daily: EDGAR scan for S-1/S-1A/424B4 filings → Template B triage payload (incl. sector concentration)
-- `weekly.py` — Friday 13:45 PT: weekly performance review payload (verdicts vs SPY)
-- `backtest.py` — Saturday 09:00 PT: backtests the *local scoring engine's* calls
+- `monitor.yml` — every 15 min, ~6:00–13:00 PT Mon–Fri: scores, delta triggers, Template A payloads
+- `pulse.yml` — hourly ~7:00–12:00 PT Mon–Fri: Template C intraday pulse payload
+- `close.yml` — ~13:35 PT: Template D closing bell payload
+- `ipo.yml` — ~5:30 AM PT daily: EDGAR scan for S-1/S-1A/424B4 filings → Template B triage payload
+- `weekly.yml` — Friday ~13:45 PT: weekly performance review payload (verdicts vs SPY)
+- `backtest.yml` — Saturday ~09:00 PT: backtests the *local scoring engine's* calls
   (not committee verdicts — that's `weekly.py`) against what each ticker actually
   did over the Mon–Fri just finished, using `history.json` snapshots
+
+Cron times assume PDT (UTC-7); during standard time (~Nov–Mar) runs land about
+an hour later than the equivalent PT time — harmless slack given the
+noise-suppression thresholds, but adjust the cron lines by 1hr if exact PT
+alignment matters. `monitor.py`/etc. still self-check `market_open_today()` /
+real session windows, so an off-by-an-hour cron fire never produces bad data,
+just a wasted/no-op run.
+
+The Discord webhook lives only as an encrypted repo secret
+(`DISCORD_WEBHOOK_URL`), never committed. If a workflow run fails (including
+if Discord posting itself fails — see notify.py's `FAILURES` tracking) the
+job goes red and GitHub emails the repo owner by default, so a broken webhook
+can't fail silently forever.
+
+### Local Mac's role now: Obsidian sync only
+
+The old `~/Library/LaunchAgents/com.stockmonitor.*.plist` jobs are retired
+(backed up in `launchd_legacy_backup/`, not deleted). The only local job left
+is `com.stockmonitor.obsidiansync.plist`, which runs twice daily (9am/6pm,
+Pacific) and on wake-catchup: it pulls the repo, replays any Obsidian events
+GitHub Actions queued while the Mac was off (`obsidian_queue.jsonl`) into the
+real Jarbis vault via `obsidian_sync.py`, using each event's original
+timestamp — so catch-up entries file under the day/week/month they actually
+happened on, not the day they were synced. Then it pushes the cleared queue
+back so nothing replays twice.
 
 All jobs skip market holidays automatically (`--force` overrides). Output appends
 to `monitor.log` (auto-rotated at ~1 MB). Edit schedule with `crontab -e`.

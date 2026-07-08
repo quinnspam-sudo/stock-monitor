@@ -12,8 +12,10 @@ Every day note links up to its week note, every week note links up to its
 month note, and the month note links up to the Hub — so the vault can be
 browsed day-by-day, week-by-week, or month-by-month, not just by flat date list.
 
-Vault root comes from config.json key "obsidian_vault". All writes are
-best-effort: Obsidian being unavailable never breaks monitoring.
+Vault root comes from secrets.json key "obsidian_vault" (gitignored — a local
+absolute path has no business in a git history, even a private one), with a
+legacy fallback to config.json for old setups. All writes are best-effort:
+Obsidian being unavailable never breaks monitoring.
 """
 import json
 import os
@@ -26,6 +28,7 @@ from zoneinfo import ZoneInfo
 PACIFIC = ZoneInfo("America/Los_Angeles")
 
 CONFIG_PATH = Path(__file__).parent / "config.json"
+SECRETS_PATH = Path(__file__).parent / "secrets.json"
 VERDICTS_PATH = Path(__file__).parent / "verdicts.json"
 QUEUE_PATH = Path(__file__).parent / "obsidian_queue.jsonl"
 
@@ -45,8 +48,11 @@ WEEK_FILE_RE = re.compile(r"^(\d{4})-W(\d{2})\.md$")
 
 
 def _base():
-    cfg = json.loads(CONFIG_PATH.read_text())
-    vault = cfg.get("obsidian_vault")
+    vault = os.environ.get("OBSIDIAN_VAULT")
+    if not vault and SECRETS_PATH.exists():
+        vault = json.loads(SECRETS_PATH.read_text()).get("obsidian_vault")
+    if not vault:
+        vault = json.loads(CONFIG_PATH.read_text()).get("obsidian_vault")  # legacy fallback
     if not vault:
         return None
     base = Path(vault) / "Claude-Code" / "Stock Monitor"
