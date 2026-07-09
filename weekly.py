@@ -14,6 +14,7 @@ from datetime import datetime
 
 import yfinance as yf
 
+import alert_stats
 from notify import send_message, load_config
 from committee import PROMPTS_DIR, load_ledger, market_open_today, thematic_concentration
 from verdict import load as load_verdicts
@@ -69,6 +70,9 @@ Generated: {now:%Y-%m-%d %H:%M} local | Source: stock-monitor weekly daemon
 Instructions: Paste into the Investment Committee session. Have the Portfolio
 Manager and Risk Manager lead a review: were past verdicts right, what should be
 re-rated, and is sector concentration acceptable? Free-form output (no template).
+
+## Alert-rate health (measurement only — thresholds are fixed, not adaptive)
+  - {alert_stats.summary()}
 
 ## Verdict performance to date (return since verdict | alpha vs SPY)
 {block(perf_lines, 'No verdicts recorded yet — record them with verdict.py add')}

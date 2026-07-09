@@ -31,7 +31,12 @@ _REGIME_CACHE = {}
 
 VIX_MAX = 28.0
 MIN_SYSTEMS = 6
-SUPERMAJORITY = 0.75
+# Calibrated 2026-07-09 against a live peak-earnings-season cross-section of
+# gate-open names (ASML 67%, TSM 90%, TECK 78%, WST 70%, MS 50%+veto): at
+# 0.65 a big week passes ~4-5 names and an ordinary week ~1-3, which is the
+# intended NATURAL rate of ~2-6 alerts/week. This is a fixed quality bar,
+# not a quota — recalibrate deliberately if alert_stats shows sustained drift.
+SUPERMAJORITY = 0.65
 
 
 def market_regime():
