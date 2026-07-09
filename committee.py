@@ -188,13 +188,16 @@ def gather(ticker, timing_score):
     except Exception:
         gate = None
 
-    # Call-option layer: only evaluated when the gate is open — option-chain
-    # fetches are heavy, and a call idea is meaningless without the catalyst.
+    # Options layer: the independent options engine (options_engine.py) replaced
+    # the old calls.py earnings-rider as the voice that proposes contracts
+    # (Quinn, 2026-07-09). Still only evaluated when the gate is open — option-
+    # chain fetches are heavy; the engine's own full-watchlist scan runs on its
+    # separate daily schedule and does not depend on this path.
     call_idea = None
     if gate and gate.get("actionable"):
-        import calls as _calls
+        import options_engine as _oe
         try:
-            call_idea = _calls.evaluate(tk, info.get("currentPrice"), earnings_date)
+            call_idea = _oe.evaluate(ticker)
         except Exception:
             call_idea = None
 
@@ -326,10 +329,10 @@ def write_payload(ticker, cur, prev, reasons, kind="Standard"):
                            + _consensus.render(cur["consensus"]) + "\n")
     call_block = ""
     if cur.get("call_idea") is not None:
-        import calls as _calls
-        call_block = ("\n## Call-option candidate (earnings-catalyst; committee should judge "
-                      "premium vs expected move, not just direction)\n"
-                      + _calls.render(cur["call_idea"]) + "\n")
+        import options_engine as _oe
+        call_block = ("\n## Call-option candidate (independent options engine; committee should "
+                      "judge premium vs expected move, not just direction)\n"
+                      + _oe.render(cur["call_idea"]) + "\n")
     news_block = "\n".join(f"  - {n}" for n in cur.get("news", [])) or "  - none available"
     insider_block = "\n".join(f"  - {i}" for i in cur.get("insiders", [])) or "  - none available (treat as GAPPED)"
     prev_block = (

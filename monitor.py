@@ -238,8 +238,8 @@ def main():
             details["Next step"] = "Paste this ticker's payload into Claude Pro for a committee verdict before acting"
             idea = cur_eval.get("call_idea")
             if idea and idea.get("contract"):
-                import calls
-                details["Call idea"] = calls.describe(idea, ticker)
+                import options_engine
+                details["Call idea"] = options_engine.describe(idea)
             try:
                 send_alert(ticker, score, "BUY", result["price"], details)
                 print(f"{ticker}: → Discord BUY alert sent (conviction {tier})")
@@ -249,10 +249,11 @@ def main():
                                             f"score {score}/100, conviction {tier}", result["price"])
                 if idea and idea.get("actionable"):
                     c = idea["contract"]
-                    import calls
+                    import options_engine
                     send_message(
-                        f"📞 **CALL IDEA — {ticker}** (fires only with a consensus-passed BUY)\n"
-                        f"{calls.describe(idea, ticker)}\n"
+                        f"📞 **CALL IDEA — {ticker}** (options engine conviction on a "
+                        "consensus-passed BUY — the strongest combined signal)\n"
+                        f"{options_engine.describe(idea)}\n"
                         f"Max loss = 100% of premium (${c['mid'] * 100:,.0f}/contract). "
                         "Committee verdict before acting.", kind="CALL_IDEA")
                     obsidian.log_recommendation(
