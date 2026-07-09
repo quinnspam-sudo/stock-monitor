@@ -64,8 +64,9 @@ def market_regime():
     return out
 
 
-def evaluate(momentum_score, f, gate):
+def evaluate(momentum_score, f, gate, supermajority=SUPERMAJORITY):
     """Vote across independent systems. f = factors dict, gate = earnings_gate.
+    supermajority may be overridden by the alert tuner (0.60-0.80 band).
     Returns {votes, systems, ayes, pass, vetoes, regime, detail}."""
     f = f or {}
     gate = gate or {}
@@ -119,13 +120,13 @@ def evaluate(momentum_score, f, gate):
     computable = {k: v for k, v in votes.items() if v is not None}
     ayes = sum(1 for v in computable.values() if v)
     ok = (len(computable) >= MIN_SYSTEMS
-          and ayes / len(computable) >= SUPERMAJORITY
+          and ayes / len(computable) >= supermajority
           and not vetoes)
 
     nays = sorted(k for k, v in computable.items() if not v)
     gapped = sorted(k for k, v in votes.items() if v is None)
     detail = (f"{ayes}/{len(computable)} systems bullish "
-              f"(need >={SUPERMAJORITY:.0%} of >={MIN_SYSTEMS})"
+              f"(need >={supermajority:.0%} of >={MIN_SYSTEMS})"
               + (f"; against: {', '.join(nays)}" if nays else "")
               + (f"; not computable: {', '.join(gapped)}" if gapped else "")
               + (f"; VETO: {'; '.join(vetoes)}" if vetoes else "")

@@ -12,6 +12,7 @@ from pathlib import Path
 import yfinance as yf
 
 from notify import load_config, send_alert, send_message
+import alert_tuner
 import committee
 import consensus
 import earnings_gate
@@ -91,6 +92,20 @@ def main():
     state = load_state()
     ledger = committee.load_ledger()
     now = time.time()
+
+    # Alert-frequency tuner: daily nudge toward the 2-5 alerts/week band
+    tuner = alert_tuner.load_state()
+    tune_note = alert_tuner.adjust_daily(tuner, now)
+    tuned = alert_tuner.params(tuner.get("strictness", alert_tuner.DEFAULT_STRICTNESS))
+    if tune_note:
+        print(tune_note)
+        if not dry_run:
+            try:
+                send_message(f"🎛️ {tune_note}", kind="ALERT_TUNER")
+            except Exception as e:
+                print(f"tuner Discord notice failed (continuing): {e}")
+    if not dry_run:
+        alert_tuner.save_state(tuner)
     cooldown = cfg.get("cooldown_hours", 24) * 3600
     payloads = []
     evaluations = {}  # ticker -> (cur, prev); triggers checked after the loop so rank shifts are visible
@@ -161,7 +176,8 @@ def main():
                 fmap["_conviction"] = (conv, tier)
             try:
                 cur["consensus"] = consensus.evaluate(momentum_score, fmap,
-                                                      cur.get("earnings_gate"))
+                                                      cur.get("earnings_gate"),
+                                                      supermajority=tuned["supermajority"])
             except Exception as e:
                 cur["consensus"] = None
                 print(f"         consensus error: {e}")
@@ -186,23 +202,24 @@ def main():
     # the whole point of having more methodologies: they're a real gate, not
     # just a label stapled onto the same alert. LOW/UNRATED gets downgraded to
     # a quiet updates-channel note instead of a pinged BUY alert.
-    for ticker, score, result in buy_queue:
+    for ticker, score, result in sorted(buy_queue, key=lambda x: -x[1]):
         cur_eval = evaluations.get(ticker, ({}, None))[0]
         f = cur_eval.get("factors", {})
         conv, tier = factors.conviction(f) if f else (None, "UNRATED")
         state[ticker] = now  # cooldown applies regardless of outcome — don't re-evaluate every run either way
-        # Earnings gate: a BUY is only actionable when earnings land within the
-        # next 10 business days AND the strict positivity screen predicts a
-        # positive report (score >=70, >=3 signals, beat streak >=3/4).
-        # Everything else goes to the updates channel as thesis-only.
+        # Earnings gate under TUNED thresholds: the 10-business-day window and
+        # >=3-signals floor are fixed; positivity bar and beat-streak move with
+        # the alert tuner's strictness dial (targeting 2-5 alerts/week).
         gate = cur_eval.get("earnings_gate") or {}
-        if not gate.get("actionable"):
-            why = "; ".join(gate.get("reasons") or ["earnings gate data unavailable this run"])
+        gate_ok, gate_why = alert_tuner.gate_pass(gate, tuned)
+        if not gate_ok:
+            why = "; ".join(gate_why)
             note = (f"⛔ **{ticker}** hit the BUY threshold (score {score}/100 at "
                     f"${result['price']:,.2f}, conviction {tier}) but the earnings gate is "
                     f"closed — {why}. Policy: actionable BUYs require earnings within "
-                    f"{earnings_gate.WINDOW_BDAYS} business days AND a strict Earnings "
-                    "Positivity pass. Logged as thesis-only, not a BUY alert.")
+                    f"{earnings_gate.WINDOW_BDAYS} business days AND an Earnings Positivity "
+                    f"pass at the tuned bar (currently ≥{tuned['min_positivity']}, "
+                    f"beats ≥{tuned['min_beats']}/4). Logged as thesis-only, not a BUY alert.")
             try:
                 send_message(note, kind="EARNINGS_GATE")
                 print(f"{ticker}: BUY suppressed — earnings gate closed ({why}) — updates channel only")
@@ -225,6 +242,21 @@ def main():
                 print(f"{ticker}: Discord notice failed (continuing): {e}")
             continue
         if tier in ("HIGH", "MEDIUM"):
+            # Hard weekly budget: even in peak earnings season, never more
+            # than TARGET_MAX pinged BUY alerts per rolling 7 days. The queue
+            # is ranked by score, so overflow drops the weakest qualifiers.
+            if alert_tuner.weekly_alert_count(tuner, now) >= alert_tuner.TARGET_MAX:
+                note = (f"📵 **{ticker}** fully qualified for a BUY alert (score {score}/100 at "
+                        f"${result['price']:,.2f}, conviction {tier}, all gates passed) but the "
+                        f"weekly alert budget ({alert_tuner.TARGET_MAX}/rolling 7d) is spent — "
+                        "updates channel only. It stays in the ledger; re-qualifies next week "
+                        "if the setup holds.")
+                try:
+                    send_message(note, kind="ALERT_BUDGET")
+                    print(f"{ticker}: BUY suppressed — weekly alert budget spent")
+                except Exception as e:
+                    print(f"{ticker}: Discord notice failed (continuing): {e}")
+                continue
             details = dict(result["details"])
             details["Factor conviction"] = f"{tier}" + (f" ({conv}/100)" if conv is not None else "")
             details["Earnings gate"] = (f"OPEN — earnings in {gate.get('bdays_to_earnings')} business day(s), "
@@ -242,6 +274,8 @@ def main():
             try:
                 send_alert(ticker, score, "BUY", result["price"], details)
                 print(f"{ticker}: → Discord BUY alert sent (conviction {tier})")
+                alert_tuner.record_alert(tuner, now)
+                alert_tuner.save_state(tuner)
                 import obsidian
                 obsidian.log_recommendation("buy_alert", ticker,
                                             f"score {score}/100, conviction {tier}", result["price"])
