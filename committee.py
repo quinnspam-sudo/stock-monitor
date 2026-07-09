@@ -171,13 +171,22 @@ def gather(ticker, timing_score):
 
     # Upcoming earnings date (best-effort)
     days_to_earnings = None
+    earnings_date = None
     try:
         cal = tk.calendar or {}
         dates = cal.get("Earnings Date") or []
         if dates:
+            earnings_date = dates[0]
             days_to_earnings = (dates[0] - datetime.now().date()).days
     except Exception:
         pass
+
+    # Earnings gate: actionable-BUY window + positivity prediction (never fatal)
+    import earnings_gate as _egate
+    try:
+        gate = _egate.evaluate(tk, info, earnings_date)
+    except Exception:
+        gate = None
 
     # Supplementary context yfinance can provide (best-effort; never fatal)
     news = []
@@ -205,7 +214,8 @@ def gather(ticker, timing_score):
     return {"fields": fields, "categories": cats, "categories_defaulted": cats_defaulted,
             "overall": overall, "timing": timing_score, "confidence": confidence,
             "rating": rating_for(overall), "news": news, "insiders": insiders,
-            "sector": sector, "industry": industry, "days_to_earnings": days_to_earnings}
+            "sector": sector, "industry": industry, "days_to_earnings": days_to_earnings,
+            "earnings_gate": gate}
 
 
 def check_triggers(prev, cur):
@@ -225,7 +235,34 @@ def check_triggers(prev, cur):
     dte, prev_dte = cur.get("days_to_earnings"), prev.get("days_to_earnings")
     if dte is not None and 0 <= dte <= 2 and (prev_dte is None or prev_dte > 2):
         reasons.append(f"Earnings imminent: {dte} day(s) out — pre-earnings committee review")
+    gate, prev_gate = cur.get("earnings_gate") or {}, prev.get("earnings_gate") or {}
+    if gate.get("actionable") and not prev_gate.get("actionable"):
+        reasons.append(
+            f"Earnings gate OPENED — earnings in {gate.get('bdays_to_earnings')} business day(s), "
+            f"positivity {gate.get('positivity')}/100, beat streak "
+            f"{gate.get('beats')}/{gate.get('beats_n')} — buy decision is now actionable")
     return reasons
+
+
+def payload_worthy(prev, cur, reasons):
+    """Gate-aware payload policy: Quinn's paste time is the scarce resource, so
+    a full committee payload is only written when a decision is actually live.
+    Everything else gets digested into a single updates-channel line instead.
+
+    Worthy: earnings inside the 10-business-day window (buy decisions possible,
+    and pre-earnings reviews of anything held), first-ever evaluation (one-time
+    baseline), or an exit-side rating move (out of Buy/Strong Buy, or into
+    Reduce/Sell) — sell decisions don't wait for an earnings window.
+    """
+    if (cur.get("earnings_gate") or {}).get("in_window"):
+        return True
+    if prev is None:
+        return True
+    prev_r, cur_r = prev.get("rating"), cur.get("rating")
+    if prev_r and prev_r != cur_r and (
+            prev_r in ("Buy", "Strong Buy") or cur_r in ("Reduce", "Sell")):
+        return True
+    return False
 
 
 def check_rank_triggers(ledger, current_scores, top_n=5):
@@ -270,6 +307,8 @@ def write_payload(ticker, cur, prev, reasons, kind="Standard"):
         factor_block = _factors.render(cur["factors"])
     else:
         factor_block = "  - Factor screen unavailable this run (treat as GAPPED)"
+    import earnings_gate as _egate
+    gate_block = _egate.render(cur.get("earnings_gate"))
     news_block = "\n".join(f"  - {n}" for n in cur.get("news", [])) or "  - none available"
     insider_block = "\n".join(f"  - {i}" for i in cur.get("insiders", [])) or "  - none available (treat as GAPPED)"
     prev_block = (
@@ -301,6 +340,12 @@ justifications, and output the matching Template.
 - Data-completeness confidence (proxy): {cur['confidence']}%
 - Category proxies ({n_defaulted}/{len(defaulted)} are ESTIMATES from missing data — weigh accordingly):
 {cat_lines}
+
+## Earnings gate (actionable-BUY policy: earnings within 10 business days AND
+## strict positivity pass — score >=70, >=3 signals, beat streak >=3/4. A Buy
+## rating without this gate is thesis-only, NOT actionable; committee should
+## confirm or veto the positivity call using transcript/guidance judgment)
+{gate_block}
 
 ## Evidence-backed factor screen (mechanical; committee should weigh explicitly)
 {factor_block}

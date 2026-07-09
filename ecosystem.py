@@ -93,6 +93,10 @@ def render():
     overalls = [e.get("overall", 0) for _, e in ranked]
     avg_overall = sum(overalls) / len(overalls) if overalls else 0
     buys = [t for t, e in ranked if e.get("rating") in ("Buy", "Strong Buy")]
+    # Actionable = Buy-rated AND earnings gate open (earnings ≤10 business days
+    # + strict positivity pass). Everything else is thesis-only by policy.
+    actionable = [t for t in buys
+                  if (dict(ranked).get(t, {}).get("earnings_gate") or {}).get("actionable")]
     threshold = config.get("alert_threshold", 76)
     above = [t for t, e in ranked if e.get("overall", 0) >= threshold]
     midnight = datetime(now.year, now.month, now.day, tzinfo=PACIFIC).timestamp()
@@ -100,8 +104,10 @@ def render():
     payloads = sorted(BASE.glob("committee_prompts/*.md"))
     payloads_today = [p for p in payloads if p.name.startswith(today)]
     earnings_soon = sorted(
-        [(t, e["days_to_earnings"]) for t, e in ranked
-         if isinstance(e.get("days_to_earnings"), int) and 0 <= e["days_to_earnings"] <= 7],
+        [(t, (e.get("earnings_gate") or {}).get("bdays_to_earnings"), e)
+         for t, e in ranked
+         if isinstance((e.get("earnings_gate") or {}).get("bdays_to_earnings"), int)
+         and 0 <= (e.get("earnings_gate") or {}).get("bdays_to_earnings") <= 10],
         key=lambda x: x[1])
     runs_today = max((len(v) for v in hist_today.values()), default=0)
 
@@ -124,7 +130,10 @@ def render():
         tile("Tracked tickers", len(watchlist), f"{len(ranked)} scored in ledger"),
         tile("Avg overall score", f"{avg_overall:.0f}<span class='denom'>/110</span>",
              f"top: {ranked[0][0]} {ranked[0][1]['overall']}" if ranked else ""),
-        tile("Buy-rated", len(buys), ", ".join(buys[:6]) + ("…" if len(buys) > 6 else "")),
+        tile("Actionable buys", len(actionable),
+             ", ".join(actionable[:6]) + ("…" if len(actionable) > 6 else "")
+             or "gate: earnings ≤10 bdays + positivity"),
+        tile("Buy-rated (thesis)", len(buys), ", ".join(buys[:6]) + ("…" if len(buys) > 6 else "")),
         tile("Above alert threshold", len(above), f"threshold {threshold}"),
         tile("Alerts fired today", len(alerts_today),
              ", ".join(sorted(alerts_today)[:5]) + ("…" if len(alerts_today) > 5 else "") or "none"),
@@ -179,6 +188,16 @@ def render():
         rating = e.get("rating", "?")
         dte = e.get("days_to_earnings")
         tier = e.get("tier")
+        g = e.get("earnings_gate") or {}
+        pos = g.get("positivity")
+        if rating in ("Buy", "Strong Buy"):
+            gate_cell = ("<span class='pill' style='background:#1e8e3e'>ACTIONABLE</span>"
+                         if g.get("actionable") else
+                         "<span class='pill' style='background:#9aa0a6' title='"
+                         + esc("; ".join(g.get("reasons") or ["gate data unavailable"]))
+                         + "'>thesis-only</span>")
+        else:
+            gate_cell = "<span class='muted'>—</span>"
         rows += (
             f"<tr><td class='muted'>{i}</td><td><b>{esc(t)}</b></td>"
             f"<td class='num'>{e.get('overall', '—')}</td>"
@@ -188,14 +207,21 @@ def render():
             f"<td><span class='pill' style='background:{BAND_COLORS.get(rating, '#9aa0a6')}'>"
             f"{esc(rating)}</span></td>"
             f"<td style='color:{TIER_COLORS.get(tier, 'inherit')};font-weight:600'>{esc(tier or '—')}</td>"
+            f"<td>{gate_cell}</td>"
+            f"<td class='num'>{pos if pos is not None else '—'}</td>"
             f"<td class='num {dcls}'>{delta:+d}</td>"
             f"<td class='num'>{dte if isinstance(dte, int) and dte >= 0 else '—'}</td>"
             f"<td class='muted'>{esc(e.get('sector', '—'))}</td></tr>")
 
     # ---- earnings + payload queue + verdicts -------------------------------
     earn_html = "".join(
-        f"<li><b>{esc(t)}</b> — {d} day{'s' if d != 1 else ''}</li>" for t, d in earnings_soon
-    ) or "<li class='muted'>Nothing within 7 days.</li>"
+        f"<li><b>{esc(t)}</b> — {d} business day{'s' if d != 1 else ''}"
+        + (f" · positivity {(e.get('earnings_gate') or {}).get('positivity')}/100"
+           if (e.get("earnings_gate") or {}).get("positivity") is not None else "")
+        + (" ✅" if (e.get("earnings_gate") or {}).get("actionable") else "")
+        + "</li>"
+        for t, d, e in earnings_soon
+    ) or "<li class='muted'>Nothing within 10 business days.</li>"
 
     if recs:
         vrows = "".join(
@@ -313,10 +339,11 @@ code{{font-size:12px;background:var(--grid);padding:1px 5px;border-radius:4px}}
 <div class='tblwrap'><table><thead><tr>
 <th>#</th><th>Ticker</th><th class='num'>Overall /110</th><th class='num'>Timing /100</th>
 <th class='num'>Blend</th><th class='num'>Conviction</th><th>Rating</th><th>Tier</th>
+<th>Buy gate</th><th class='num'>EPS+ /100</th>
 <th class='num'>Δ today</th><th class='num'>Earnings (d)</th>
 <th>Sector</th></tr></thead><tbody>{rows}</tbody></table></div>
 <div class='grid3'>
-<div class='card'><h2>⏰ Earnings within 7 days</h2><ul>{earn_html}</ul></div>
+<div class='card'><h2>⏰ Earnings within 10 business days (buy window)</h2><ul>{earn_html}</ul></div>
 <div class='card'><h2>⚖️ Committee verdicts</h2><ul>{vrows}</ul></div>
 <div class='card'><h2>🩺 Pipeline health</h2><ul>{ops}</ul>
 <p class='muted' style='font-size:12px'>Runs in GitHub Actions (cron-job.org dispatch):

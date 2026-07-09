@@ -13,14 +13,10 @@ import yfinance as yf
 
 from notify import load_config, send_alert, send_message
 import committee
+import earnings_gate
 import factors
 
 STATE_PATH = Path(__file__).parent / "alert_state.json"
-
-# No BUY alert fires this close to a confirmed earnings date — the report is a
-# coin flip that can invalidate the setup overnight. Suppressed alerts go to
-# the updates channel instead so the signal itself isn't lost.
-EARNINGS_BLACKOUT_DAYS = 3
 
 
 def rsi(closes, period=14):
@@ -184,22 +180,30 @@ def main():
         f = cur_eval.get("factors", {})
         conv, tier = factors.conviction(f) if f else (None, "UNRATED")
         state[ticker] = now  # cooldown applies regardless of outcome — don't re-evaluate every run either way
-        dte = cur_eval.get("days_to_earnings")
-        if isinstance(dte, int) and 0 <= dte <= EARNINGS_BLACKOUT_DAYS:
-            note = (f"📅 **{ticker}** hit the BUY threshold (score {score}/100 at "
-                    f"${result['price']:,.2f}, conviction {tier}) but earnings are in "
-                    f"**{dte} day(s)** — BUY alert suppressed (earnings blackout, "
-                    f"≤{EARNINGS_BLACKOUT_DAYS}d). Entering right before a report is a "
-                    "coin flip on the print, not a setup; re-evaluate after earnings.")
+        # Earnings gate: a BUY is only actionable when earnings land within the
+        # next 10 business days AND the strict positivity screen predicts a
+        # positive report (score >=70, >=3 signals, beat streak >=3/4).
+        # Everything else goes to the updates channel as thesis-only.
+        gate = cur_eval.get("earnings_gate") or {}
+        if not gate.get("actionable"):
+            why = "; ".join(gate.get("reasons") or ["earnings gate data unavailable this run"])
+            note = (f"⛔ **{ticker}** hit the BUY threshold (score {score}/100 at "
+                    f"${result['price']:,.2f}, conviction {tier}) but the earnings gate is "
+                    f"closed — {why}. Policy: actionable BUYs require earnings within "
+                    f"{earnings_gate.WINDOW_BDAYS} business days AND a strict Earnings "
+                    "Positivity pass. Logged as thesis-only, not a BUY alert.")
             try:
-                send_message(note, kind="EARNINGS_BLACKOUT")
-                print(f"{ticker}: BUY suppressed — earnings in {dte}d (blackout) — updates channel only")
+                send_message(note, kind="EARNINGS_GATE")
+                print(f"{ticker}: BUY suppressed — earnings gate closed ({why}) — updates channel only")
             except Exception as e:
                 print(f"{ticker}: Discord notice failed (continuing): {e}")
             continue
         if tier in ("HIGH", "MEDIUM"):
             details = dict(result["details"])
             details["Factor conviction"] = f"{tier}" + (f" ({conv}/100)" if conv is not None else "")
+            details["Earnings gate"] = (f"OPEN — earnings in {gate.get('bdays_to_earnings')} business day(s), "
+                                        f"positivity {gate.get('positivity')}/100, "
+                                        f"beat streak {gate.get('beats')}/{gate.get('beats_n')}")
             if f.get("magic_rank"):
                 details["Magic Formula"] = f"#{f['magic_rank']}/{f['magic_universe']}"
             if f.get("f_score") is not None:
@@ -231,17 +235,25 @@ def main():
     # Trigger pass: per-ticker deltas plus cross-sectional top-N rank shifts
     rank_reasons = committee.check_rank_triggers(
         ledger, {t: cur["overall"] for t, (cur, _) in evaluations.items()})
+    digest = []  # triggers not worth a full payload — one summary line each
     for ticker, (cur, prev) in evaluations.items():
         reasons = committee.check_triggers(prev, cur)
         if ticker in rank_reasons:
             reasons.append(rank_reasons[ticker])
         if reasons:
+            worthy = committee.payload_worthy(prev, cur, reasons)
             if dry_run:
-                print(f"{ticker}: would trigger payload — {'; '.join(reasons)}")
+                verb = "would trigger payload" if worthy else "would digest (no live decision)"
+                print(f"{ticker}: {verb} — {'; '.join(reasons)}")
                 continue  # leave ledger untouched so the real run still fires
-            path = committee.write_payload(ticker, cur, prev, reasons)
-            payloads.append((ticker, path, reasons))
-            print(f"{ticker}: committee payload {path.name} — {'; '.join(reasons)}")
+            if worthy:
+                path = committee.write_payload(ticker, cur, prev, reasons)
+                payloads.append((ticker, path, reasons))
+                print(f"{ticker}: committee payload {path.name} — {'; '.join(reasons)}")
+            else:
+                digest.append(f"**{ticker}** ({cur['rating']}): {'; '.join(reasons)}")
+                print(f"{ticker}: trigger digested, no payload (no earnings ≤10 bdays, "
+                      f"no exit-side move) — {'; '.join(reasons)}")
         if dry_run:
             continue
         ledger[ticker] = {"overall": cur["overall"], "timing": cur["timing"],
@@ -249,7 +261,22 @@ def main():
                           "days_to_earnings": cur["days_to_earnings"], "sector": cur["sector"],
                           "blend": cur.get("blend"), "conviction": cur.get("conviction"),
                           "tier": cur.get("tier"),
+                          "earnings_gate": {k: (cur.get("earnings_gate") or {}).get(k)
+                                            for k in ("bdays_to_earnings", "positivity", "beats",
+                                                      "beats_n", "in_window", "positivity_pass",
+                                                      "actionable", "reasons")}
+                          if cur.get("earnings_gate") else None,
                           "date": time.strftime("%Y-%m-%d %H:%M")}
+    if digest and not dry_run:
+        note = ("🗞 **Committee digest** — triggers fired outside the earnings window; "
+                "no payloads written (nothing actionable to decide yet):\n"
+                + "\n".join(f"- {d}" for d in digest))
+        try:
+            send_message(note, kind="COMMITTEE_DIGEST")
+            print(f"digest: {len(digest)} suppressed trigger(s) → updates channel")
+        except Exception as e:
+            print(f"digest Discord notice failed (continuing): {e}")
+
     if not dry_run:
         committee.save_ledger(ledger)
         try:
