@@ -319,6 +319,11 @@ def write_payload(ticker, cur, prev, reasons, kind="Standard"):
         factor_block = "  - Factor screen unavailable this run (treat as GAPPED)"
     import earnings_gate as _egate
     gate_block = _egate.render(cur.get("earnings_gate"))
+    consensus_block = ""
+    if cur.get("consensus") is not None:
+        import consensus as _consensus
+        consensus_block = ("\n## Supermajority consensus vote (last gate before a BUY alert)\n"
+                           + _consensus.render(cur["consensus"]) + "\n")
     call_block = ""
     if cur.get("call_idea") is not None:
         import calls as _calls
@@ -362,7 +367,7 @@ justifications, and output the matching Template.
 ## rating without this gate is thesis-only, NOT actionable; committee should
 ## confirm or veto the positivity call using transcript/guidance judgment)
 {gate_block}
-{call_block}
+{consensus_block}{call_block}
 ## Evidence-backed factor screen (mechanical; committee should weigh explicitly)
 {factor_block}
   - Interpretation guide: Magic Formula = Greenblatt cheapness+quality rank within

@@ -13,6 +13,7 @@ import yfinance as yf
 
 from notify import load_config, send_alert, send_message
 import committee
+import consensus
 import earnings_gate
 import factors
 
@@ -154,6 +155,16 @@ def main():
             cur["blend"] = score
             cur["conviction"] = conv
             cur["tier"] = tier
+            # Supermajority consensus vote (local math only — regime is cached)
+            fmap = dict(cur.get("factors") or {})
+            if conv is not None:
+                fmap["_conviction"] = (conv, tier)
+            try:
+                cur["consensus"] = consensus.evaluate(momentum_score, fmap,
+                                                      cur.get("earnings_gate"))
+            except Exception as e:
+                cur["consensus"] = None
+                print(f"         consensus error: {e}")
         action = "BUY" if score >= cfg["alert_threshold"] else "WATCH" if score >= 60 else "HOLD"
         breakdown = f"(momentum {momentum_score}, factors {conv} {tier})" if conv is not None else "(factors GAPPED)"
         print(f"{ticker:<8}{result['price']:>10,.2f}{score:>7}  {action}  {breakdown}")
@@ -198,6 +209,21 @@ def main():
             except Exception as e:
                 print(f"{ticker}: Discord notice failed (continuing): {e}")
             continue
+        # Supermajority consensus: >=75% of computable systems bullish, no hard
+        # vetoes, friendly market regime. The last gate before an alert — this
+        # is deliberately hard to pass; long silences are expected.
+        cons = cur_eval.get("consensus") or {}
+        if not cons.get("pass"):
+            note = (f"🗳️ **{ticker}** cleared the earnings gate but FAILED the consensus vote "
+                    f"(score {score}/100 at ${result['price']:,.2f}, conviction {tier}) — "
+                    f"{cons.get('detail', 'consensus unavailable')}. High-conviction policy: "
+                    "no BUY alert without supermajority agreement. Logged as thesis-only.")
+            try:
+                send_message(note, kind="CONSENSUS_VETO")
+                print(f"{ticker}: BUY suppressed — consensus failed — updates channel only")
+            except Exception as e:
+                print(f"{ticker}: Discord notice failed (continuing): {e}")
+            continue
         if tier in ("HIGH", "MEDIUM"):
             details = dict(result["details"])
             details["Factor conviction"] = f"{tier}" + (f" ({conv}/100)" if conv is not None else "")
@@ -221,11 +247,17 @@ def main():
                                             f"score {score}/100, conviction {tier}", result["price"])
                 if idea and idea.get("actionable"):
                     c = idea["contract"]
+                    import calls
+                    send_message(
+                        f"📞 **CALL IDEA — {ticker}** (fires only with a consensus-passed BUY)\n"
+                        f"{calls.describe(idea, ticker)}\n"
+                        f"Max loss = 100% of premium (${c['mid'] * 100:,.0f}/contract). "
+                        "Committee verdict before acting.", kind="CALL_IDEA")
                     obsidian.log_recommendation(
                         "call_idea", ticker,
                         f"{c['expiry']} ${c['strike']:g}C mid ${c['mid']:.2f} "
                         f"(Δ{c['delta']:.2f}, call score {idea['score']}/100)", c["mid"])
-                    print(f"{ticker}: → call idea logged: {c['expiry']} ${c['strike']:g}C")
+                    print(f"{ticker}: → CALL idea announced: {c['expiry']} ${c['strike']:g}C")
             except Exception as e:
                 print(f"{ticker}: Discord alert failed (continuing): {e}")
         else:

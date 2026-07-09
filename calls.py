@@ -32,11 +32,14 @@ RISK_FREE = 0.04
 MIN_EXPIRY_BUFFER_D = 21   # expiry at least 3 weeks past earnings
 MAX_EXPIRY_BUFFER_D = 45   # ... and at most ~6 weeks past
 DELTA_LO, DELTA_HI = 0.50, 0.60
-MIN_OI = 100
-MAX_SPREAD_PCT = 0.10
-MAX_IV_RV = 1.6
-MAX_BREAKEVEN_SIGMA = 0.9
-PASS_SCORE = 65
+# High-conviction policy (Quinn, 2026-07-09): tightened from the launch values
+# (OI 100 / spread 10% / IV_RV 1.6 / 0.9 sigma / bar 65). Fewer, better ideas.
+MIN_OI = 500
+MAX_SPREAD_PCT = 0.05
+MAX_IV_RV = 1.2
+MAX_BREAKEVEN_SIGMA = 0.6
+PASS_SCORE = 80
+MAX_TERM_INVERSION = 1.10  # chosen-expiry IV may exceed front-month IV by at most 10%
 
 
 def _norm_cdf(x):
@@ -149,6 +152,25 @@ def pick_contract(tk, spot, earnings_date):
     return best[1], notes
 
 
+def front_month_iv(tk, spot, earnings_date, chosen_expiry):
+    """ATM IV of the nearest expiry that still contains the earnings event.
+    Healthy pre-earnings term structure: front IV > back IV (the crush lives
+    in the front month, not in our post-event expiry). Returns None on gaps."""
+    try:
+        fronts = [e for e in (tk.options or ())
+                  if earnings_date <= date.fromisoformat(e) < date.fromisoformat(chosen_expiry)]
+        if not fronts:
+            return None
+        chain = tk.option_chain(fronts[0]).calls
+        chain = chain[(chain["impliedVolatility"] > 0.01)]
+        if not len(chain):
+            return None
+        atm = chain.iloc[(chain["strike"] - spot).abs().argsort()[:1]]
+        return float(atm["impliedVolatility"].iloc[0])
+    except Exception:
+        return None
+
+
 def evaluate(tk, spot, earnings_date, hist_close=None):
     """Full call-idea evaluation for an already gate-open ticker.
     Never raises. Returns dict with contract, score, pass/fail, reasons."""
@@ -174,10 +196,14 @@ def evaluate(tk, spot, earnings_date, hist_close=None):
     # breakeven distance in units of the implied 1-sigma move to expiry
     sigma_move = c["iv"] * math.sqrt(c["t_years"]) if c["iv"] else None
     be_sigma = (c["breakeven_move"] / sigma_move) if sigma_move else None
+    fiv = front_month_iv(tk, spot, earnings_date, c["expiry"])
+    term_ratio = (c["iv"] / fiv) if c["iv"] and fiv else None
     out["context"] = {"realized_vol_30d": round(rv, 4) if rv else None,
                       "iv_rv_ratio": round(iv_rv, 2) if iv_rv else None,
                       "avg_earnings_move": round(em, 4) if em else None,
-                      "breakeven_sigma": round(be_sigma, 2) if be_sigma else None}
+                      "breakeven_sigma": round(be_sigma, 2) if be_sigma else None,
+                      "front_month_iv": round(fiv, 4) if fiv else None,
+                      "term_ratio": round(term_ratio, 2) if term_ratio else None}
 
     # --- component scores ---
     liq = _clamp100((min(c["open_interest"], 1000) / 1000) * 60
@@ -203,6 +229,9 @@ def evaluate(tk, spot, earnings_date, hist_close=None):
     if be_sigma is not None and be_sigma > MAX_BREAKEVEN_SIGMA:
         out["reasons"].append(f"breakeven {c['breakeven_move']:.1%} is {be_sigma:.2f} sigma of the "
                               f"implied move (max {MAX_BREAKEVEN_SIGMA}) — needs an outsized reaction")
+    if term_ratio is not None and term_ratio > MAX_TERM_INVERSION:
+        out["reasons"].append(f"term structure inverted: our expiry IV is {term_ratio:.2f}x the "
+                              f"front month — we'd be the ones holding the crush premium")
     if score is not None and score < PASS_SCORE:
         out["reasons"].append(f"call score {score}/100 below bar {PASS_SCORE}")
 
@@ -210,7 +239,8 @@ def evaluate(tk, spot, earnings_date, hist_close=None):
                          and c["open_interest"] >= MIN_OI
                          and c["spread_pct"] <= MAX_SPREAD_PCT
                          and not (iv_rv and iv_rv > MAX_IV_RV)
-                         and not (be_sigma is not None and be_sigma > MAX_BREAKEVEN_SIGMA))
+                         and not (be_sigma is not None and be_sigma > MAX_BREAKEVEN_SIGMA)
+                         and not (term_ratio is not None and term_ratio > MAX_TERM_INVERSION))
     return out
 
 
@@ -248,6 +278,9 @@ def render(idea):
         f"  - Breakeven at expiry: {c['breakeven_move']:+.1%} = {ctx.get('breakeven_sigma') or 'GAPPED'} sigma "
         f"of the implied move (max {MAX_BREAKEVEN_SIGMA}); avg earnings-day move for context: "
         f"{('%.1f%%' % (ctx['avg_earnings_move']*100)) if ctx.get('avg_earnings_move') else 'GAPPED'}",
+        f"  - Term structure: our expiry IV vs front-month IV = "
+        f"{ctx.get('term_ratio') or 'GAPPED'} (healthy <1.0 — crush belongs in the front month; "
+        f"max {MAX_TERM_INVERSION})",
         f"  - Call score: {idea.get('score')}/100 (liquidity {comp.get('liquidity')}, "
         f"premium {comp.get('premium_richness')}, breakeven {comp.get('breakeven')}, "
         f"delta fit {comp.get('delta_fit')}; pass bar {PASS_SCORE})",
