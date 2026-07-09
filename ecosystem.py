@@ -1,7 +1,7 @@
 """Ecosystem dashboard — one static page with every important metric.
 
 Reads scores.json, history.json, config.json, alert_state.json,
-recommendations.json, committee_prompts/ and monitor.log, and writes
+recommendations.json and committee_prompts/, and writes
 ecosystem.html (self-contained, no network, self-refreshes every 5 min).
 
     ./venv/bin/python ecosystem.py && open ecosystem.html
@@ -31,19 +31,6 @@ def load(name, default):
 
 def esc(s):
     return html.escape(str(s))
-
-
-def sparkline(vals, w=110, h=26, color="var(--series1)"):
-    if len(vals) < 2:
-        return "<span class='muted'>—</span>"
-    lo, hi = min(vals), max(vals)
-    rng = (hi - lo) or 1
-    pts = " ".join(
-        f"{2 + i * (w - 4) / (len(vals) - 1):.1f},{h - 3 - (v - lo) / rng * (h - 6):.1f}"
-        for i, v in enumerate(vals))
-    return (f"<svg width='{w}' height='{h}' aria-label='intraday trend'>"
-            f"<polyline points='{pts}' fill='none' stroke='{color}' stroke-width='2' "
-            f"stroke-linecap='round' stroke-linejoin='round'/></svg>")
 
 
 def hbar(pct, color):
@@ -202,19 +189,13 @@ def render():
             f"{esc(rating)}</span></td>"
             f"<td style='color:{TIER_COLORS.get(tier, 'inherit')};font-weight:600'>{esc(tier or '—')}</td>"
             f"<td class='num {dcls}'>{delta:+d}</td>"
-            f"<td>{sparkline(vals)}</td>"
             f"<td class='num'>{dte if isinstance(dte, int) and dte >= 0 else '—'}</td>"
-            f"<td class='num'>{e.get('confidence', '—')}%</td>"
             f"<td class='muted'>{esc(e.get('sector', '—'))}</td></tr>")
 
     # ---- earnings + payload queue + verdicts -------------------------------
     earn_html = "".join(
         f"<li><b>{esc(t)}</b> — {d} day{'s' if d != 1 else ''}</li>" for t, d in earnings_soon
     ) or "<li class='muted'>Nothing within 7 days.</li>"
-
-    recent_payloads = "".join(
-        f"<li><code>{esc(p.name)}</code></li>" for p in payloads[-8:][::-1]
-    ) or "<li class='muted'>None generated yet.</li>"
 
     if recs:
         vrows = "".join(
@@ -247,14 +228,6 @@ def render():
             ops += f"<li>last commit <span class='muted'>{esc(commit)}</span></li>"
     except Exception:
         pass
-    # monitor.log is gitignored and local-only — absent in CI runs, and its age
-    # says nothing about the GH-Actions pipeline. Show the tail only if present.
-    log_tail = ""
-    logp = BASE / "monitor.log"
-    if logp.exists():
-        tail = logp.read_text().strip().splitlines()[-6:]
-        log_tail = "".join(f"<div>{esc(l)}</div>" for l in tail)
-
     banner = (f"<div class='banner'>⚠ scores.json is {scores_age_min:.0f} min old during "
               f"market hours — the monitor pipeline may be stalled.</div>") if stale else ""
 
@@ -325,8 +298,6 @@ ul{{margin:0;padding-left:2px;list-style:none}}
 li{{padding:4px 0;border-bottom:1px solid var(--grid)}}
 li:last-child{{border:none}}
 code{{font-size:12px;background:var(--grid);padding:1px 5px;border-radius:4px}}
-.log{{font:11px/1.6 ui-monospace,monospace;color:var(--ink2);overflow-x:auto;
-white-space:pre}}
 </style></head><body><div class='wrap'>
 <header><h1>📈 Stock Monitor Ecosystem</h1>
 <span class='stamp'>Generated {now.strftime('%a %b %d, %Y · %I:%M %p PT')} · auto-refreshes every 5 min</span></header>
@@ -342,20 +313,15 @@ white-space:pre}}
 <div class='tblwrap'><table><thead><tr>
 <th>#</th><th>Ticker</th><th class='num'>Overall /110</th><th class='num'>Timing /100</th>
 <th class='num'>Blend</th><th class='num'>Conviction</th><th>Rating</th><th>Tier</th>
-<th class='num'>Δ today</th><th>Today</th><th class='num'>Earnings (d)</th>
-<th class='num'>Conf.</th><th>Sector</th></tr></thead><tbody>{rows}</tbody></table></div>
+<th class='num'>Δ today</th><th class='num'>Earnings (d)</th>
+<th>Sector</th></tr></thead><tbody>{rows}</tbody></table></div>
 <div class='grid3'>
 <div class='card'><h2>⏰ Earnings within 7 days</h2><ul>{earn_html}</ul></div>
-<div class='card'><h2>📋 Latest committee payloads</h2><ul>{recent_payloads}</ul></div>
 <div class='card'><h2>⚖️ Committee verdicts</h2><ul>{vrows}</ul></div>
-</div>
-<div class='grid2' style='margin-top:14px'>
 <div class='card'><h2>🩺 Pipeline health</h2><ul>{ops}</ul>
 <p class='muted' style='font-size:12px'>Runs in GitHub Actions (cron-job.org dispatch):
 monitor every 15 min · pulse hourly · close 13:35 PT · weekly Friday.
 State commits sync to this Mac via launchd.</p></div>
-<div class='card'><h2>📜 monitor.log — local runs only</h2>
-<div class='log'>{log_tail or "<span class='muted'>No local log (pipeline runs in CI).</span>"}</div></div>
 </div>
 </div></body></html>"""
     OUT.write_text(page)
