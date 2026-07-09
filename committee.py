@@ -188,6 +188,16 @@ def gather(ticker, timing_score):
     except Exception:
         gate = None
 
+    # Call-option layer: only evaluated when the gate is open — option-chain
+    # fetches are heavy, and a call idea is meaningless without the catalyst.
+    call_idea = None
+    if gate and gate.get("actionable"):
+        import calls as _calls
+        try:
+            call_idea = _calls.evaluate(tk, info.get("currentPrice"), earnings_date)
+        except Exception:
+            call_idea = None
+
     # Supplementary context yfinance can provide (best-effort; never fatal)
     news = []
     try:
@@ -215,7 +225,7 @@ def gather(ticker, timing_score):
             "overall": overall, "timing": timing_score, "confidence": confidence,
             "rating": rating_for(overall), "news": news, "insiders": insiders,
             "sector": sector, "industry": industry, "days_to_earnings": days_to_earnings,
-            "earnings_gate": gate}
+            "earnings_gate": gate, "call_idea": call_idea}
 
 
 def check_triggers(prev, cur):
@@ -309,6 +319,12 @@ def write_payload(ticker, cur, prev, reasons, kind="Standard"):
         factor_block = "  - Factor screen unavailable this run (treat as GAPPED)"
     import earnings_gate as _egate
     gate_block = _egate.render(cur.get("earnings_gate"))
+    call_block = ""
+    if cur.get("call_idea") is not None:
+        import calls as _calls
+        call_block = ("\n## Call-option candidate (earnings-catalyst; committee should judge "
+                      "premium vs expected move, not just direction)\n"
+                      + _calls.render(cur["call_idea"]) + "\n")
     news_block = "\n".join(f"  - {n}" for n in cur.get("news", [])) or "  - none available"
     insider_block = "\n".join(f"  - {i}" for i in cur.get("insiders", [])) or "  - none available (treat as GAPPED)"
     prev_block = (
@@ -346,7 +362,7 @@ justifications, and output the matching Template.
 ## rating without this gate is thesis-only, NOT actionable; committee should
 ## confirm or veto the positivity call using transcript/guidance judgment)
 {gate_block}
-
+{call_block}
 ## Evidence-backed factor screen (mechanical; committee should weigh explicitly)
 {factor_block}
   - Interpretation guide: Magic Formula = Greenblatt cheapness+quality rank within

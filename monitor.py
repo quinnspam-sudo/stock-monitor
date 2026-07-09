@@ -209,12 +209,23 @@ def main():
             if f.get("f_score") is not None:
                 details["F-Score"] = f"{f['f_score']}/9"
             details["Next step"] = "Paste this ticker's payload into Claude Pro for a committee verdict before acting"
+            idea = cur_eval.get("call_idea")
+            if idea and idea.get("contract"):
+                import calls
+                details["Call idea"] = calls.describe(idea, ticker)
             try:
                 send_alert(ticker, score, "BUY", result["price"], details)
                 print(f"{ticker}: → Discord BUY alert sent (conviction {tier})")
                 import obsidian
                 obsidian.log_recommendation("buy_alert", ticker,
                                             f"score {score}/100, conviction {tier}", result["price"])
+                if idea and idea.get("actionable"):
+                    c = idea["contract"]
+                    obsidian.log_recommendation(
+                        "call_idea", ticker,
+                        f"{c['expiry']} ${c['strike']:g}C mid ${c['mid']:.2f} "
+                        f"(Δ{c['delta']:.2f}, call score {idea['score']}/100)", c["mid"])
+                    print(f"{ticker}: → call idea logged: {c['expiry']} ${c['strike']:g}C")
             except Exception as e:
                 print(f"{ticker}: Discord alert failed (continuing): {e}")
         else:
