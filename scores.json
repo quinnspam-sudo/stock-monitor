@@ -47,18 +47,6 @@
     "tier": "LOW",
     "date": "2026-07-08 16:45"
   },
-  "TSLA": {
-    "overall": 47,
-    "timing": 25,
-    "confidence": 70,
-    "rating": "Hold",
-    "days_to_earnings": 14,
-    "sector": "Consumer Cyclical",
-    "blend": 30,
-    "conviction": 37,
-    "tier": "LOW",
-    "date": "2026-07-08 16:45"
-  },
   "AAPL": {
     "overall": 82,
     "timing": 71,
@@ -287,18 +275,6 @@
     "tier": "MEDIUM",
     "date": "2026-07-08 16:45"
   },
-  "MP": {
-    "overall": 45,
-    "timing": 0,
-    "confidence": 59,
-    "rating": "Hold",
-    "days_to_earnings": 29,
-    "sector": "Basic Materials",
-    "blend": 18,
-    "conviction": 39,
-    "tier": "LOW",
-    "date": "2026-07-08 16:45"
-  },
   "FCX": {
     "overall": 68,
     "timing": 15,
@@ -347,18 +323,6 @@
     "tier": "LOW",
     "date": "2026-07-08 16:45"
   },
-  "RKLB": {
-    "overall": 46,
-    "timing": 20,
-    "confidence": 62,
-    "rating": "Hold",
-    "days_to_earnings": 29,
-    "sector": "Industrials",
-    "blend": 29,
-    "conviction": 40,
-    "tier": "LOW",
-    "date": "2026-07-08 16:45"
-  },
   "IRDM": {
     "overall": 69,
     "timing": 75,
@@ -380,18 +344,6 @@
     "sector": "Technology",
     "blend": 25,
     "conviction": 32,
-    "tier": "LOW",
-    "date": "2026-07-08 16:45"
-  },
-  "QBTS": {
-    "overall": 47,
-    "timing": 20,
-    "confidence": 62,
-    "rating": "Hold",
-    "days_to_earnings": 29,
-    "sector": "Technology",
-    "blend": 29,
-    "conviction": 40,
     "tier": "LOW",
     "date": "2026-07-08 16:45"
   },
@@ -587,18 +539,6 @@
     "tier": "LOW",
     "date": "2026-07-08 16:45"
   },
-  "QUBT": {
-    "overall": 45,
-    "timing": 20,
-    "confidence": 62,
-    "rating": "Hold",
-    "days_to_earnings": 33,
-    "sector": "Technology",
-    "blend": 19,
-    "conviction": 17,
-    "tier": "LOW",
-    "date": "2026-07-08 16:45"
-  },
   "VKTX": {
     "overall": 53,
     "timing": 74,
@@ -620,18 +560,6 @@
     "sector": "Healthcare",
     "blend": 24,
     "conviction": 47,
-    "tier": "LOW",
-    "date": "2026-07-08 16:45"
-  },
-  "SYM": {
-    "overall": 47,
-    "timing": 10,
-    "confidence": 65,
-    "rating": "Hold",
-    "days_to_earnings": 19,
-    "sector": "Industrials",
-    "blend": 19,
-    "conviction": 30,
     "tier": "LOW",
     "date": "2026-07-08 16:45"
   },
@@ -671,18 +599,6 @@
     "tier": "MEDIUM",
     "date": "2026-07-08 16:45"
   },
-  "NB": {
-    "overall": 46,
-    "timing": 0,
-    "confidence": 51,
-    "rating": "Hold",
-    "days_to_earnings": -55,
-    "sector": "Basic Materials",
-    "blend": 23,
-    "conviction": 52,
-    "tier": "MEDIUM",
-    "date": "2026-07-08 16:45"
-  },
   "UUUU": {
     "overall": 50,
     "timing": 0,
@@ -704,18 +620,6 @@
     "sector": "Industrials",
     "blend": 27,
     "conviction": 47,
-    "tier": "LOW",
-    "date": "2026-07-08 16:45"
-  },
-  "LUNR": {
-    "overall": 48,
-    "timing": 0,
-    "confidence": 62,
-    "rating": "Hold",
-    "days_to_earnings": 29,
-    "sector": "Industrials",
-    "blend": 14,
-    "conviction": 32,
     "tier": "LOW",
     "date": "2026-07-08 16:45"
   },
@@ -838,5 +742,2147 @@
     "conviction": 45,
     "tier": "LOW",
     "date": "2026-07-08 16:45"
+  },
+  "LRCX": {
+    "overall": 81,
+    "timing": 64,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:55"
+  },
+  "TOELY": {
+    "overall": 66,
+    "timing": 80,
+    "confidence": 57,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Technology",
+    "date": "2026-07-08 16:55"
+  },
+  "APH": {
+    "overall": 81,
+    "timing": 77,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:55"
+  },
+  "NOW": {
+    "overall": 85,
+    "timing": 56,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 14,
+    "sector": "Technology",
+    "date": "2026-07-08 16:55"
+  },
+  "PWR": {
+    "overall": 57,
+    "timing": 16,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 22,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:55"
+  },
+  "GE": {
+    "overall": 74,
+    "timing": 76,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 8,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:55"
+  },
+  "REGN": {
+    "overall": 75,
+    "timing": 43,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 22,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:55"
+  },
+  "EMR": {
+    "overall": 68,
+    "timing": 15,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:55"
+  },
+  "ALB": {
+    "overall": 67,
+    "timing": 0,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:55"
+  },
+  "MA": {
+    "overall": 84,
+    "timing": 58,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 22,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:56"
+  },
+  "TEAM": {
+    "overall": 73,
+    "timing": 30,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": -69,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "NBIS": {
+    "overall": 57,
+    "timing": 40,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": 29,
+    "sector": "Communication Services",
+    "date": "2026-07-08 16:56"
+  },
+  "QCOM": {
+    "overall": 70,
+    "timing": 20,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "ASMIY": {
+    "overall": 68,
+    "timing": 41,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": -78,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "TEL": {
+    "overall": 70,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 14,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "CRM": {
+    "overall": 77,
+    "timing": 10,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 56,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "EME": {
+    "overall": 66,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:56"
+  },
+  "HWM": {
+    "overall": 74,
+    "timing": 59,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:56"
+  },
+  "VRTX": {
+    "overall": 81,
+    "timing": 77,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 26,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:56"
+  },
+  "HON": {
+    "overall": 58,
+    "timing": 20,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 15,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:56"
+  },
+  "SQM": {
+    "overall": 80,
+    "timing": 3,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 41,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:56"
+  },
+  "OKTA": {
+    "overall": 77,
+    "timing": 85,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 48,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "MSCI": {
+    "overall": 81,
+    "timing": 39,
+    "confidence": 65,
+    "rating": "Buy",
+    "days_to_earnings": 13,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:56"
+  },
+  "WDAY": {
+    "overall": 79,
+    "timing": 46,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 43,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "EQIX": {
+    "overall": 64,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Real Estate",
+    "date": "2026-07-08 16:56"
+  },
+  "ARM": {
+    "overall": 65,
+    "timing": 35,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "BESIY": {
+    "overall": 77,
+    "timing": 37,
+    "confidence": 59,
+    "rating": "Buy",
+    "days_to_earnings": null,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "COHR": {
+    "overall": 55,
+    "timing": 28,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": -63,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "SNOW": {
+    "overall": 62,
+    "timing": 78,
+    "confidence": 62,
+    "rating": "Watch",
+    "days_to_earnings": 49,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "HUBB": {
+    "overall": 65,
+    "timing": 15,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:56"
+  },
+  "TDG": {
+    "overall": 74,
+    "timing": 62,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:56"
+  },
+  "ABBV": {
+    "overall": 80,
+    "timing": 70,
+    "confidence": 65,
+    "rating": "Buy",
+    "days_to_earnings": 23,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:56"
+  },
+  "PH": {
+    "overall": 70,
+    "timing": 55,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:56"
+  },
+  "SCCO": {
+    "overall": 82,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Buy",
+    "days_to_earnings": 19,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:56"
+  },
+  "S": {
+    "overall": 65,
+    "timing": 55,
+    "confidence": 59,
+    "rating": "Watch",
+    "days_to_earnings": 50,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "SPGI": {
+    "overall": 87,
+    "timing": 68,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 20,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:56"
+  },
+  "HUBS": {
+    "overall": 74,
+    "timing": 10,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "DLR": {
+    "overall": 65,
+    "timing": 5,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 15,
+    "sector": "Real Estate",
+    "date": "2026-07-08 16:56"
+  },
+  "SNPS": {
+    "overall": 77,
+    "timing": 6,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": -42,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "ONTO": {
+    "overall": 65,
+    "timing": 63,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": -64,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "LITE": {
+    "overall": 63,
+    "timing": 0,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 35,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "DDOG": {
+    "overall": 71,
+    "timing": 70,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Technology",
+    "date": "2026-07-08 16:56"
+  },
+  "NVT": {
+    "overall": 69,
+    "timing": 35,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 23,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:57"
+  },
+  "HEI": {
+    "overall": 73,
+    "timing": 75,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 48,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:57"
+  },
+  "AMGN": {
+    "overall": 77,
+    "timing": 76,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 27,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:57"
+  },
+  "ITW": {
+    "overall": 66,
+    "timing": 54,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:57"
+  },
+  "TECK": {
+    "overall": 68,
+    "timing": 1,
+    "confidence": 59,
+    "rating": "Watch",
+    "days_to_earnings": 15,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:57"
+  },
+  "TENB": {
+    "overall": 68,
+    "timing": 75,
+    "confidence": 62,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "MCO": {
+    "overall": 80,
+    "timing": 68,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 14,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:57"
+  },
+  "VEEV": {
+    "overall": 90,
+    "timing": 78,
+    "confidence": 70,
+    "rating": "Strong Buy",
+    "days_to_earnings": 56,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:57"
+  },
+  "HPE": {
+    "overall": 67,
+    "timing": 55,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": -37,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "CDNS": {
+    "overall": 83,
+    "timing": 55,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 19,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "CAMT": {
+    "overall": 62,
+    "timing": 5,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 35,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "CRDO": {
+    "overall": 78,
+    "timing": 80,
+    "confidence": 65,
+    "rating": "Buy",
+    "days_to_earnings": -37,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "MDB": {
+    "overall": 67,
+    "timing": 68,
+    "confidence": 62,
+    "rating": "Watch",
+    "days_to_earnings": 49,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "FIX": {
+    "overall": 60,
+    "timing": 11,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 15,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:57"
+  },
+  "AXON": {
+    "overall": 62,
+    "timing": 75,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 26,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:57"
+  },
+  "GILD": {
+    "overall": 83,
+    "timing": 45,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 29,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:57"
+  },
+  "DOV": {
+    "overall": 66,
+    "timing": 20,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 15,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:57"
+  },
+  "VALE": {
+    "overall": 62,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": -71,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:57"
+  },
+  "QLYS": {
+    "overall": 91,
+    "timing": 90,
+    "confidence": 70,
+    "rating": "Strong Buy",
+    "days_to_earnings": 27,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "BLK": {
+    "overall": 80,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 7,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:57"
+  },
+  "TYL": {
+    "overall": 73,
+    "timing": 35,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "CLS": {
+    "overall": 65,
+    "timing": 12,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 19,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "TXN": {
+    "overall": 75,
+    "timing": 70,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 14,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "NVMI": {
+    "overall": 68,
+    "timing": 20,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "FN": {
+    "overall": 58,
+    "timing": 0,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": -65,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "INTU": {
+    "overall": 83,
+    "timing": 10,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 43,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "IESC": {
+    "overall": 61,
+    "timing": 33,
+    "confidence": 62,
+    "rating": "Watch",
+    "days_to_earnings": 23,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:57"
+  },
+  "LHX": {
+    "overall": 68,
+    "timing": 0,
+    "confidence": 59,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:57"
+  },
+  "MRK": {
+    "overall": 77,
+    "timing": 72,
+    "confidence": 67,
+    "rating": "Buy",
+    "days_to_earnings": 27,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:57"
+  },
+  "AME": {
+    "overall": 74,
+    "timing": 49,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:57"
+  },
+  "RIO": {
+    "overall": 65,
+    "timing": 5,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:57"
+  },
+  "VRNS": {
+    "overall": 67,
+    "timing": 85,
+    "confidence": 62,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "GILT": {
+    "overall": 64,
+    "timing": 0,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:57"
+  },
+  "AXP": {
+    "overall": 76,
+    "timing": 64,
+    "confidence": 65,
+    "rating": "Buy",
+    "days_to_earnings": 16,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:58"
+  },
+  "PTC": {
+    "overall": 89,
+    "timing": 10,
+    "confidence": 70,
+    "rating": "Strong Buy",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "JBL": {
+    "overall": 52,
+    "timing": 28,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": -21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "ADI": {
+    "overall": 82,
+    "timing": 11,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 42,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "MKSI": {
+    "overall": 66,
+    "timing": 85,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "GLW": {
+    "overall": 61,
+    "timing": 37,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "ADBE": {
+    "overall": 84,
+    "timing": 10,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 64,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "MYRG": {
+    "overall": 62,
+    "timing": 35,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:58"
+  },
+  "HII": {
+    "overall": 53,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 22,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:58"
+  },
+  "BSX": {
+    "overall": 72,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:58"
+  },
+  "ROP": {
+    "overall": 81,
+    "timing": 70,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 15,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "BHP": {
+    "overall": 75,
+    "timing": 2,
+    "confidence": 67,
+    "rating": "Buy",
+    "days_to_earnings": null,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:58"
+  },
+  "GEN": {
+    "overall": 84,
+    "timing": 65,
+    "confidence": 67,
+    "rating": "Buy",
+    "days_to_earnings": 29,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "GS": {
+    "overall": 72,
+    "timing": 49,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 6,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:58"
+  },
+  "FLEX": {
+    "overall": 57,
+    "timing": 35,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "NXPI": {
+    "overall": 73,
+    "timing": 20,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "ACLS": {
+    "overall": 56,
+    "timing": 35,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": 27,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "CSCO": {
+    "overall": 78,
+    "timing": 55,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 35,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "AGX": {
+    "overall": 77,
+    "timing": 49,
+    "confidence": 67,
+    "rating": "Buy",
+    "days_to_earnings": 57,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:58"
+  },
+  "TXT": {
+    "overall": 58,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 20,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:58"
+  },
+  "SYK": {
+    "overall": 73,
+    "timing": 58,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:58"
+  },
+  "IR": {
+    "overall": 64,
+    "timing": 44,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:58"
+  },
+  "LYSDY": {
+    "overall": 61,
+    "timing": 0,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": null,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:58"
+  },
+  "AKAM": {
+    "overall": 60,
+    "timing": 9,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "SCHW": {
+    "overall": 83,
+    "timing": 81,
+    "confidence": 65,
+    "rating": "Buy",
+    "days_to_earnings": 13,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:58"
+  },
+  "MPWR": {
+    "overall": 67,
+    "timing": 5,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "FORM": {
+    "overall": 60,
+    "timing": 15,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "CIEN": {
+    "overall": 64,
+    "timing": 10,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": -34,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "APP": {
+    "overall": 85,
+    "timing": 55,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 28,
+    "sector": "Communication Services",
+    "date": "2026-07-08 16:58"
+  },
+  "CW": {
+    "overall": 67,
+    "timing": 58,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:58"
+  },
+  "MDT": {
+    "overall": 72,
+    "timing": 49,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 41,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:58"
+  },
+  "CGNX": {
+    "overall": 78,
+    "timing": 74,
+    "confidence": 67,
+    "rating": "Buy",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:58"
+  },
+  "ERO": {
+    "overall": 73,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:58"
+  },
+  "SAIL": {
+    "overall": 66,
+    "timing": 55,
+    "confidence": 59,
+    "rating": "Watch",
+    "days_to_earnings": 63,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "ICE": {
+    "overall": 85,
+    "timing": 5,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 22,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:59"
+  },
+  "ESTC": {
+    "overall": 81,
+    "timing": 65,
+    "confidence": 65,
+    "rating": "Buy",
+    "days_to_earnings": 50,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "NTAP": {
+    "overall": 77,
+    "timing": 65,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": -41,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "MCHP": {
+    "overall": 71,
+    "timing": 20,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "UCTT": {
+    "overall": 48,
+    "timing": 85,
+    "confidence": 62,
+    "rating": "Hold",
+    "days_to_earnings": 26,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "DUOL": {
+    "overall": 90,
+    "timing": 77,
+    "confidence": 67,
+    "rating": "Strong Buy",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "OKLO": {
+    "overall": 52,
+    "timing": 0,
+    "confidence": 54,
+    "rating": "Hold",
+    "days_to_earnings": 33,
+    "sector": "Utilities",
+    "date": "2026-07-08 16:59"
+  },
+  "TDY": {
+    "overall": 69,
+    "timing": 52,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 14,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "DXCM": {
+    "overall": 80,
+    "timing": 58,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 21,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:59"
+  },
+  "ZBRA": {
+    "overall": 72,
+    "timing": 95,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "HBM": {
+    "overall": 79,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Buy",
+    "days_to_earnings": 23,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:59"
+  },
+  "RBRK": {
+    "overall": 73,
+    "timing": 70,
+    "confidence": 57,
+    "rating": "Watch",
+    "days_to_earnings": -34,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "CME": {
+    "overall": 79,
+    "timing": 5,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 14,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:59"
+  },
+  "GTLB": {
+    "overall": 69,
+    "timing": 68,
+    "confidence": 57,
+    "rating": "Watch",
+    "days_to_earnings": 56,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "WDC": {
+    "overall": 80,
+    "timing": 62,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "ON": {
+    "overall": 62,
+    "timing": 20,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 26,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "LFUS": {
+    "overall": 65,
+    "timing": 29,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "UBER": {
+    "overall": 75,
+    "timing": 39,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "BWXT": {
+    "overall": 61,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 26,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:59"
+  },
+  "LDOS": {
+    "overall": 57,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": 27,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "PODD": {
+    "overall": 77,
+    "timing": 36,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 28,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:59"
+  },
+  "TRMB": {
+    "overall": 70,
+    "timing": 15,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "MTRN": {
+    "overall": 64,
+    "timing": 85,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": -70,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 16:59"
+  },
+  "NDAQ": {
+    "overall": 79,
+    "timing": 5,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 15,
+    "sector": "Financial Services",
+    "date": "2026-07-08 16:59"
+  },
+  "DT": {
+    "overall": 81,
+    "timing": 71,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "STX": {
+    "overall": 72,
+    "timing": 55,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "GFS": {
+    "overall": 60,
+    "timing": 35,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "VECO": {
+    "overall": 53,
+    "timing": 35,
+    "confidence": 62,
+    "rating": "Hold",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "SHOP": {
+    "overall": 62,
+    "timing": 56,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "CACI": {
+    "overall": 58,
+    "timing": 10,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": -77,
+    "sector": "Technology",
+    "date": "2026-07-08 16:59"
+  },
+  "TMO": {
+    "overall": 68,
+    "timing": 60,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 15,
+    "sector": "Healthcare",
+    "date": "2026-07-08 16:59"
+  },
+  "NDSN": {
+    "overall": 69,
+    "timing": 20,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 42,
+    "sector": "Industrials",
+    "date": "2026-07-08 16:59"
+  },
+  "ATI": {
+    "overall": 64,
+    "timing": 58,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:00"
+  },
+  "LIN": {
+    "overall": 73,
+    "timing": 58,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 23,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 17:00"
+  },
+  "BRZE": {
+    "overall": 73,
+    "timing": 46,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": -42,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "GDS": {
+    "overall": 55,
+    "timing": 15,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 42,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "MELI": {
+    "overall": 66,
+    "timing": 47,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Consumer Cyclical",
+    "date": "2026-07-08 17:00"
+  },
+  "UEC": {
+    "overall": 48,
+    "timing": 0,
+    "confidence": 59,
+    "rating": "Hold",
+    "days_to_earnings": -29,
+    "sector": "Energy",
+    "date": "2026-07-08 17:00"
+  },
+  "SAIC": {
+    "overall": 58,
+    "timing": 76,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": -37,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "DHR": {
+    "overall": 73,
+    "timing": 51,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 13,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:00"
+  },
+  "RRX": {
+    "overall": 64,
+    "timing": 22,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:00"
+  },
+  "CRS": {
+    "overall": 71,
+    "timing": 80,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:00"
+  },
+  "TT": {
+    "overall": 68,
+    "timing": 54,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:00"
+  },
+  "IOT": {
+    "overall": 72,
+    "timing": 75,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 57,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "SWKS": {
+    "overall": 60,
+    "timing": 9,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "DSCSY": {
+    "overall": 69,
+    "timing": 20,
+    "confidence": 57,
+    "rating": "Watch",
+    "days_to_earnings": null,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "NFLX": {
+    "overall": 80,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 8,
+    "sector": "Communication Services",
+    "date": "2026-07-08 17:00"
+  },
+  "NXE": {
+    "overall": 50,
+    "timing": 0,
+    "confidence": 54,
+    "rating": "Hold",
+    "days_to_earnings": 28,
+    "sector": "Energy",
+    "date": "2026-07-08 17:00"
+  },
+  "MRCY": {
+    "overall": 54,
+    "timing": 67,
+    "confidence": 59,
+    "rating": "Hold",
+    "days_to_earnings": -64,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:00"
+  },
+  "ILMN": {
+    "overall": 75,
+    "timing": 85,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 22,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:00"
+  },
+  "GGG": {
+    "overall": 71,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 14,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:00"
+  },
+  "AA": {
+    "overall": 57,
+    "timing": 5,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": 8,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 17:00"
+  },
+  "SHW": {
+    "overall": 67,
+    "timing": 60,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Basic Materials",
+    "date": "2026-07-08 17:00"
+  },
+  "GWRE": {
+    "overall": 74,
+    "timing": 40,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 57,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "QRVO": {
+    "overall": 59,
+    "timing": 5,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": 20,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "BKNG": {
+    "overall": 82,
+    "timing": 56,
+    "confidence": 65,
+    "rating": "Buy",
+    "days_to_earnings": 27,
+    "sector": "Consumer Cyclical",
+    "date": "2026-07-08 17:00"
+  },
+  "DRS": {
+    "overall": 54,
+    "timing": 50,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": 22,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:00"
+  },
+  "NTRA": {
+    "overall": 65,
+    "timing": 70,
+    "confidence": 62,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:00"
+  },
+  "LECO": {
+    "overall": 63,
+    "timing": 15,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:00"
+  },
+  "CTAS": {
+    "overall": 76,
+    "timing": 69,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 7,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:00"
+  },
+  "MANH": {
+    "overall": 84,
+    "timing": 59,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 20,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "ALGM": {
+    "overall": 71,
+    "timing": 80,
+    "confidence": 62,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Technology",
+    "date": "2026-07-08 17:00"
+  },
+  "GNRC": {
+    "overall": 59,
+    "timing": 37,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 21,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "ESLT": {
+    "overall": 48,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": 41,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "KEYS": {
+    "overall": 75,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 41,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "FAST": {
+    "overall": 71,
+    "timing": 47,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 6,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "PCOR": {
+    "overall": 67,
+    "timing": 10,
+    "confidence": 62,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "CORZ": {
+    "overall": 54,
+    "timing": 35,
+    "confidence": 57,
+    "rating": "Hold",
+    "days_to_earnings": -63,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "SITM": {
+    "overall": 49,
+    "timing": 20,
+    "confidence": 62,
+    "rating": "Hold",
+    "days_to_earnings": 28,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "RNMBY": {
+    "overall": 59,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": null,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "GEHC": {
+    "overall": 66,
+    "timing": 45,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:01"
+  },
+  "NOVT": {
+    "overall": 61,
+    "timing": 40,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "WM": {
+    "overall": 62,
+    "timing": 73,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "TOST": {
+    "overall": 69,
+    "timing": 69,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "SANM": {
+    "overall": 55,
+    "timing": 20,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 19,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "POWI": {
+    "overall": 56,
+    "timing": 35,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": 29,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "FSLR": {
+    "overall": 78,
+    "timing": 27,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 22,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "XYL": {
+    "overall": 67,
+    "timing": 57,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "RSG": {
+    "overall": 66,
+    "timing": 74,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "SPOT": {
+    "overall": 68,
+    "timing": 45,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Communication Services",
+    "date": "2026-07-08 17:01"
+  },
+  "PLXS": {
+    "overall": 56,
+    "timing": 35,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "AMKR": {
+    "overall": 56,
+    "timing": 35,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": 19,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "NRG": {
+    "overall": 53,
+    "timing": 21,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 27,
+    "sector": "Utilities",
+    "date": "2026-07-08 17:01"
+  },
+  "CRSP": {
+    "overall": 53,
+    "timing": 64,
+    "confidence": 62,
+    "rating": "Hold",
+    "days_to_earnings": -58,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:01"
+  },
+  "SIEGY": {
+    "overall": 58,
+    "timing": 29,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 29,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "URI": {
+    "overall": 67,
+    "timing": 65,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 14,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "RBLX": {
+    "overall": 55,
+    "timing": 60,
+    "confidence": 62,
+    "rating": "Hold",
+    "days_to_earnings": 22,
+    "sector": "Communication Services",
+    "date": "2026-07-08 17:01"
+  },
+  "BHE": {
+    "overall": 52,
+    "timing": 35,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "MTSI": {
+    "overall": 66,
+    "timing": 40,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Technology",
+    "date": "2026-07-08 17:01"
+  },
+  "PEG": {
+    "overall": 68,
+    "timing": 68,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Utilities",
+    "date": "2026-07-08 17:01"
+  },
+  "ALNY": {
+    "overall": 71,
+    "timing": 35,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:01"
+  },
+  "YASKY": {
+    "overall": 54,
+    "timing": 45,
+    "confidence": 59,
+    "rating": "Hold",
+    "days_to_earnings": null,
+    "sector": "Industrials",
+    "date": "2026-07-08 17:01"
+  },
+  "HD": {
+    "overall": 63,
+    "timing": 58,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 41,
+    "sector": "Consumer Cyclical",
+    "date": "2026-07-08 17:01"
+  },
+  "TTD": {
+    "overall": 71,
+    "timing": 10,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Communication Services",
+    "date": "2026-07-08 17:02"
+  },
+  "TTMI": {
+    "overall": 56,
+    "timing": 35,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": 21,
+    "sector": "Technology",
+    "date": "2026-07-08 17:02"
+  },
+  "SMTC": {
+    "overall": 51,
+    "timing": 35,
+    "confidence": 62,
+    "rating": "Hold",
+    "days_to_earnings": 47,
+    "sector": "Technology",
+    "date": "2026-07-08 17:02"
+  },
+  "SO": {
+    "overall": 61,
+    "timing": 68,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Utilities",
+    "date": "2026-07-08 17:02"
+  },
+  "ZTS": {
+    "overall": 72,
+    "timing": 0,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 29,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:02"
+  },
+  "OMRNY": {
+    "overall": 57,
+    "timing": 30,
+    "confidence": 62,
+    "rating": "Hold",
+    "days_to_earnings": null,
+    "sector": "Technology",
+    "date": "2026-07-08 17:02"
+  },
+  "TJX": {
+    "overall": 62,
+    "timing": 15,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 42,
+    "sector": "Consumer Cyclical",
+    "date": "2026-07-08 17:02"
+  },
+  "PINS": {
+    "overall": 78,
+    "timing": 84,
+    "confidence": 67,
+    "rating": "Buy",
+    "days_to_earnings": -65,
+    "sector": "Communication Services",
+    "date": "2026-07-08 17:02"
+  },
+  "VICR": {
+    "overall": 58,
+    "timing": 35,
+    "confidence": 65,
+    "rating": "Hold",
+    "days_to_earnings": 13,
+    "sector": "Technology",
+    "date": "2026-07-08 17:02"
+  },
+  "DUK": {
+    "overall": 63,
+    "timing": 56,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Utilities",
+    "date": "2026-07-08 17:02"
+  },
+  "IDXX": {
+    "overall": 72,
+    "timing": 20,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 27,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:02"
+  },
+  "ORLY": {
+    "overall": 61,
+    "timing": 5,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Consumer Cyclical",
+    "date": "2026-07-08 17:02"
+  },
+  "DASH": {
+    "overall": 72,
+    "timing": 78,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 28,
+    "sector": "Consumer Cyclical",
+    "date": "2026-07-08 17:02"
+  },
+  "D": {
+    "overall": 69,
+    "timing": 82,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Utilities",
+    "date": "2026-07-08 17:02"
+  },
+  "WST": {
+    "overall": 73,
+    "timing": 70,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 15,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:02"
+  },
+  "AZO": {
+    "overall": 60,
+    "timing": 10,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": -43,
+    "sector": "Consumer Cyclical",
+    "date": "2026-07-08 17:02"
+  },
+  "ABNB": {
+    "overall": 79,
+    "timing": 63,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 28,
+    "sector": "Consumer Cyclical",
+    "date": "2026-07-08 17:02"
+  },
+  "XEL": {
+    "overall": 61,
+    "timing": 50,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Utilities",
+    "date": "2026-07-08 17:02"
+  },
+  "RMD": {
+    "overall": 83,
+    "timing": 45,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 29,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:02"
+  },
+  "WMT": {
+    "overall": 55,
+    "timing": 5,
+    "confidence": 70,
+    "rating": "Hold",
+    "days_to_earnings": 43,
+    "sector": "Consumer Defensive",
+    "date": "2026-07-08 17:02"
+  },
+  "COIN": {
+    "overall": 53,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Hold",
+    "days_to_earnings": 22,
+    "sector": "Financial Services",
+    "date": "2026-07-08 17:02"
+  },
+  "EXC": {
+    "overall": 60,
+    "timing": 58,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Utilities",
+    "date": "2026-07-08 17:02"
+  },
+  "EW": {
+    "overall": 82,
+    "timing": 88,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 15,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:02"
+  },
+  "PG": {
+    "overall": 73,
+    "timing": 57,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Consumer Defensive",
+    "date": "2026-07-08 17:02"
+  },
+  "HOOD": {
+    "overall": 71,
+    "timing": 80,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Financial Services",
+    "date": "2026-07-08 17:02"
+  },
+  "BRK-B": {
+    "overall": 66,
+    "timing": 66,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 24,
+    "sector": "Financial Services",
+    "date": "2026-07-08 17:02"
+  },
+  "SOFI": {
+    "overall": 73,
+    "timing": 64,
+    "confidence": 65,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Financial Services",
+    "date": "2026-07-08 17:02"
+  },
+  "TMDX": {
+    "overall": 66,
+    "timing": 0,
+    "confidence": 67,
+    "rating": "Watch",
+    "days_to_earnings": 22,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:02"
+  },
+  "GOOG": {
+    "overall": 77,
+    "timing": 14,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 14,
+    "sector": "Communication Services",
+    "date": "2026-07-08 17:02"
+  },
+  "NU": {
+    "overall": 77,
+    "timing": 50,
+    "confidence": 59,
+    "rating": "Buy",
+    "days_to_earnings": 36,
+    "sector": "Financial Services",
+    "date": "2026-07-08 17:02"
+  },
+  "GKOS": {
+    "overall": 63,
+    "timing": 85,
+    "confidence": 62,
+    "rating": "Watch",
+    "days_to_earnings": 21,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:02"
+  },
+  "MS": {
+    "overall": 75,
+    "timing": 69,
+    "confidence": 65,
+    "rating": "Buy",
+    "days_to_earnings": 7,
+    "sector": "Financial Services",
+    "date": "2026-07-08 17:02"
+  },
+  "PYPL": {
+    "overall": 66,
+    "timing": 22,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Financial Services",
+    "date": "2026-07-08 17:02"
+  },
+  "PEN": {
+    "overall": 60,
+    "timing": 10,
+    "confidence": 70,
+    "rating": "Watch",
+    "days_to_earnings": 20,
+    "sector": "Healthcare",
+    "date": "2026-07-08 17:02"
+  },
+  "BX": {
+    "overall": 76,
+    "timing": 23,
+    "confidence": 65,
+    "rating": "Buy",
+    "days_to_earnings": 15,
+    "sector": "Financial Services",
+    "date": "2026-07-08 17:02"
+  },
+  "ADSK": {
+    "overall": 86,
+    "timing": 10,
+    "confidence": 70,
+    "rating": "Buy",
+    "days_to_earnings": 50,
+    "sector": "Technology",
+    "date": "2026-07-08 17:03"
   }
 }

@@ -6,6 +6,7 @@ Run without alerts:  ./venv/bin/python monitor.py --dry-run
 import json
 import sys
 import time
+import zlib
 from pathlib import Path
 
 import yfinance as yf
@@ -98,8 +99,23 @@ def main():
     evaluations = {}  # ticker -> (cur, prev); triggers checked after the loop so rank shifts are visible
     buy_queue = []    # BUY alerts deferred until factor ranks exist
 
+    # Sharding: above ~100 tickers a full sweep would take 15+ min of CI per
+    # run (~3 s/ticker), burning the free Actions tier. Each 15-min slot scores
+    # one quarter of the list (stable crc32 assignment → full coverage every
+    # hour) plus the current top-30 by ledger overall, so the names most likely
+    # to alert keep true 15-min cadence. --full overrides (weekly/backtests).
+    run_list = cfg["watchlist"]
+    if len(run_list) > 100 and "--full" not in sys.argv:
+        slot = int(time.time() // 900) % 4
+        top = sorted((t for t in run_list if "overall" in ledger.get(t, {})),
+                     key=lambda t: -ledger[t]["overall"])[:30]
+        shard = [t for t in run_list
+                 if zlib.crc32(t.encode()) % 4 == slot or t in top]
+        print(f"sharded run: slot {slot}, {len(shard)}/{len(run_list)} tickers")
+        run_list = shard
+
     print(f"{'TICKER':<8}{'PRICE':>10}{'SCORE':>7}  ACTION")
-    for ticker in cfg["watchlist"]:
+    for ticker in run_list:
         try:
             result = score_ticker(ticker)
         except Exception as e:
