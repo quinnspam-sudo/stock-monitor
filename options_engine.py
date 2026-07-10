@@ -494,10 +494,14 @@ def main():
             json.dump(ledger, f, indent=1)
         if args.discord:
             import notify
+            # Conviction calls are buy signals — post to the BUY channel (the
+            # pinging channel), not #updates (Quinn, 2026-07-09).
+            buy_webhook = notify.load_config()["discord_webhook_url"]
             for r in actionable:
                 notify.send_message("🎯 OPTIONS ENGINE — independent conviction call\n"
                                     + describe(r) + "\nRecommend-only; committee verdict "
-                                    "before acting.", kind="CALL_CONVICTION", mention=True)
+                                    "before acting.", kind="CALL_CONVICTION", mention=True,
+                                    webhook_url=buy_webhook)
     if not args.ticker:
         print(f"Scanned {len(tickers)} names — {len(actionable)} conviction call(s). "
               "Silence is the bar working.")

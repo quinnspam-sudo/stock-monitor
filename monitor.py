@@ -250,12 +250,15 @@ def main():
                 if idea and idea.get("actionable"):
                     c = idea["contract"]
                     import options_engine
+                    import notify
+                    # Call ideas are buy signals — BUY channel, with ping.
                     send_message(
                         f"📞 **CALL IDEA — {ticker}** (options engine conviction on a "
                         "consensus-passed BUY — the strongest combined signal)\n"
                         f"{options_engine.describe(idea)}\n"
                         f"Max loss = 100% of premium (${c['mid'] * 100:,.0f}/contract). "
-                        "Committee verdict before acting.", kind="CALL_IDEA", mention=True)
+                        "Committee verdict before acting.", kind="CALL_IDEA", mention=True,
+                        webhook_url=notify.load_config()["discord_webhook_url"])
                     obsidian.log_recommendation(
                         "call_idea", ticker,
                         f"{c['expiry']} ${c['strike']:g}C mid ${c['mid']:.2f} "
