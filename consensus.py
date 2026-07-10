@@ -59,12 +59,26 @@ def market_regime():
             out["vix"] = round(float(vh.iloc[-1]), 1)
     except Exception:
         pass
+    # Term structure: VIX/VIX3M > 1 (backwardation) means the market pays up
+    # for NEAR-term protection — the classic stress regime that a spot-VIX
+    # threshold misses while vol drifts up under 28. Small buffer (1.02) so
+    # a flat curve on a choppy day doesn't flap the gate; missing ^VIX3M
+    # degrades to the old spot-only behavior.
+    out["vix_term"] = None
+    try:
+        v3 = yf.Ticker("^VIX3M").history(period="5d")["Close"]
+        if len(v3) and out["vix"]:
+            out["vix_term"] = round(out["vix"] / float(v3.iloc[-1]), 3)
+    except Exception:
+        pass
+    backwardated = out["vix_term"] is not None and out["vix_term"] > 1.02
     out["pass"] = bool(out["spy_above_50d"]) and bool(out["spy_above_200d"]) \
-        and (out["vix"] is None or out["vix"] < VIX_MAX)
+        and (out["vix"] is None or out["vix"] < VIX_MAX) and not backwardated
     out["detail"] = (f"SPY>{'50d' if out['spy_above_50d'] else '!50d'}"
                      f"/{'200d' if out['spy_above_200d'] else '!200d'}, "
                      f"VIX {out['vix'] if out['vix'] is not None else 'n/a'}"
-                     f" (max {VIX_MAX})")
+                     f" (max {VIX_MAX}), term {out['vix_term'] if out['vix_term'] is not None else 'n/a'}"
+                     f"{' BACKWARDATED' if backwardated else ''}")
     _REGIME_CACHE["r"] = out
     return out
 
