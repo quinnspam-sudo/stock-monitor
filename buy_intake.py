@@ -42,6 +42,24 @@ TRADE_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Committee-verdict intake (2026-07-09): lets Quinn log verdicts from his
+# phone instead of verdict.py on the Mac. Same channel, same poll.
+#   Verdict AAPL Buy
+#   Verdict AAPL Strong Buy entry 305 — margin expansion thesis
+#   Verdict TECK Pass
+VERDICT_RE = re.compile(
+    r"^verdict\s+([A-Za-z]{1,5})\s+(strong\s+buy|buy|hold|avoid|sell|pass)"
+    r"(?:\s+entry\s+\$?([\d,]+(?:\.\d+)?))?"
+    r"(?:\s*[—–-]+\s*(.+))?\s*$",
+    re.IGNORECASE,
+)
+
+VERDICT_FORMAT_HELP = (
+    "Couldn't parse that as a committee verdict. Format:\n"
+    "`Verdict <TICKER> <Strong Buy|Buy|Hold|Avoid|Sell|Pass> [entry <price>] [— note]`\n"
+    "e.g. `Verdict AAPL Buy entry 305 — margin expansion thesis`"
+)
+
 FORMAT_HELP = (
     "Couldn't parse that as a trade-log entry. Format:\n"
     "`Bought $<amount> of <TICKER> at $<price>` or `Sold $<amount> of <TICKER> at $<price>`\n"
@@ -110,6 +128,27 @@ def parse_trade(text):
     return action, amount, ticker, price
 
 
+RECOMMENDATIONS_PATH = Path(__file__).parent / "recommendations.json"
+
+
+def record_verdict(ticker, rating, entry, note):
+    """Append a committee verdict to recommendations.json — the exact same
+    shape verdict.py writes, so weekly review and signal_tracker see it."""
+    price = float(yf.Ticker(ticker).history(period="5d")["Close"].iloc[-1])
+    recs = json.loads(RECOMMENDATIONS_PATH.read_text()) if RECOMMENDATIONS_PATH.exists() else []
+    date = datetime.now().strftime("%Y-%m-%d")
+    recs.append({"date": date, "ticker": ticker, "kind": "committee_verdict",
+                 "rating": rating, "price_at_verdict": round(price, 2),
+                 "suggested_entry": entry, "note": note})
+    RECOMMENDATIONS_PATH.write_text(json.dumps(recs, indent=2))
+    try:
+        import obsidian
+        obsidian.record_verdict(ticker, rating, price, entry, note, date)
+    except Exception as e:
+        print(f"Obsidian verdict mirror failed (continuing): {e}")
+    return price, date
+
+
 def validate_ticker(ticker):
     try:
         h = yf.Ticker(ticker).history(period="5d")
@@ -144,6 +183,46 @@ def main():
         if msg.get("author", {}).get("bot"):
             continue  # ignore the bot's own replies
         text = msg.get("content", "")
+
+        # Committee verdicts: any message starting with "verdict" is an attempt
+        if text.lower().lstrip().startswith("verdict"):
+            vm = VERDICT_RE.match(text.strip())
+            if not vm:
+                try:
+                    reply(channel_id, VERDICT_FORMAT_HELP, in_reply_to=msg["id"])
+                    react(channel_id, msg["id"], "❌")
+                except Exception as e:
+                    print(f"Failed to reply with verdict format help: {e}")
+                continue
+            vt = vm.group(1).upper()
+            rating = " ".join(w.capitalize() for w in vm.group(2).split())
+            entry = float(vm.group(3).replace(",", "")) if vm.group(3) else None
+            note = vm.group(4)
+            if not validate_ticker(vt):
+                try:
+                    reply(channel_id, f"❌ `{vt}` doesn't look like a real ticker — double-check and resend.",
+                          in_reply_to=msg["id"])
+                except Exception as e:
+                    print(f"Failed to reply with ticker-invalid notice: {e}")
+                continue
+            try:
+                price, date = record_verdict(vt, rating, entry, note)
+            except Exception as e:
+                print(f"Failed to record verdict for {vt}: {e}")
+                continue
+            changed = True
+            try:
+                reply(channel_id, f"✅ Verdict recorded: **{vt} {rating}** @ ${price:,.2f} on {date}"
+                                  + (f", suggested entry ${entry:,.2f}" if entry else "")
+                                  + (f" — {note}" if note else "")
+                                  + ". Tracked by the weekly review and the machine-vs-committee comparison.",
+                      in_reply_to=msg["id"])
+                react(channel_id, msg["id"], "✅")
+            except Exception as e:
+                print(f"Failed to reply with verdict confirmation: {e}")
+            print(f"Recorded verdict: {vt} {rating}")
+            continue
+
         if "bought" not in text.lower() and "sold" not in text.lower():
             continue  # not an attempted trade-log entry — ignore silently, don't spam replies to chat
 
@@ -192,8 +271,9 @@ def main():
     save_state(state)
     if changed:
         save_trades(trades)
-        git_sync.commit_and_push(["actual_trades.json", "discord_intake_state.json"],
-                                  "buy_intake: record Discord-logged trade(s)")
+        git_sync.commit_and_push(["actual_trades.json", "discord_intake_state.json",
+                                  "recommendations.json"],
+                                  "buy_intake: record Discord-logged trade(s)/verdict(s)")
     else:
         git_sync.commit_and_push(["discord_intake_state.json"], "buy_intake: advance message cursor")
 

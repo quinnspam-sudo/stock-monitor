@@ -85,7 +85,9 @@ OPTION CONTRACT VERDICT (only if the payload proposed one):
   <TAKE | PASS> — premium vs expected move reasoning
 INVALIDATION TRIGGERS: <2-3 concrete, checkable conditions>
 DISSENT: <any member who formally disagrees, and why>
-LOG LINE: verdict.py add <TICKER> "<VERDICT>" --entry <n> --note "<15 words>"
+LOG LINE (post this in the #buy-log Discord channel to record the verdict):
+  Verdict <TICKER> <VERDICT> entry <n> — <note, 15 words max>
+(desktop alternative: verdict.py add <TICKER> "<VERDICT>" --entry <n> --note "...")
 ```
 
 **Template B — Re-evaluation** (delta-triggered payloads on a name with a
