@@ -8,9 +8,8 @@ name: monitor
 # externally instead.
 
 # Mirrors com.stockmonitor.monitor.plist: every 15 min, ~6:00-13:00 PT, Mon-Fri.
-# Cron times below assume PDT (UTC-7). During PST (roughly Nov-Mar) runs land
-# about an hour later than the equivalent local time — acceptable slack for
-# this system, but adjust by 1hr if you want exact PT alignment year-round.
+# The cron-job.org jobs (monitor-15min + monitor-1300pt) run in timezone
+# America/Los_Angeles as of 2026-07-09, so PT alignment holds year-round.
 on:
   workflow_dispatch: {}
 

@@ -5,9 +5,13 @@ name: options
 # workflow_dispatch REST endpoint (same pattern as the other workflows;
 # GitHub's native `schedule:` trigger doesn't fire on this repo).
 #
-# Suggested cadence: once per trading day after the close (e.g. 13:45 PT,
-# Mon-Fri) — the judges use daily closes and same-day chain flow, so more
-# frequent runs add API load without adding information.
+# Cadence: once per trading day at 12:45 PT Mon-Fri (cron-job.org job
+# "stock-monitor options", timezone America/Los_Angeles). Runs DURING
+# market hours deliberately: option chain bid/ask are live (after-hours
+# quotes degrade and would starve the contract-quality gate) and a
+# conviction call is still actionable the same day. More frequent runs
+# add API load without adding information — the judges use daily closes
+# and same-day chain flow.
 on:
   workflow_dispatch: {}
 

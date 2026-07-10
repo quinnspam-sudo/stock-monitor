@@ -1,5 +1,13 @@
 # Task: set up three scheduled triggers on cron-job.org (assume no prior context)
 
+> **STATUS 2026-07-09 (task complete — kept as the PAT-rotation runbook):** all 9
+> jobs verified. Every job now runs in timezone America/Los_Angeles (was UTC —
+> would have made close/weekly fire before the closing bell after the November
+> DST change), the options job was moved to 12:45 PT and enabled, and the jobs
+> formerly named for UTC times are now `close-1335pt` / `monitor-1300pt`. The
+> PAT behind every job expires ~2026-08-07; when rotated, update the
+> Authorization header on ALL 9 jobs (see Step 3 for where it lives).
+
 ## What this is about, in plain English
 
 Quinn runs an automated stock-monitoring system. The programs live in a private
