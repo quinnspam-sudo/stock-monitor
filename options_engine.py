@@ -359,6 +359,24 @@ def evaluate(ticker, spy_close=None):
         lead = "vol"
     out["lead"] = lead
 
+    # Depth context (post-confluence only — extra fetches on rare names):
+    # where today's IV sits vs the stock's own 1y realized-vol range, and the
+    # 25-delta skew read. Evidence for the committee, not gates.
+    try:
+        rv_series = close.pct_change().rolling(20).std().dropna() * math.sqrt(252)
+        if atm_iv and len(rv_series) > 60:
+            pctile = float((rv_series < atm_iv).mean())
+            out["evidence"]["vol"]["iv_pctile_vs_1y_rv"] = round(pctile, 2)
+    except Exception:
+        pass
+    try:
+        import enrich
+        skew = enrich.option_skew(tk, spot)
+        if skew:
+            out["evidence"]["skew"] = skew
+    except Exception:
+        pass
+
     c, notes = pick_contract(tk, spot, lead, earn)
     out["reasons"].extend(notes)
     if c is None:
@@ -449,6 +467,12 @@ def render(r):
         f"  - Breakeven {c['breakeven_move']:+.1%} = {m.get('breakeven_sigma', 'GAPPED')} sigma of "
         f"the implied move (max {MAX_BREAKEVEN_SIGMA}); premium {m.get('premium_vs_fair', 'GAPPED')}x "
         f"zero-drift fair value at forecast vol (max {MAX_EV_PREMIUM})",
+        f"  - Vol context: IV sits at the {(r.get('evidence', {}).get('vol', {}).get('iv_pctile_vs_1y_rv') or 0):.0%} "
+        "percentile of this stock's own 1y realized-vol range (low = cheap by its history)"
+        if r.get("evidence", {}).get("vol", {}).get("iv_pctile_vs_1y_rv") is not None else
+        "  - Vol context: IV percentile vs own history GAPPED",
+        "  - Skew/flow: " + "; ".join(r["evidence"]["skew"])
+        if r.get("evidence", {}).get("skew") else "  - Skew/flow: GAPPED",
         f"  - Score {r.get('score')}/100 (confluence {comp.get('confluence')}, vol edge "
         f"{comp.get('vol_edge')}, contract quality {comp.get('contract_quality')}, "
         f"EV {comp.get('expected_value')}; pass bar {PASS_SCORE})",

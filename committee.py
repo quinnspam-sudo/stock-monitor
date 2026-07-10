@@ -25,10 +25,18 @@ OVERALL_DELTA = 8      # /110
 TIMING_DELTA = 15      # /100
 CONFIDENCE_DELTA = 10  # percentage points
 
+# Sources with no free provider. Options skew/flow, 13F deltas, SEC filings,
+# short-interest trend moved OUT of here 2026-07-09 — enrich.py now computes
+# them (per-name fetch failures still render as GAPPED dynamically).
 GAPPED_SOURCES = [
-    "Congressional trades", "Options skew / flow",
-    "Institutional flow (13F deltas)", "SEC filing stream", "Earnings call transcripts",
-    "Credit ratings",
+    "Congressional trades", "Earnings call transcripts", "Credit ratings",
+]
+
+ENRICHED_SOURCES = [  # (payload heading, key in cur["enrichment"])
+    ("Short interest trend", "short_interest"),
+    ("Institutional flow (13F deltas)", "institutional"),
+    ("SEC filing stream", "filings"),
+    ("Options skew / flow", "options_skew"),
 ]
 
 HISTORY_PATH = ROOT / "history.json"
@@ -221,6 +229,20 @@ def gather(ticker, timing_score):
     except Exception:
         pass
 
+    # Depth enrichment: formerly-GAPPED sources now computed from free data
+    # (None per source = still gapped for this name; renderer handles both)
+    import enrich as _enrich
+    enrichment = {}
+    try:
+        enrichment = {
+            "short_interest": _enrich.short_interest(info),
+            "institutional": _enrich.institutional_flow(tk),
+            "filings": _enrich.sec_filings(tk),
+            "options_skew": _enrich.option_skew(tk, info.get("currentPrice")),
+        }
+    except Exception:
+        pass
+
     present = sum(1 for v in fields.values() if v is not None)
     confidence = round(present / len(fields) * 70)  # cap at 70% — GAPPED sources penalize the rest
 
@@ -228,7 +250,7 @@ def gather(ticker, timing_score):
             "overall": overall, "timing": timing_score, "confidence": confidence,
             "rating": rating_for(overall), "news": news, "insiders": insiders,
             "sector": sector, "industry": industry, "days_to_earnings": days_to_earnings,
-            "earnings_gate": gate, "call_idea": call_idea}
+            "earnings_gate": gate, "call_idea": call_idea, "enrichment": enrichment}
 
 
 def check_triggers(prev, cur):
@@ -314,7 +336,18 @@ def write_payload(ticker, cur, prev, reasons, kind="Standard"):
     n_defaulted = sum(1 for v in defaulted.values() if v)
     field_lines = "\n".join(f"  - {k}: {v}" for k, v in cur["fields"].items() if v is not None)
     missing = [k for k, v in cur["fields"].items() if v is None]
-    gap_lines = "\n".join(f"  - {s}: Data Status: GAPPED" for s in GAPPED_SOURCES + missing)
+    # Enriched sources: real data when the fetch worked, dynamic GAPPED when not
+    enr = cur.get("enrichment") or {}
+    enrich_parts, enrich_gapped = [], []
+    for heading, key in ENRICHED_SOURCES:
+        lines = enr.get(key)
+        if lines:
+            enrich_parts.append(f"  - {heading}:\n" + "\n".join(f"    - {l}" for l in lines))
+        else:
+            enrich_gapped.append(heading)
+    enrich_block = "\n".join(enrich_parts) or "  - (enrichment unavailable this run)"
+    gap_lines = "\n".join(f"  - {s}: Data Status: GAPPED"
+                          for s in GAPPED_SOURCES + enrich_gapped + missing)
     if cur.get("factors"):
         import factors as _factors
         factor_block = _factors.render(cur["factors"])
@@ -403,6 +436,9 @@ justifications, and output the matching Template.
 
 ## Recent insider transactions
 {insider_block}
+
+## Depth enrichment (short interest, 13F flow, filings, options skew)
+{enrich_block}
 
 ## Gapped data sources (penalize Confidence Score accordingly)
 {gap_lines}
