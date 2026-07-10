@@ -91,6 +91,15 @@ DELTA_BANDS = {"trend": (0.65, 0.75), "catalyst": (0.50, 0.60), "vol": (0.55, 0.
 DTE_BANDS = {"trend": (45, 90), "catalyst": None, "vol": (45, 75)}  # catalyst uses earnings window
 CATALYST_HORIZON_D = 15     # earnings within ~3 trading weeks counts as a live catalyst
 
+# ETFs run through the same judges minus CATALYST (no earnings). An index or
+# sector basket compounds slower than a single stock, so the trend judge's
+# 6-mo momentum bar drops from 15% to 8% — otherwise even SMH in a roaring
+# semis bull would rarely clear it. Everything else (vetoes, contract gate,
+# score bar) is identical: the liquidity gates were the binding constraint on
+# single names and are trivially met by these chains, so the edge selection
+# still does the work.
+TREND_MOM6_BAR = {"stock": 0.15, "etf": 0.08}
+
 
 # ---------------------------------------------------------------- vol forecast
 
@@ -124,7 +133,7 @@ def judge_vol_mispricing(atm_iv, rvf):
                            "rv_forecast": round(rvf, 4)}
 
 
-def judge_trend(close, spy_close):
+def judge_trend(close, spy_close, mom6_bar=0.15):
     if close is None or len(close) < 200:
         return None, {}
     px = float(close.iloc[-1])
@@ -139,7 +148,7 @@ def judge_trend(close, spy_close):
     if spy_close is not None and len(spy_close) >= 126 and mom6 is not None:
         spy6 = float(spy_close.iloc[-1]) / float(spy_close.iloc[-126]) - 1
         rs = mom6 - spy6
-    checks = [above, rising, (mom6 is not None and mom6 > 0.15), near_high,
+    checks = [above, rising, (mom6 is not None and mom6 > mom6_bar), near_high,
               (rs is not None and rs > 0)]
     ev = {"above_smas": above, "sma50_rising": rising,
           "mom_6m": round(mom6, 3) if mom6 is not None else None,
@@ -169,10 +178,16 @@ def judge_catalyst(tk, close, atm_iv, next_earnings, term_ratio):
     return bool(cheap_event and healthy_term), ev
 
 
-def judge_flow_proxy(tk, expiries):
+def judge_flow_proxy(tk, expiries, cp_bar=1.5):
     """Same-day chain totals only (free data has no flow history): call
     volume vs OI turnover and call/put volume ratio across the two nearest
-    expiries. Suggestive, never decisive."""
+    expiries. Suggestive, never decisive.
+
+    cp_bar: on index/sector ETFs put volume is structurally inflated by
+    portfolio hedging, so the single-stock 1.5 call/put bar is nearly
+    unreachable there (validation 2026-07-09: flow voted nay on all 35
+    ETFs). ETFs use 1.0 — calls merely outpacing the hedging flow already
+    marks unusual demand."""
     try:
         cv = pv = coi = 0
         for exp in list(expiries)[:2]:
@@ -186,7 +201,7 @@ def judge_flow_proxy(tk, expiries):
         cp = cv / pv if pv else None
         ev = {"call_vol": cv, "put_vol": pv, "call_vol_oi_turnover": round(turnover, 2),
               "call_put_ratio": round(cp, 2) if cp else None}
-        return (turnover >= 0.30 and cp is not None and cp >= 1.5), ev
+        return (turnover >= 0.30 and cp is not None and cp >= cp_bar), ev
     except Exception:
         return None, {"note": "chain flow unavailable"}
 
@@ -298,9 +313,10 @@ def next_earnings_date(tk):
 
 # ---------------------------------------------------------------- evaluation
 
-def evaluate(ticker, spy_close=None):
+def evaluate(ticker, spy_close=None, asset_class="stock"):
     """Full independent evaluation of one ticker. Never raises."""
-    out = {"ticker": ticker, "actionable": False, "judges": {}, "evidence": {},
+    out = {"ticker": ticker, "asset_class": asset_class, "actionable": False,
+           "judges": {}, "evidence": {},
            "lead": None, "contract": None, "score": None, "vetoes": [], "reasons": [],
            "ts": datetime.now().isoformat(timespec="seconds")}
     try:
@@ -314,13 +330,22 @@ def evaluate(ticker, spy_close=None):
 
     rvf = forecast_rv(close)
     atm_iv, term_ratio, expiries = atm_iv_and_term(tk, spot)
-    earn = next_earnings_date(tk)
+    # ETFs have no earnings: skip the fetch entirely (saves 1-2 yfinance
+    # requests per name) and mark CATALYST not-computable instead of letting
+    # it fail per-ticker. Confluence still works: vol + trend + flow = 3
+    # computable judges, exactly MIN_JUDGES.
+    earn = None if asset_class == "etf" else next_earnings_date(tk)
 
     votes = {}
     votes["vol_mispricing"], out["evidence"]["vol"] = judge_vol_mispricing(atm_iv, rvf)
-    votes["trend"], out["evidence"]["trend"] = judge_trend(close, spy_close)
-    votes["catalyst"], out["evidence"]["catalyst"] = judge_catalyst(tk, close, atm_iv, earn, term_ratio)
-    votes["flow_proxy"], out["evidence"]["flow"] = judge_flow_proxy(tk, expiries)
+    votes["trend"], out["evidence"]["trend"] = judge_trend(
+        close, spy_close, TREND_MOM6_BAR.get(asset_class, 0.15))
+    if asset_class == "etf":
+        votes["catalyst"], out["evidence"]["catalyst"] = None, {"note": "ETF — no earnings catalyst"}
+    else:
+        votes["catalyst"], out["evidence"]["catalyst"] = judge_catalyst(tk, close, atm_iv, earn, term_ratio)
+    votes["flow_proxy"], out["evidence"]["flow"] = judge_flow_proxy(
+        tk, expiries, cp_bar=1.0 if asset_class == "etf" else 1.5)
     out["judges"] = votes
 
     # vetoes — any one is terminal
@@ -433,7 +458,8 @@ def _load(path, default):
 
 def describe(r):
     c = r.get("contract")
-    head = f"{r['ticker']} [{r.get('lead') or '-'}-led] {r.get('confluence', '')}"
+    tag = " [ETF]" if r.get("asset_class") == "etf" else ""
+    head = f"{r['ticker']}{tag} [{r.get('lead') or '-'}-led] {r.get('confluence', '')}"
     if not c:
         return head + " — no contract: " + "; ".join(r.get("reasons") or ["n/a"])
     m = r["evidence"].get("contract_math", {})
@@ -487,10 +513,19 @@ def main():
     ap.add_argument("--ticker", help="evaluate a single ticker (verbose)")
     ap.add_argument("--discord", action="store_true", help="announce actionable ideas")
     ap.add_argument("--all", action="store_true", help="print every result, not just actionable")
+    ap.add_argument("--etfs-only", action="store_true", help="scan only the etf_watchlist")
     args = ap.parse_args()
 
     cfg = _load(os.path.join(DIR, "config.json"), {})
-    tickers = [args.ticker.upper()] if args.ticker else cfg.get("watchlist", [])
+    etfs = set(cfg.get("etf_watchlist", []))
+    if args.ticker:
+        t = args.ticker.upper()
+        universe = [(t, "etf" if t in etfs else "stock")]
+    elif args.etfs_only:
+        universe = [(t, "etf") for t in sorted(etfs)]
+    else:
+        universe = ([(t, "stock") for t in cfg.get("watchlist", [])]
+                    + [(t, "etf") for t in sorted(etfs)])
     try:
         spy_close = yf.Ticker("SPY").history(period="1y")["Close"]
     except Exception:
@@ -499,12 +534,12 @@ def main():
     state = _load(STATE_PATH, {})
     ledger = _load(LEDGER_PATH, [])
     actionable = []
-    for t in tickers:
+    for t, asset_class in universe:
         last = state.get(t)
         if not args.ticker and last and \
                 (datetime.now() - datetime.fromisoformat(last)).days < COOLDOWN_DAYS:
             continue
-        r = evaluate(t, spy_close)
+        r = evaluate(t, spy_close, asset_class)
         if args.ticker or args.all or r["actionable"]:
             print(describe(r) + "\n")
         if r["actionable"]:
@@ -513,7 +548,8 @@ def main():
             ledger.append(r)
             import signal_tracker
             c = r["contract"]
-            signal_tracker.record("call_conviction", t, r.get("spot"),
+            signal_tracker.record("etf_call_conviction" if asset_class == "etf"
+                                  else "call_conviction", t, r.get("spot"),
                                   f"score {r['score']}/100, {r['lead']}-led",
                                   contract={k: c.get(k) for k in ("expiry", "strike", "mid", "delta")})
 
@@ -533,8 +569,9 @@ def main():
                                     "before acting.", kind="CALL_CONVICTION", mention=True,
                                     webhook_url=buy_webhook)
     if not args.ticker:
-        print(f"Scanned {len(tickers)} names — {len(actionable)} conviction call(s). "
-              "Silence is the bar working.")
+        n_etf = sum(1 for _, a in universe if a == "etf")
+        print(f"Scanned {len(universe)} names ({len(universe) - n_etf} stocks, {n_etf} ETFs) — "
+              f"{len(actionable)} conviction call(s). Silence is the bar working.")
 
 
 if __name__ == "__main__":
