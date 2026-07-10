@@ -63,6 +63,28 @@ def main():
     def block(items, empty):
         return "\n".join(f"  - {i}" for i in items) if items else f"  - {empty}"
 
+    # Options engine: this week's conviction calls from the append ledger
+    # (evaluated in the signal-tracker section below; listed here so the
+    # committee sees the contracts themselves).
+    try:
+        ideas = json.loads((PROMPTS_DIR.parent / "options_ideas.json").read_text())
+    except Exception:
+        ideas = []
+    week_ideas = [r for r in ideas
+                  if (now - datetime.fromisoformat(r["ts"])).days <= 7]
+    idea_lines = [f"{r['ticker']}{' [ETF]' if r.get('asset_class') == 'etf' else ''} "
+                  f"({r.get('lead')}-led, score {r.get('score')}/100): "
+                  f"{(r.get('contract') or {}).get('expiry')} ${(r.get('contract') or {}).get('strike')}C "
+                  f"@ ${(r.get('contract') or {}).get('mid')}"
+                  for r in week_ideas]
+
+    # Machine-vs-committee: does the paste time earn alpha? (signal_tracker)
+    try:
+        import signal_tracker
+        tracker_block = "\n".join(f"  {l}" for l in signal_tracker.report_lines(max_days=90))
+    except Exception as e:
+        tracker_block = f"  - tracker unavailable this run: {e}"
+
     PROMPTS_DIR.mkdir(exist_ok=True)
     path = PROMPTS_DIR / f"{now:%Y-%m-%d}_WEEKLY_review.md"
     path.write_text(f"""# COMMITTEE DATA PAYLOAD — WEEKLY PERFORMANCE REVIEW
@@ -85,6 +107,12 @@ re-rated, and is sector concentration acceptable? Free-form output (no template)
 
 ## Thematic concentration (user-defined groupings)
 {block(theme_lines, 'unavailable')}
+
+## Options engine — conviction calls this week
+{block(idea_lines, 'None this week — silence is the bar working')}
+
+## Machine book vs committee book (signal_tracker, last 90d)
+{tracker_block}
 """)
     import obsidian
     obsidian.mirror_payload(path)

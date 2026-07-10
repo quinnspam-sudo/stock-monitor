@@ -87,9 +87,10 @@ def _agg(rows):
             f"win-rate vs SPY {wins}/{len(rets)} ({wins/len(rets):.0%})")
 
 
-def cmd_report(args):
+def report_lines(max_days=None):
+    """The machine-vs-committee comparison as a list of text lines — used by
+    both the CLI (`report`) and the weekly review payload."""
     import yfinance as yf
-    max_days = int(args[args.index("--days") + 1]) if "--days" in args else None
 
     sigs = json.loads(SIGNALS_PATH.read_text()) if SIGNALS_PATH.exists() else []
     recs = json.loads(RECOMMENDATIONS_PATH.read_text()) if RECOMMENDATIONS_PATH.exists() else []
@@ -98,9 +99,8 @@ def cmd_report(args):
         cutoff = datetime.now().timestamp() - max_days * 86400
         sigs = [s for s in sigs if datetime.strptime(s["date"], "%Y-%m-%d").timestamp() >= cutoff]
     if not sigs:
-        print("No machine signals recorded yet — the ledger starts accumulating "
-              "from the first alert after this tracker was deployed (2026-07-09).")
-        return
+        return ["No machine signals recorded yet — the ledger starts accumulating "
+                "from the first alert after this tracker was deployed (2026-07-09)."]
 
     spy = yf.Ticker("SPY").history(period="5y")["Close"]
     rows = []
@@ -123,32 +123,41 @@ def cmd_report(args):
             row["error"] = str(e)
         rows.append(row)
 
-    print(f"{'DATE':<12}{'KIND':<17}{'TICKER':<8}{'GROUP':<12}{'RETURN':>8}{'vs SPY':>9}{'~OPT':>8}")
+    lines = [f"{'DATE':<12}{'KIND':<17}{'TICKER':<8}{'GROUP':<12}{'RETURN':>8}{'vs SPY':>9}{'~OPT':>8}"]
     for r in rows:
-        print(f"{r['date']:<12}{r['kind']:<17}{r['ticker']:<8}{r['group']:<12}"
-              + (f"{r['ret']:>8.1%}" if r.get("ret") is not None else f"{'n/a':>8}")
-              + (f"{r['alpha']:>+9.1%}" if r.get("alpha") is not None else f"{'n/a':>9}")
-              + (f"{r['opt_ret']:>8.0%}" if r.get("opt_ret") is not None else f"{'':>8}"))
+        lines.append(f"{r['date']:<12}{r['kind']:<17}{r['ticker']:<8}{r['group']:<12}"
+                     + (f"{r['ret']:>8.1%}" if r.get("ret") is not None else f"{'n/a':>8}")
+                     + (f"{r['alpha']:>+9.1%}" if r.get("alpha") is not None else f"{'n/a':>9}")
+                     + (f"{r['opt_ret']:>8.0%}" if r.get("opt_ret") is not None else f"{'':>8}"))
 
     approved = [r for r in rows if r["group"] == "APPROVED"]
     rejected = [r for r in rows if r["group"] == "REJECTED"]
     unreviewed = [r for r in rows if r["group"] == "UNREVIEWED"]
-    print(f"\nMACHINE BOOK (all signals, no filter): {_agg(rows)}")
-    print(f"COMMITTEE-APPROVED:                    {_agg(approved)}")
-    print(f"COMMITTEE-REJECTED (filter's saves):   {_agg(rejected)}")
-    print(f"UNREVIEWED (never pasted):             {_agg(unreviewed)}")
+    lines.append("")
+    lines.append(f"MACHINE BOOK (all signals, no filter): {_agg(rows)}")
+    lines.append(f"COMMITTEE-APPROVED:                    {_agg(approved)}")
+    lines.append(f"COMMITTEE-REJECTED (filter's saves):   {_agg(rejected)}")
+    lines.append(f"UNREVIEWED (never pasted):             {_agg(unreviewed)}")
 
     a = [r["alpha"] for r in approved if r.get("alpha") is not None]
     m = [r["alpha"] for r in rows if r.get("alpha") is not None]
     if a and m and len(m) > len(a):
         edge = sum(a) / len(a) - sum(m) / len(m)
-        print(f"\nCommittee filter edge vs raw machine book: {edge:+.1%} avg alpha. "
-              + ("Positive = the paste time is earning alpha."
-                 if edge > 0 else
-                 "Negative/zero = the mechanical gates alone are doing the work."))
-    print("\nNote: REJECTED alpha is what the committee KEPT YOU OUT OF — for the "
-          "filter to be valuable, rejected signals should underperform approved ones. "
-          "Wait for ~2-3 months / 15+ joined signals before acting on this.")
+        lines.append("")
+        lines.append(f"Committee filter edge vs raw machine book: {edge:+.1%} avg alpha. "
+                     + ("Positive = the paste time is earning alpha."
+                        if edge > 0 else
+                        "Negative/zero = the mechanical gates alone are doing the work."))
+    lines.append("")
+    lines.append("Note: REJECTED alpha is what the committee KEPT YOU OUT OF — for the "
+                 "filter to be valuable, rejected signals should underperform approved ones. "
+                 "Wait for ~2-3 months / 15+ joined signals before acting on this.")
+    return lines
+
+
+def cmd_report(args):
+    max_days = int(args[args.index("--days") + 1]) if "--days" in args else None
+    print("\n".join(report_lines(max_days)))
 
 
 if __name__ == "__main__":
