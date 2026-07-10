@@ -1,137 +1,212 @@
-# Cowork task: verify + complete the cron-job.org triggers for stock-monitor
+# Task: set up three scheduled triggers on cron-job.org (assume no prior context)
 
-## Mission
+## What this is about, in plain English
 
-The private GitHub repo `quinnspam-sudo/stock-monitor` runs its scheduled jobs as
-GitHub Actions workflows, but GitHub's native `schedule:` trigger doesn't fire on
-this account (anti-abuse throttle on new accounts). Scheduling is therefore done by
-**cron-job.org** jobs that POST to each workflow's `workflow_dispatch` REST endpoint.
+Quinn runs an automated stock-monitoring system. The programs live in a private
+GitHub repository called `quinnspam-sudo/stock-monitor` and run in the cloud using
+a GitHub feature called **Actions workflows** — think of each workflow as a program
+that runs when poked.
 
-Your job: log the current state of every cron-job.org job, figure out which of the
-target triggers below are missing, create ONLY the missing ones, test them, and
-verify on the GitHub side that each test actually started a workflow run. Then report.
+GitHub's own scheduler doesn't work on this account, so the poking is done by a
+separate free website: **cron-job.org**. Each "cronjob" on that site is a tiny
+scheduled task that, at set times, sends one HTTPS request to a special GitHub URL.
+That request is the poke: GitHub receives it and starts the matching workflow.
 
-Deadline context: `weekly.yml` must fire **Friday 13:45 PT** (first-ever slot is the
-next Friday after 2026-07-09) and `backtest.yml` **Saturday 09:00 PT** — if their
-triggers are missing, those reviews silently never happen.
+Six workflows already have their cronjobs set up and working. Up to **three are
+missing**: `options.yml`, `weekly.yml`, and `backtest.yml`. Your job is to check
+what exists, create only what's missing, test it, and report back. Everything
+happens in a web browser on `https://console.cron-job.org`. You never need to touch
+the code.
 
-## Ground rules (read before touching anything)
+## Vocabulary you'll need
 
-1. **Never edit, disable, or delete an existing job.** Existing jobs are live
-   production triggers. You are additive-only. Rollback = delete only jobs YOU created.
-2. **The GitHub PAT never leaves cron-job.org.** New jobs need an
-   `Authorization: Bearer <token>` header. Get the value by opening an EXISTING
-   working job's settings (Advanced → headers) and copying it field-to-field into
-   the new job. Do not write the token into your report, notes, or anywhere else.
-3. **Stop and report instead of improvising** if: you can't log in, the console UI
-   doesn't match these notes, an existing job already covers one of the targets but
-   with a different schedule (report the difference, don't "fix" it), or a test
-   returns 401/403 (PAT problem — retrying won't help).
-4. Discord side effects of testing are expected and harmless (see Phase 4).
+- **Cronjob** — one scheduled task on cron-job.org: a URL + a schedule + request settings.
+- **Cron expression** — a 5-part text code for a schedule, e.g. `45 13 * * 5` means
+  "at 13:45 on day-of-week 5 (Friday)". You will copy-paste these exactly; you don't
+  need to understand them beyond that.
+- **Request method / POST** — the type of HTTPS request. These must be POST (a
+  "send data" request), not the default GET.
+- **Header** — a named label attached to a request. The important one here is
+  `Authorization`, whose value is a secret token proving the request comes from
+  Quinn. **This token is a password. Never write it into your notes, your report,
+  or anywhere outside cron-job.org's own form fields.**
+- **Request body** — the data sent with a POST. Here it is always the exact text
+  `{"ref":"main"}` (which tells GitHub "run the version on the main branch").
+- **HTTP 204** — the success response for this kind of poke. It literally means
+  "worked, nothing more to say". 401/403/404/422 are failures (see Troubleshooting).
 
-## Target state
+## Hard rules
 
-One cron-job.org job per row (monitor has two rows — its window needs two cron
-patterns). URL pattern for every job:
+1. **Never edit, disable, or delete any cronjob that already exists.** They are
+   live production. You only ADD. If you must undo something, delete only a job you
+   yourself created in this session.
+2. **The secret token stays inside cron-job.org.** You'll copy it from an existing
+   job's form field into a new job's form field. Never transcribe it anywhere else.
+3. **When reality doesn't match these instructions** — a button isn't where
+   described, a job already exists but with a different schedule, a test keeps
+   failing — STOP that step, note exactly what you saw, and move on or report.
+   Do not improvise fixes to existing things.
+4. Before creating any job, re-check the job list so you never create a duplicate.
 
-`https://api.github.com/repos/quinnspam-sudo/stock-monitor/actions/workflows/<FILE>/dispatches`
+## Step 0 — Log in
 
-| Workflow file | Intended schedule (Pacific) | Cron (if job is set to timezone America/Los_Angeles) |
+Open `https://console.cron-job.org`. It should already be logged in to Quinn's
+account ([account-email-redacted]). If it shows a login page and you don't have the
+password available, STOP and ask Quinn — do not try password recovery.
+
+## Step 1 — Write down what already exists
+
+You should land on a dashboard listing existing cronjobs (a menu item like
+"Cronjobs" shows the list). For EVERY job in the list, record:
+
+- Its **title**
+- Its **URL** — every URL here ends in `.../actions/workflows/SOMETHING.yml/dispatches`.
+  The `SOMETHING.yml` part tells you which workflow it pokes. Record that filename.
+- Its **schedule** as displayed, and its **timezone** if shown
+- Whether it is **enabled**
+- Its most recent execution result: open the job and find its history tab/section —
+  the last executions should show status **204**. Record the latest status code.
+
+Expected (but verify, don't assume): six workflows covered by seven jobs —
+`monitor.yml` (twice — it needs two schedule patterns), `pulse.yml`, `close.yml`,
+`sell_check.yml`, `buy_intake.yml` — all enabled, all recently returning 204.
+
+Then open ONE known-good job fully (the `close.yml` one is a good pick) and study
+its settings screens. Note (names only, never the secret value):
+- where the request method is set (should say POST),
+- which headers it has (expect at least `Authorization`, possibly
+  `Accept` and `Content-Type`),
+- what its request body says (expect `{"ref":"main"}`),
+- whether failure notifications are switched on,
+- which title style it uses (so your new jobs match).
+
+This job is your **template** — every job you create must have the same shape.
+
+## Step 2 — Decide what's missing
+
+Compare the list you built against these three targets:
+
+| Target workflow | Purpose (context only) | Wanted schedule |
 |---|---|---|
-| monitor.yml (job 1) | every 15 min, 6:00–12:45 PT, Mon–Fri | `*/15 6-12 * * 1-5` |
-| monitor.yml (job 2) | 13:00 PT, Mon–Fri | `0 13 * * 1-5` |
-| pulse.yml | hourly 7:00–12:00 PT, Mon–Fri | `0 7-12 * * 1-5` |
-| close.yml | 13:35 PT, Mon–Fri | `35 13 * * 1-5` |
-| sell_check.yml | hourly 7:00–12:00 PT, Mon–Fri | `0 7-12 * * 1-5` |
-| buy_intake.yml | every 15 min, all day, every day | `*/15 * * * *` |
-| **options.yml** | daily 13:45 PT, Mon–Fri | `45 13 * * 1-5` |
-| **weekly.yml** | Friday 13:45 PT | `45 13 * * 5` |
-| **backtest.yml** | Saturday 09:00 PT | `0 9 * * 6` |
+| `options.yml`  | daily options-market scan | 13:45 Pacific, Monday–Friday |
+| `weekly.yml`   | Friday performance review | 13:45 Pacific, Fridays |
+| `backtest.yml` | Saturday scoring backtest | 09:00 Pacific, Saturdays |
 
-The bold three are the ones most likely missing (the first six are confirmed firing
-as of 2026-07-09). But don't assume — Phase 1 establishes the truth. `options.yml`
-ran once on 2026-07-09 at ~17:04 PT, which does NOT match its intended 13:45 slot,
-so that run was probably a manual test, not proof of a trigger.
+For each: **exists with this schedule** (do nothing) / **exists with a different
+schedule** (do NOT change it — just note the difference for the report) /
+**missing** (create it in Step 3).
 
-**Timezone caveat:** the original jobs may have been entered as UTC cron times
-assuming PDT (UTC-7) — the repo's workflow comments say exact-PT alignment was
-knowingly traded away. When you inspect an existing job, note which convention it
-uses. For the NEW jobs, prefer setting the job's timezone to
-**America/Los_Angeles** with the cron expressions above (exact PT year-round). If
-the console only offers UTC, use the UTC equivalents (add 7 hours: options/weekly
-`45 20 * * 1-5` / `45 20 * * 5`, backtest `0 16 * * 6`) and say so in your report.
+Note: a workflow named `options` was manually poked once on 2026-07-09 — a run
+existing on GitHub does NOT prove a cronjob exists. Only the cron-job.org list
+counts as proof.
 
-## Phase 0 — Login
+## Step 3 — Create the missing jobs (one recipe card each)
 
-Go to `https://console.cron-job.org`. The account is Quinn's (email
-[account-email-redacted]). If the browser isn't already logged in and you don't have
-credentials available, STOP and ask — do not attempt password recovery.
+Click the create button (labeled something like **CREATE CRONJOB**). Fill in the
+fields exactly as below. The form usually has a basic/"Common" section and an
+"Advanced" section — the method, headers, and body live under Advanced.
 
-## Phase 1 — Inventory
+**Getting the Authorization value:** open the template job (from Step 1) in another
+tab, go to its headers, and copy the full value of its `Authorization` header (it
+looks like `Bearer github_pat_…` — copy the WHOLE thing including the word
+`Bearer`). Paste it into the new job's `Authorization` header value. Copy
+field-to-field only.
 
-On the Cronjobs list page, for EVERY existing job record:
-- Title
-- Target URL — specifically which `<FILE>.yml` it dispatches
-- Schedule (as displayed) and, if visible, the job's timezone setting
-- Enabled/disabled status
-- Latest execution status from the job's history (expect HTTP 204 on success)
+**Timezone:** the schedule section should offer a timezone setting — set it to
+**America/Los_Angeles**. If (and only if) there is genuinely no timezone option and
+schedules are UTC, use the UTC alternative given on each card and say so in your
+report.
 
-Open at least one known-good job (e.g. the close.yml one) fully and record its
-configuration shape: request method, headers present (names only — do not transcribe
-the Authorization value), request body, notification settings. New jobs must match
-this shape.
+---
 
-## Phase 2 — Gap analysis
+### Card 1 — options
 
-Compare inventory against the target table. Classify each target row:
-**present-and-matching / present-but-different (report, don't touch) / missing.**
+- Title: `stock-monitor options` (adjust to match the existing naming style)
+- URL: `https://api.github.com/repos/quinnspam-sudo/stock-monitor/actions/workflows/options.yml/dispatches`
+- Schedule: custom cron expression `45 13 * * 1-5`, timezone America/Los_Angeles
+  ( = 13:45 Mon–Fri Pacific; UTC fallback: `45 20 * * 1-5`)
+- Request method: `POST`
+- Headers:
+  - `Authorization` → pasted from template job
+  - `Accept` → `application/vnd.github+json`
+  - `Content-Type` → `application/json` (include if the template job has it)
+- Request body: `{"ref":"main"}`
+- Failure notification: same setting as the template job
+- Enabled: yes → Save
 
-## Phase 3 — Create each missing job
+### Card 2 — weekly
 
-For each missing row, create a new cronjob:
+Identical to Card 1 except:
+- Title: `stock-monitor weekly`
+- URL: `.../actions/workflows/weekly.yml/dispatches` (same prefix as Card 1)
+- Schedule: `45 13 * * 5`, timezone America/Los_Angeles
+  ( = Fridays 13:45 Pacific; UTC fallback: `45 20 * * 5`)
 
-- **Title:** follow the existing naming convention from Phase 1 (e.g. if existing
-  jobs are titled `stock-monitor close`, use `stock-monitor options`).
-- **URL:** the dispatch URL from the pattern above with the right filename.
-- **Schedule:** custom cron expression + timezone per the target table.
-- **Request method:** POST.
-- **Headers** (copied field-for-field from the known-good job, plus these names):
-  - `Authorization` — copy the exact value from the existing job
-  - `Accept: application/vnd.github+json`
-  - `Content-Type: application/json` (include if the existing job has it)
-- **Request body:** `{"ref":"main"}`
-- **Notifications:** mirror the existing jobs' failure-notification setting.
-- Save.
+### Card 3 — backtest
 
-## Phase 4 — Test and verify (both sides)
+Identical to Card 1 except:
+- Title: `stock-monitor backtest`
+- URL: `.../actions/workflows/backtest.yml/dispatches`
+- Schedule: `0 9 * * 6`, timezone America/Los_Angeles
+  ( = Saturdays 09:00 Pacific; UTC fallback: `0 16 * * 6`)
 
-For each job you created:
+---
 
-1. Use the console's test/execute-now function. **Success = HTTP 204 (No Content).**
-   - 401/403 → the Authorization header wasn't copied correctly, or PAT issue. Fix
-     the copy once; if it persists, STOP and report.
-   - 404 → wrong URL (check the filename spelling).
-   - 422 → request body missing/malformed (`{"ref":"main"}`).
-2. Then open `https://github.com/quinnspam-sudo/stock-monitor/actions` and confirm a
-   run of that workflow appeared within ~1 minute of your test. The 204 alone is not
-   full proof — the run appearing is.
-3. Expected side effects (all harmless, mention them in the report, don't react):
-   - **weekly.yml** tested on a non-Friday: the run starts, then weekly.py prints
-     "Not Friday — skipping" and exits green. That still proves the trigger.
-   - **backtest.yml** tested midweek: may post a partial-week line to Discord.
-   - **options.yml**: runs a real ~8-minute scan and posts one OPTIONS_SCAN digest
-     line to the #updates Discord channel. Expected.
-4. Confirm the new job is **enabled** after testing.
+## Step 4 — Test each job you created
 
-## Phase 5 — Report
+For each new job, use the console's immediate-test function (a button like
+**TEST RUN** on the job's page, or an execute-now option in the list).
 
-Deliver a table: every target row → existed already? / created by you? / test HTTP
-status / GitHub run confirmed (run id or timestamp) / schedule+timezone as saved.
-Plus: any present-but-different jobs found in Phase 2, any UI mismatches with these
-instructions, and confirmation that no existing job was modified.
+**Success = status 204.** Anything else → Troubleshooting below.
 
-## Maintenance note (for the human, not for this task)
+Then verify the poke really started the program on GitHub's side: open
+`https://github.com/quinnspam-sudo/stock-monitor/actions` — this requires being
+logged in to Quinn's GitHub account (`quinnspam-sudo`), because the repository is
+private. A new run of the matching workflow should appear within about a minute of
+your test. **If you can't log in to GitHub, skip this sub-step, rely on the 204,
+and flag in your report that GitHub-side verification is still pending.**
 
-The PAT behind all these jobs is a fine-grained token scoped to this repo's Actions
-permission only, **expiring ~2026-08-07**. When it's rotated, every job's
-Authorization header must be updated or all triggers start returning 401.
+Normal, harmless side effects of testing (mention in report, do nothing about them):
+- Testing **weekly** on a day that isn't Friday: the run starts, immediately prints
+  "Not Friday — skipping", and ends green. The trigger is still proven.
+- Testing **backtest** midweek: it may post one messy partial-week message to
+  Quinn's Discord. Harmless.
+- Testing **options**: it runs a real ~8-minute market scan and posts one summary
+  line to Quinn's Discord #updates channel. Expected.
+
+Finally, confirm each new job shows **enabled** in the list.
+
+## Troubleshooting
+
+| Symptom | Meaning | What to do |
+|---|---|---|
+| Test returns 401 or 403 | Authorization header wrong/missing | Re-copy the header from the template job once. If it fails again, STOP — the token itself may be the problem. Report it. |
+| Test returns 404 | URL typo (usually the filename) | Check the URL against the card character-by-character. |
+| Test returns 422 | Body wrong | Body must be exactly `{"ref":"main"}` and Content-Type `application/json`. |
+| UI doesn't match these notes | Site layout changed | Look for equivalent labels; if genuinely stuck, screenshot-describe what you see in the report. |
+| A target job already exists | Nothing to create | Record its actual schedule; touch nothing. |
+
+## Step 5 — Report back (fill this in)
+
+```
+CRON-JOB.ORG TRIGGER REPORT — <date/time>
+
+Existing jobs found (title / workflow file / schedule / enabled / last status):
+1. ...
+
+Target check:
+- options.yml : [already existed / created / created-with-UTC-fallback] — test status ___ — GitHub run seen? [yes/no/skipped]
+- weekly.yml  : same fields
+- backtest.yml: same fields
+
+Discrepancies / anything odd: ...
+Confirmation: no pre-existing job was modified, disabled, or deleted. [yes]
+Side effects observed (Discord posts etc.): ...
+```
+
+## Note for Quinn (not part of the Cowork task)
+
+The secret token behind every one of these jobs is a fine-grained GitHub PAT,
+scoped to this repo's Actions permission only, **expiring ~2026-08-07**. When it is
+rotated, the `Authorization` header of EVERY job must be updated or all triggers
+start failing with 401. This document doubles as the runbook for that.
