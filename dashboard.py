@@ -75,6 +75,30 @@ def render():
         except ValueError:
             pass
 
+    # Options engine panel: conviction calls from the append ledger (30d).
+    # Empty is the normal state — the engine is designed to be silent.
+    opt_rows = []
+    try:
+        ideas = json.loads((Path(__file__).parent / "options_ideas.json").read_text())
+        for r in ideas:
+            if (datetime.now() - datetime.fromisoformat(r["ts"])).days > 30:
+                continue
+            c = r.get("contract") or {}
+            etf = " <span style='color:#8b949e;font-size:11px'>[ETF]</span>" \
+                if r.get("asset_class") == "etf" else ""
+            opt_rows.append(
+                f"<tr><td>{r['ts'][:10]}</td><td><b>{r['ticker']}</b>{etf}</td>"
+                f"<td>{r.get('lead', '?')}-led</td><td>{r.get('score', '?')}/100</td>"
+                f"<td>{c.get('expiry', '?')} ${c.get('strike', '?')}C @ ${c.get('mid', '?')}"
+                f" (Δ{c.get('delta', '?')})</td></tr>")
+    except Exception:
+        pass
+    options_html = ("<h1 style='margin-top:36px'>🎯 Options Engine — conviction calls (30d)</h1>"
+                    + ("<table><tr><th>Date</th><th>Ticker</th><th>Lead</th><th>Score</th>"
+                       "<th>Contract</th></tr>" + "".join(opt_rows) + "</table>"
+                       if opt_rows else
+                       "<div class='sub'>None in the last 30 days — silence is the bar working.</div>"))
+
     DASH_PATH.write_text(f"""<!doctype html><html><head><meta charset="utf-8">
 <meta http-equiv="refresh" content="300"><title>Stock Monitor</title>
 <style>
@@ -92,7 +116,9 @@ actually gates BUY alerts · auto-refreshes every 5 min · recommends only, neve
 {stale_html}<table><tr><th>#</th><th>Ticker</th><th>Score</th><th>Blend</th><th>Conviction</th>
 <th>Rating</th><th>Timing</th><th>Δ today</th><th>Earnings</th><th>Sector</th><th>Conf.</th></tr>
 {''.join(rows)}
-</table></body></html>""")
+</table>
+{options_html}
+</body></html>""")
     return DASH_PATH
 
 

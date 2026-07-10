@@ -52,9 +52,9 @@ workflow runs on brand-new accounts/repos as an anti-abuse measure (manual
 tick opportunities ever ran). There's no visible toggle for this and no
 guaranteed clear time, so scheduling was moved to **cron-job.org** (free
 external scheduler) calling each workflow's `workflow_dispatch` REST endpoint
-directly — 7 jobs (`monitor.yml` needs two, for its two different
-minute-patterns) on the exact same schedule the removed `schedule:` blocks
-had. Manage/inspect the jobs at cron-job.org's console (account is Quinn's);
+directly — one job per workflow (`monitor.yml` needs two, for its two
+different minute-patterns) on the exact same schedule the removed
+`schedule:` blocks had. Manage/inspect the jobs at cron-job.org's console (account is Quinn's);
 the API token used is a fine-grained GitHub PAT scoped only to this repo's
 Actions permission, expiring ~2026-08-07 (30 days from creation — needs
 rotating before then or the jobs will start failing with 401s).
@@ -62,7 +62,10 @@ rotating before then or the jobs will start failing with 401s).
 - `monitor.yml` — every 15 min, ~6:00–13:00 PT Mon–Fri: scores, delta triggers, Template A payloads
 - `pulse.yml` — hourly ~7:00–12:00 PT Mon–Fri: Template C intraday pulse payload
 - `close.yml` — ~13:35 PT: Template D closing bell payload
-- `weekly.yml` — Friday ~13:45 PT: weekly performance review payload (verdicts vs SPY)
+- `options.yml` — daily after close Mon–Fri: independent options-engine scan
+  (watchlist + `etf_watchlist`), CALL_CONVICTION alerts + OPTIONS_SCAN heartbeat digest
+- `weekly.yml` — Friday ~13:45 PT: weekly performance review payload (verdicts vs
+  SPY, options book, machine-vs-committee signal tracker)
 - `backtest.yml` — Saturday ~09:00 PT: backtests the *local scoring engine's* calls
   (not committee verdicts — that's `weekly.py`) against what each ticker actually
   did over the Mon–Fri just finished, using `history.json` snapshots
