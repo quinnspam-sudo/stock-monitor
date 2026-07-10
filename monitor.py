@@ -247,6 +247,9 @@ def main():
                 import obsidian
                 obsidian.log_recommendation("buy_alert", ticker,
                                             f"score {score}/100, conviction {tier}", result["price"])
+                import signal_tracker
+                signal_tracker.record("buy_alert", ticker, result["price"],
+                                      f"score {score}/100, conviction {tier}")
                 if idea and idea.get("actionable"):
                     c = idea["contract"]
                     import options_engine
@@ -263,6 +266,10 @@ def main():
                         "call_idea", ticker,
                         f"{c['expiry']} ${c['strike']:g}C mid ${c['mid']:.2f} "
                         f"(Δ{c['delta']:.2f}, call score {idea['score']}/100)", c["mid"])
+                    signal_tracker.record(
+                        "call_idea", ticker, result["price"],
+                        f"call score {idea['score']}/100",
+                        contract={k: c.get(k) for k in ("expiry", "strike", "mid", "delta")})
                     print(f"{ticker}: → CALL idea announced: {c['expiry']} ${c['strike']:g}C")
             except Exception as e:
                 print(f"{ticker}: Discord alert failed (continuing): {e}")

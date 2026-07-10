@@ -310,6 +310,7 @@ def evaluate(ticker, spy_close=None):
     except Exception as e:
         out["reasons"].append(f"no price history: {e}")
         return out
+    out["spot"] = round(spot, 2)
 
     rvf = forecast_rv(close)
     atm_iv, term_ratio, expiries = atm_iv_and_term(tk, spot)
@@ -486,6 +487,11 @@ def main():
             actionable.append(r)
             state[t] = r["ts"]
             ledger.append(r)
+            import signal_tracker
+            c = r["contract"]
+            signal_tracker.record("call_conviction", t, r.get("spot"),
+                                  f"score {r['score']}/100, {r['lead']}-led",
+                                  contract={k: c.get(k) for k in ("expiry", "strike", "mid", "delta")})
 
     if actionable:
         with open(STATE_PATH, "w") as f:
