@@ -132,3 +132,52 @@ def option_skew(tk, spot):
         return lines
     except Exception:
         return None
+
+
+# ------------------------------------------------------- commodity context
+
+# Futures curve as sector context for commodity-sensitive names: the equity
+# often trades as a leveraged bet on the underlying commodity, so the
+# committee should see the driver's trend next to the stock's own score.
+# Map is explicit tickers (not sector strings) — yfinance sector labels are
+# too coarse (all of Basic Materials is not a copper play). Names without a
+# liquid yfinance future (uranium, lithium carbonate) stay GAPPED honestly.
+COMMODITY_DRIVERS = {
+    "CL=F": ("WTI crude", {"XOM", "CVX", "COP", "EOG", "FANG", "DVN", "OXY",
+                           "SLB", "HAL", "BKR", "VLO", "MPC", "PSX"}),
+    "NG=F": ("Natural gas", {"LNG", "WMB", "KMI", "ET", "TRGP", "EOG", "DVN"}),
+    "HG=F": ("Copper", {"FCX", "SCCO", "TECK", "ERO", "HBM"}),
+    "GC=F": ("Gold", {"NEM", "AEM", "WPM"}),
+    "SI=F": ("Silver", {"WPM"}),
+}
+
+_FUT_CACHE = {}
+
+
+def _future_trend(symbol, label):
+    if symbol in _FUT_CACHE:
+        return _FUT_CACHE[symbol]
+    line = None
+    try:
+        import yfinance as yf
+        h = yf.Ticker(symbol).history(period="1y")["Close"]
+        if len(h) >= 60:
+            px = float(h.iloc[-1])
+            m3 = px / float(h.iloc[-63]) - 1 if len(h) >= 63 else None
+            sma50 = float(h.rolling(50).mean().iloc[-1])
+            line = (f"{label} ({symbol}): {px:,.2f}, 3-mo {m3:+.1%}, "
+                    f"{'above' if px > sma50 else 'below'} 50d SMA — "
+                    f"{'tailwind' if (m3 or 0) > 0 and px > sma50 else 'headwind' if (m3 or 0) < 0 and px < sma50 else 'mixed'}")
+    except Exception:
+        pass
+    _FUT_CACHE[symbol] = line
+    return line
+
+
+def commodity_context(ticker):
+    """Payload lines for the futures driver(s) behind a commodity-sensitive
+    name; None for names with no mapped driver (renderer skips, not GAPPED —
+    most of the watchlist legitimately has no commodity driver)."""
+    lines = [ln for sym, (label, names) in COMMODITY_DRIVERS.items()
+             if ticker in names and (ln := _future_trend(sym, label))]
+    return lines or None

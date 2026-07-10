@@ -239,6 +239,7 @@ def gather(ticker, timing_score):
             "institutional": _enrich.institutional_flow(tk),
             "filings": _enrich.sec_filings(tk),
             "options_skew": _enrich.option_skew(tk, info.get("currentPrice")),
+            "commodity": _enrich.commodity_context(ticker),
         }
     except Exception:
         pass
@@ -345,6 +346,11 @@ def write_payload(ticker, cur, prev, reasons, kind="Standard"):
             enrich_parts.append(f"  - {heading}:\n" + "\n".join(f"    - {l}" for l in lines))
         else:
             enrich_gapped.append(heading)
+    # Commodity driver renders only when the name HAS one — absence is the
+    # normal case for most of the watchlist, not a data gap.
+    if enr.get("commodity"):
+        enrich_parts.append("  - Commodity driver (futures):\n"
+                            + "\n".join(f"    - {l}" for l in enr["commodity"]))
     enrich_block = "\n".join(enrich_parts) or "  - (enrichment unavailable this run)"
     gap_lines = "\n".join(f"  - {s}: Data Status: GAPPED"
                           for s in GAPPED_SOURCES + enrich_gapped + missing)
