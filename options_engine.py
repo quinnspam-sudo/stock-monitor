@@ -533,13 +533,19 @@ def main():
 
     state = _load(STATE_PATH, {})
     ledger = _load(LEDGER_PATH, [])
-    actionable = []
+    actionable, near = [], []
     for t, asset_class in universe:
         last = state.get(t)
         if not args.ticker and last and \
                 (datetime.now() - datetime.fromisoformat(last)).days < COOLDOWN_DAYS:
             continue
         r = evaluate(t, spy_close, asset_class)
+        try:
+            ayes, comp = r["confluence"].split(" ")[0].split("/")
+            if int(comp) >= 2 and not r["actionable"]:
+                near.append((int(ayes) / int(comp), int(ayes), t, asset_class))
+        except Exception:
+            pass
         if args.ticker or args.all or r["actionable"]:
             print(describe(r) + "\n")
         if r["actionable"]:
@@ -570,8 +576,19 @@ def main():
                                     webhook_url=buy_webhook)
     if not args.ticker:
         n_etf = sum(1 for _, a in universe if a == "etf")
-        print(f"Scanned {len(universe)} names ({len(universe) - n_etf} stocks, {n_etf} ETFs) — "
-              f"{len(actionable)} conviction call(s). Silence is the bar working.")
+        summary = (f"Scanned {len(universe)} names ({len(universe) - n_etf} stocks, {n_etf} ETFs) — "
+                   f"{len(actionable)} conviction call(s).")
+        print(summary + " Silence is the bar working.")
+        if args.discord:
+            # Daily heartbeat to #updates (never pings): without it a silent
+            # engine is indistinguishable from a broken one. Near-misses show
+            # where the scan is converging without implying action.
+            import notify
+            top = sorted(near, reverse=True)[:3]
+            closest = ", ".join(f"{t}{' [ETF]' if a == 'etf' else ''} {ayes}✔"
+                                for _, ayes, t, a in top) or "none"
+            notify.send_message(f"🔍 OPTIONS SCAN — {summary} Closest setups: {closest}.",
+                                kind="OPTIONS_SCAN")
 
 
 if __name__ == "__main__":
