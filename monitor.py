@@ -255,7 +255,7 @@ def main():
                         "consensus-passed BUY — the strongest combined signal)\n"
                         f"{options_engine.describe(idea)}\n"
                         f"Max loss = 100% of premium (${c['mid'] * 100:,.0f}/contract). "
-                        "Committee verdict before acting.", kind="CALL_IDEA")
+                        "Committee verdict before acting.", kind="CALL_IDEA", mention=True)
                     obsidian.log_recommendation(
                         "call_idea", ticker,
                         f"{c['expiry']} ${c['strike']:g}C mid ${c['mid']:.2f} "

@@ -497,7 +497,7 @@ def main():
             for r in actionable:
                 notify.send_message("🎯 OPTIONS ENGINE — independent conviction call\n"
                                     + describe(r) + "\nRecommend-only; committee verdict "
-                                    "before acting.", kind="CALL_CONVICTION")
+                                    "before acting.", kind="CALL_CONVICTION", mention=True)
     if not args.ticker:
         print(f"Scanned {len(tickers)} names — {len(actionable)} conviction call(s). "
               "Silence is the bar working.")
