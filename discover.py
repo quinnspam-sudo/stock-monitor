@@ -92,7 +92,8 @@ DEFAULTS = {
     "hypergrowth": 0.20,      # optimistic: >=20% growth admits even a merely-solid overall
     "reject_cooldown_days": 30,   # don't re-score a rejected name for this long
     "prune_confirmations": 2,     # remove a dead name only after it's flagged dead this many runs running
-    "per_run_add_cap": 25,        # circuit breaker (logged if hit), NOT a quota
+    "per_run_add_cap": 12,        # circuit breaker (logged if hit), NOT a quota — keeps a big
+                                  # cold-start backlog from dumping into an already-large watchlist
     "sleep": 0.4,             # seconds between candidate fetches — be polite to Yahoo
 }
 
@@ -277,10 +278,15 @@ def evaluate_candidate(ticker):
 
 
 def _growth(cur):
-    f = cur.get("fields", {})
-    vals = [f.get("revenueGrowth"), f.get("earningsGrowth")]
-    vals = [v for v in vals if isinstance(v, (int, float))]
-    return max(vals) if vals else None
+    """Revenue growth ONLY — the reliable growth signal for admission.
+
+    earningsGrowth is intentionally excluded: on turnaround names a tiny
+    prior-year EPS base explodes the percentage (the first live run waved in
+    names on +680% / +990% / +1250% earnings 'growth' that were pure base
+    noise). Revenue growth can't blow up that way, so it's the rigorous input.
+    """
+    v = cur.get("fields", {}).get("revenueGrowth")
+    return v if isinstance(v, (int, float)) else None
 
 
 def qualifies(ev, dc, alert_threshold):
@@ -303,17 +309,25 @@ def qualifies(ev, dc, alert_threshold):
     if struct_vetoes:
         return False, None, "veto: " + "; ".join(struct_vetoes)
 
-    # ── OPTIMISTIC promise (any one admits) ──
-    g = _growth(cur)
+    # ── RIGOR: a genuine factor conviction tier is required to be admitted. ──
+    # LOW conviction (<50) can never enter — the first live run let LOW-tier
+    # names in via the near-buyable branch (price proximity alone), which is
+    # exactly the "not actually rigorous" hole. Discovery watches names with
+    # real factor support; timing/regime stay the monitor's job.
+    if ev["tier"] not in ("HIGH", "MEDIUM"):
+        return False, None, f"tier {ev['tier']} below MEDIUM (insufficient factor conviction)"
+
+    # ── OPTIMISTIC promise (any one admits a name that cleared rigor) ──
+    g = _growth(cur)  # revenue growth only
     if ev["tier"] == "HIGH":
         return True, "HIGH conviction tier", None
-    if ev["tier"] == "MEDIUM" and g is not None and g >= dc["growth_floor"]:
-        return True, f"MEDIUM tier + {g:+.0%} growth", None
+    if g is not None and g >= dc["growth_floor"]:
+        return True, f"MEDIUM tier + {g:+.0%} rev growth", None
     if ev["blend"] >= alert_threshold - dc["near_buy_margin"]:
-        return True, f"near-buyable (blend {ev['blend']} vs {alert_threshold})", None
+        return True, f"MEDIUM tier, near-buyable (blend {ev['blend']} vs {alert_threshold})", None
     if g is not None and g >= dc["hypergrowth"] and overall >= 65:
-        return True, f"hyper-growth {g:+.0%} + overall {overall}", None
-    return False, None, f"solid but no promise trigger (tier {ev['tier']}, blend {ev['blend']}, growth {g})"
+        return True, f"hyper rev growth {g:+.0%} + overall {overall}", None
+    return False, None, f"MEDIUM tier but no promise trigger (blend {ev['blend']}, rev growth {g})"
 
 
 # ── prune (confirmation-gated, reads watchlist_health.json) ──────────────────

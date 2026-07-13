@@ -430,17 +430,12 @@
     "AIG",
     "DLO",
     "WBS",
-    "ANGX",
-    "PAY",
     "AVAH",
     "LYG",
     "NLY",
     "NAT",
     "ALLY",
     "SIMO",
-    "ITUB",
-    "KVUE",
-    "HST",
     "SNX",
     "NTR",
     "BBD",
@@ -735,8 +730,6 @@
       "TTEK",
       "IRM",
       "NLY",
-      "KVUE",
-      "HST",
       "TAL"
     ],
     "Uncategorized": [
@@ -804,7 +797,6 @@
       "TBLA",
       "FLYW",
       "DLO",
-      "PAY",
       "SNX"
     ],
     "Software & Data (extended)": [
@@ -881,7 +873,6 @@
       "WBS",
       "LYG",
       "ALLY",
-      "ITUB",
       "BBD"
     ],
     "Consumer & Travel": [
@@ -920,8 +911,7 @@
       "LYV",
       "RDDT",
       "SE",
-      "BABA",
-      "ANGX"
+      "BABA"
     ],
     "Housing & Builders": [
       "DHI",
@@ -1018,7 +1008,7 @@
     "hypergrowth": 0.2,
     "reject_cooldown_days": 30,
     "prune_confirmations": 2,
-    "per_run_add_cap": 25,
+    "per_run_add_cap": 12,
     "sleep": 0.4
   }
 }

@@ -324,6 +324,19 @@
       "errors": [],
       "budget_hit": true,
       "watchlist_size": 445
+    },
+    {
+      "when": "2026-07-13T15:18",
+      "dry_run": false,
+      "reconcile": true,
+      "removed_by_refined_gate": [
+        "ANGX",
+        "PAY",
+        "ITUB",
+        "KVUE",
+        "HST"
+      ],
+      "watchlist_size": 440
     }
   ]
 }

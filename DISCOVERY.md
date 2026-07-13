@@ -39,16 +39,24 @@ rules.
   momentum < −10% (falling knife). The *regime* veto is deliberately ignored
   here — a hostile tape is a reason not to **buy**, not a reason not to **watch**.
 
-**OPTIMISTIC promise** — any one admits a name that cleared the floors:
+A **MEDIUM or HIGH** conviction tier is required to be admitted at all — LOW
+tier (factor conviction < 50) can never enter, even at a strong price. (The
+first live run exposed this: LOW-tier names were slipping in via the
+near-buyable branch on price proximity alone — not actually rigorous.)
+
+**OPTIMISTIC promise** — any one admits a MEDIUM/HIGH name that cleared the floors:
 
 - conviction tier **HIGH**, or
-- tier **MEDIUM** with ≥10% revenue/earnings growth, or
+- ≥10% **revenue** growth (earningsGrowth is *not* used — a tiny prior-year EPS
+  base explodes the % on turnaround names; the first live run waved in names on
+  +680%/+990%/+1250% earnings noise, so only revenue growth qualifies now), or
 - **near-buyable**: blended score within 12 of `alert_threshold`, or
-- **hyper-growth**: ≥20% growth with overall ≥ 65
+- **hyper-growth**: ≥20% revenue growth with overall ≥ 65
 
-Calibrated to a natural handful per run — **not a quota**. A generous per-run
-safety ceiling (`per_run_add_cap`, 25) only trips as a logged circuit breaker;
-if it recurs, recalibrate the gate deliberately (same discipline as
+Calibrated to a natural handful per run — **not a quota**. A per-run safety
+ceiling (`per_run_add_cap`, 12) only trips as a logged circuit breaker — it
+keeps a big cold-start backlog from dumping into an already-large watchlist; if
+it recurs steadily, recalibrate the gate deliberately (same discipline as
 `consensus.SUPERMAJORITY`).
 
 ## Sourcing (free + dynamic)
