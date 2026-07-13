@@ -419,7 +419,32 @@
     "NEM",
     "AEM",
     "WPM",
-    "IONS"
+    "IONS",
+    "MTCH",
+    "MFG",
+    "BBY",
+    "TBLA",
+    "MET",
+    "AAL",
+    "FLYW",
+    "AIG",
+    "DLO",
+    "WBS",
+    "ANGX",
+    "PAY",
+    "AVAH",
+    "LYG",
+    "NLY",
+    "NAT",
+    "ALLY",
+    "SIMO",
+    "ITUB",
+    "KVUE",
+    "HST",
+    "SNX",
+    "NTR",
+    "BBD",
+    "TAL"
   ],
   "alert_threshold": 76,
   "cooldown_hours": 24,
@@ -559,7 +584,8 @@
       "ARGX",
       "AZN",
       "NVS",
-      "IONS"
+      "IONS",
+      "AVAH"
     ],
     "Automation & Robotics": [
       "ROK",
@@ -625,7 +651,8 @@
       "CRS",
       "AA",
       "MP",
-      "LAC"
+      "LAC",
+      "NTR"
     ],
     "Cybersecurity": [
       "CRWD",
@@ -706,7 +733,11 @@
       "ECL",
       "VRSK",
       "TTEK",
-      "IRM"
+      "IRM",
+      "NLY",
+      "KVUE",
+      "HST",
+      "TAL"
     ],
     "Uncategorized": [
       "TTWO"
@@ -738,7 +769,8 @@
       "AAOI",
       "OLED",
       "RMBS",
-      "TSEM"
+      "TSEM",
+      "SIMO"
     ],
     "Networking & Optics": [
       "APH",
@@ -767,7 +799,13 @@
       "MELI",
       "NFLX",
       "BKNG",
-      "TEM"
+      "TEM",
+      "MTCH",
+      "TBLA",
+      "FLYW",
+      "DLO",
+      "PAY",
+      "SNX"
     ],
     "Software & Data (extended)": [
       "TEAM",
@@ -816,7 +854,8 @@
       "WMB",
       "KMI",
       "ET",
-      "TRGP"
+      "TRGP",
+      "NAT"
     ],
     "Financials & Alt Managers": [
       "BAC",
@@ -835,7 +874,15 @@
       "LPLA",
       "AON",
       "AJG",
-      "BRO"
+      "BRO",
+      "MFG",
+      "MET",
+      "AIG",
+      "WBS",
+      "LYG",
+      "ALLY",
+      "ITUB",
+      "BBD"
     ],
     "Consumer & Travel": [
       "LULU",
@@ -852,7 +899,8 @@
       "UAL",
       "EXPE",
       "TSCO",
-      "WSM"
+      "WSM",
+      "BBY"
     ],
     "EV & Mobility": [
       "TSLA",
@@ -872,7 +920,8 @@
       "LYV",
       "RDDT",
       "SE",
-      "BABA"
+      "BABA",
+      "ANGX"
     ],
     "Housing & Builders": [
       "DHI",
@@ -888,7 +937,8 @@
       "PCAR",
       "WAB",
       "MOD",
-      "CARR"
+      "CARR",
+      "AAL"
     ],
     "Payments & Fintech": [
       "FOUR",
