@@ -99,6 +99,7 @@ Compare the list you built against these three targets:
 | `options.yml`  | daily options-market scan | 13:45 Pacific, Monday–Friday |
 | `weekly.yml`   | Friday performance review | 13:45 Pacific, Fridays |
 | `backtest.yml` | Saturday scoring backtest | 09:00 Pacific, Saturdays |
+| `discover.yml` | weekly watchlist discovery | 09:00 Pacific, Saturdays |
 
 For each: **exists with this schedule** (do nothing) / **exists with a different
 schedule** (do NOT change it — just note the difference for the report) /
@@ -157,6 +158,15 @@ Identical to Card 1 except:
 - URL: `.../actions/workflows/backtest.yml/dispatches`
 - Schedule: `0 9 * * 6`, timezone America/Los_Angeles
   ( = Saturdays 09:00 Pacific; UTC fallback: `0 16 * * 6`)
+
+### Card 4 — discover
+
+Identical to Card 1 except:
+- Title: `stock-monitor discover`
+- URL: `.../actions/workflows/discover.yml/dispatches`
+- Schedule: `30 9 * * 6`, timezone America/Los_Angeles
+  ( = Saturdays 09:30 Pacific — 30 min after `backtest`, so the two weekend
+    yfinance-heavy runs don't overlap; UTC fallback: `30 16 * * 6`)
 
 ---
 

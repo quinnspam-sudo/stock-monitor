@@ -102,6 +102,13 @@ rotating before then or the jobs will start failing with 401s).
   in-channel with a ✅/❌ confirming exactly what was parsed. Credentials:
   `discord_bot_token` (Bot Token from the Discord Developer Portal, **not**
   a webhook secret) + `discord_buy_log_channel_id`.
+- `discover.yml` — Saturday ~09:30 PT: the watchlist discovery engine
+  (`discover.py`) — sources new names from free Yahoo screens + sector
+  top-companies, admits the ones clearing the rigorous-but-optimistic gate
+  (favouring under-represented themes), and prunes structurally-dead names.
+  Runs after Friday's `weekly.py` refreshes `watchlist_health.json` (the prune
+  input). Adds to the watchlist only — never touches the frozen trading rules.
+  See `DISCOVERY.md`.
 
 ### Two separate ledgers — recommendations vs actual trades (2026-07-08)
 
@@ -196,6 +203,25 @@ open ~/Claude/stock-monitor/dashboard.html   # auto-refreshes every 5 min
 ./venv/bin/python watchlist.py remove TSLA   # also clears its ledger entry
 ```
 
+### Automatic discovery (`discover.py`)
+
+`discover.py` grows the watchlist on its own, weekly, on a **rigorous-but-
+optimistic** bar — it asks "is this worth *watching*?" (durable quality, no
+timing/regime gate) rather than the monitor's "should we buy it *now*?". It
+sources new names from free Yahoo screens + sector top-companies, scores them
+with the exact monitor pipeline, auto-adds the ones that clear the gate (into
+the right thematic category, favouring under-represented themes), and prunes
+structurally-dead names that can never alert. Every run is announced to
+#updates and logged. It only curates watchlist membership — the frozen trading
+rules (`EVALUATION_PROTOCOL.md`) still decide if/when any name alerts. Full
+design in **`DISCOVERY.md`**.
+
+```bash
+./venv/bin/python discover.py            # full run (also runs Saturdays via discover.yml)
+./venv/bin/python discover.py --dry-run  # propose mode — score/rank/print, change nothing
+./venv/bin/python discover.py --report   # last run's summary
+```
+
 ## Discord field guide
 
 `./venv/bin/python guide.py` posts the alert field guide (every output type,
@@ -243,6 +269,9 @@ week-to-week.
 - `alert_state.json` — Discord alert cooldowns
 - `sell_alert_state.json` — sell-signal cooldowns (per ticker+kind)
 - `discord_intake_state.json` — buy-log bot's last-processed Discord message ID
+- `discover_log.json` — every discovery run's adds/prunes/near-misses (from `discover.py`)
+- `discover_state.json` — discovery reject cooldowns + prune-confirmation counters
+- `watchlist_health.json` — dead-name report (from `watchlist_health.py`; read by the prune pass)
 
 ## Committee pipeline (manual Claude Pro workflow)
 

@@ -937,5 +937,38 @@
     "EWZ",
     "TLT",
     "HYG"
-  ]
+  ],
+  "discovery": {
+    "screens": [
+      "growth_technology_stocks",
+      "undervalued_growth_stocks",
+      "aggressive_small_caps",
+      "undervalued_large_caps",
+      "most_actives"
+    ],
+    "diversify_sectors": [
+      "healthcare",
+      "financial-services",
+      "consumer-defensive",
+      "energy",
+      "utilities",
+      "basic-materials",
+      "real-estate",
+      "industrials",
+      "consumer-cyclical",
+      "communication-services"
+    ],
+    "screen_count": 40,
+    "sector_top_n": 15,
+    "eval_budget": 120,
+    "min_overall": 60,
+    "min_confidence": 45,
+    "near_buy_margin": 12,
+    "growth_floor": 0.1,
+    "hypergrowth": 0.2,
+    "reject_cooldown_days": 30,
+    "prune_confirmations": 2,
+    "per_run_add_cap": 25,
+    "sleep": 0.4
+  }
 }

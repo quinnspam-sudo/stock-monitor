@@ -142,6 +142,15 @@ def main():
     except Exception as e:
         tracker_block = f"  - tracker unavailable this run: {e}"
 
+    # Watchlist discovery: what the rigorous-but-optimistic engine drew in and
+    # pruned recently. Names enter the watchlist only — the frozen trading rules
+    # still decide if/when any ever alert (see EVALUATION_PROTOCOL.md).
+    try:
+        import discover
+        discover_block = "\n".join(discover.report_lines(n_runs=4))
+    except Exception as e:
+        discover_block = f"  - discovery unavailable this run: {e}"
+
     PROMPTS_DIR.mkdir(exist_ok=True)
     path = PROMPTS_DIR / f"{now:%Y-%m-%d}_WEEKLY_review.md"
     path.write_text(f"""# COMMITTEE DATA PAYLOAD — WEEKLY PERFORMANCE REVIEW
@@ -176,6 +185,9 @@ re-rated, and is sector concentration acceptable? Free-form output (no template)
 
 ## Machine book vs committee book (signal_tracker, last 90d)
 {tracker_block}
+
+## Watchlist discovery (rigorous-but-optimistic engine, recent runs)
+{discover_block}
 """)
     import obsidian
     obsidian.mirror_payload(path)
