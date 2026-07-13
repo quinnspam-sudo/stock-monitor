@@ -76,6 +76,14 @@ def send_alert(ticker, score, action, price, details, webhook_url=None):
             "Discord: Server Settings > Integrations > Webhooks > New Webhook > Copy URL"
         )
     color = GREEN if action == "BUY" else YELLOW if action == "WATCH" else GREY
+    # Mechanical sizing: the Jan-Jul replays showed the buy signal's alpha is
+    # carried by a few huge outliers (median fire ~0 alpha), so the edge only
+    # survives if EVERY alert is bought at equal size with no discretion.
+    # Prescribe the exact action on the card so no decision is left to make.
+    amount = cfg.get("buy_amount_usd")
+    if action == "BUY" and amount and price:
+        details = {"Mechanical action": f"BUY ${amount:,.2f} (~{amount / price:.4f} sh) — "
+                   "every alert, equal size, no picking", **details}
     import obsidian
     obsidian.log_ping(action, f"**{ticker}** score {score}/100 at ${price:,.2f} — "
                       + "; ".join(f"{k}: {v}" for k, v in details.items()))

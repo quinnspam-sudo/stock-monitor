@@ -12,7 +12,7 @@ GUIDE = """\
 ━━━━━━━━━━━━━━━━━━
 🟢 **BUY ALERT** (green card with a ticker + score)
 **Means:** a watchlist stock crossed the momentum threshold (75/100) — trend, volume, and relative strength are aligned. The card now includes a **Factor conviction** line (HIGH/MEDIUM/LOW) blending Magic Formula rank, Piotroski F-Score, quality gates, and momentum.
-**Do:** HIGH/MEDIUM → paste the ticker's committee payload into Claude Pro and get a verdict before any trade. LOW → treat as watch-only; momentum without factor support is the weakest signal. Never trade off the card alone.
+**Do:** execute the card's **Mechanical action** line — buy the fixed dollar amount (config `buy_amount_usd`), every alert, equal size, then log it in #buy-log. The Jan-Jul backtests showed the alpha lives in a few huge outliers (median alert ≈ 0): picking among alerts is how the edge dies. Committee judgment belongs upstream — deciding what's ON the watchlist — not vetoing individual alerts. If the total dollar flow is too high, lower `buy_amount_usd` or raise `alert_threshold`; don't skip alerts.
 
 📋 **COMMITTEE PAYLOAD(S) READY**
 **Means:** something *thesis-relevant* changed — score moved ≥8/110, timing ≥15, rating band crossed, Top-5 rank shifted, or a first evaluation. This is the system's core signal; it fires rarely by design.
