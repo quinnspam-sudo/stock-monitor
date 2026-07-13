@@ -157,7 +157,18 @@ def report_lines(max_days=None):
 
 def cmd_report(args):
     max_days = int(args[args.index("--days") + 1]) if "--days" in args else None
-    print("\n".join(report_lines(max_days)))
+    lines = report_lines(max_days)
+    print("\n".join(lines))
+    if "--discord" in args:
+        # Post only the aggregate section (skip the per-signal table — too
+        # long for an embed; the aggregates are the actionable part).
+        cut = next((i for i, l in enumerate(lines) if l.startswith("MACHINE BOOK")), 0)
+        summary = "\n".join(lines[cut:])
+        from notify import send_message
+        send_message("🧾 **MACHINE vs COMMITTEE — signal tracker report**\n"
+                     "Does the committee's paste time earn alpha over the raw machine book?\n"
+                     f"```\n{summary}\n```", kind="SIGNAL_TRACKER")
+        print("Signal-tracker summary posted to Discord.")
 
 
 if __name__ == "__main__":

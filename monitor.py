@@ -69,6 +69,47 @@ def score_ticker(ticker):
     }
 
 
+REGIME_STATE_PATH = Path(__file__).parent / "regime_state.json"
+
+
+def check_regime_transition():
+    """Ping the updates channel when the market regime flips.
+
+    Without this, a regime change is invisible: buy alerts just stop (gate
+    closed) and sell stops silently suspend (sell_check.py) — Discord goes
+    quiet exactly when the user most wants to know what the system is doing.
+    One message per flip, state persisted across runs.
+    """
+    try:
+        r = consensus.market_regime()
+        cur = bool(r.get("pass"))
+        prev = None
+        if REGIME_STATE_PATH.exists():
+            prev = json.loads(REGIME_STATE_PATH.read_text()).get("pass")
+        if prev is None or cur == prev:
+            REGIME_STATE_PATH.write_text(json.dumps({"pass": cur}))
+            return
+        if cur:
+            note = ("🟢 **MARKET REGIME: RISK-ON** — " + r.get("detail", "") +
+                    "\nThe system is back to normal operation: BUY alerts re-enabled, "
+                    "sell stops (-15% / 25% trailing) re-armed. Expect a burst of "
+                    "queued alerts over the next few runs — the mechanical rule still "
+                    "applies: every alert, equal size.")
+        else:
+            note = ("🔴 **MARKET REGIME: RISK-OFF** — " + r.get("detail", "") +
+                    "\nThe system is now in drawdown posture, per the exit-rule "
+                    "backtest: NO new BUY alerts (regime gate closed), sell stops "
+                    "SUSPENDED (a stock falling with the whole market usually recovers "
+                    "with it — selling here tested as sell-low/rebuy-high churn). Only "
+                    "the unconditional -30% disaster floor remains armed. Expected "
+                    "behavior is silence: hold, don't act.")
+        send_message(note, kind="REGIME_CHANGE")
+        print(f"Regime transition: {'RISK-ON' if cur else 'RISK-OFF'} — updates channel notified")
+        REGIME_STATE_PATH.write_text(json.dumps({"pass": cur}))
+    except Exception as e:
+        print(f"regime transition check failed (continuing): {e}")
+
+
 def load_state():
     return json.loads(STATE_PATH.read_text()) if STATE_PATH.exists() else {}
 
@@ -92,6 +133,8 @@ def main():
     state = load_state()
     ledger = committee.load_ledger()
     now = time.time()
+    if not dry_run:
+        check_regime_transition()
     print(alert_stats.summary(now))  # measurement only — never feeds back into thresholds
     cooldown = cfg.get("cooldown_hours", 24) * 3600
     payloads = []
@@ -193,29 +236,30 @@ def main():
         f = cur_eval.get("factors", {})
         conv, tier = factors.conviction(f) if f else (None, "UNRATED")
         state[ticker] = now  # cooldown applies regardless of outcome — don't re-evaluate every run either way
-        # Earnings gate at the fixed strict bar: earnings within 10 business
-        # days, positivity >=70 with >=3 signals, beat streak >=3/4. This is a
-        # calibrated quality bar — the weekly alert count is whatever it is.
+        # Earnings gate — DEMOTED from hard suppressor to informational tag
+        # (2026-07-13). The Jan-Jul backtests that validated the system's edge
+        # (+11pts over SPY buy-and-hold; see committee_prompts/2026-07-13_
+        # EXIT_RULES_BACKTEST.md) replayed "buy every consensus fire" with NO
+        # earnings gate; as a suppressor the gate blocked nearly every alert
+        # (e.g. all three consensus-passed BUYs on 2026-07-13) — untested
+        # behavior replacing tested behavior. The gate's read is still on the
+        # card so it can be evaluated; signal_tracker records gate status per
+        # signal so its alpha contribution can be measured before any re-
+        # promotion to suppressor.
         gate = cur_eval.get("earnings_gate") or {}
-        if not gate.get("actionable"):
-            why = "; ".join(gate.get("reasons") or ["earnings gate data unavailable this run"])
-            note = (f"⛔ **{ticker}** hit the BUY threshold (score {score}/100 at "
-                    f"${result['price']:,.2f}, conviction {tier}) but the earnings gate is "
-                    f"closed — {why}. Policy: actionable BUYs require earnings within "
-                    f"{earnings_gate.WINDOW_BDAYS} business days AND a strict Earnings "
-                    "Positivity pass. Logged as thesis-only, not a BUY alert.")
-            try:
-                send_message(note, kind="EARNINGS_GATE")
-                print(f"{ticker}: BUY suppressed — earnings gate closed ({why}) — updates channel only")
-            except Exception as e:
-                print(f"{ticker}: Discord notice failed (continuing): {e}")
-            continue
+        gate_open = bool(gate.get("actionable"))
+        if gate_open:
+            gate_note = (f"OPEN — earnings in {gate.get('bdays_to_earnings')} business day(s), "
+                         f"positivity {gate.get('positivity')}/100, "
+                         f"beat streak {gate.get('beats')}/{gate.get('beats_n')}")
+        else:
+            gate_note = "closed: " + "; ".join(gate.get("reasons") or ["gate data unavailable"])
         # Supermajority consensus: >=75% of computable systems bullish, no hard
         # vetoes, friendly market regime. The last gate before an alert — this
         # is deliberately hard to pass; long silences are expected.
         cons = cur_eval.get("consensus") or {}
         if not cons.get("pass"):
-            note = (f"🗳️ **{ticker}** cleared the earnings gate but FAILED the consensus vote "
+            note = (f"🗳️ **{ticker}** FAILED the consensus vote "
                     f"(score {score}/100 at ${result['price']:,.2f}, conviction {tier}) — "
                     f"{cons.get('detail', 'consensus unavailable')}. High-conviction policy: "
                     "no BUY alert without supermajority agreement. Logged as thesis-only.")
@@ -228,14 +272,13 @@ def main():
         if tier in ("HIGH", "MEDIUM"):
             details = dict(result["details"])
             details["Factor conviction"] = f"{tier}" + (f" ({conv}/100)" if conv is not None else "")
-            details["Earnings gate"] = (f"OPEN — earnings in {gate.get('bdays_to_earnings')} business day(s), "
-                                        f"positivity {gate.get('positivity')}/100, "
-                                        f"beat streak {gate.get('beats')}/{gate.get('beats_n')}")
+            details["Earnings gate"] = gate_note
             if f.get("magic_rank"):
                 details["Magic Formula"] = f"#{f['magic_rank']}/{f['magic_universe']}"
             if f.get("f_score") is not None:
                 details["F-Score"] = f"{f['f_score']}/9"
-            details["Next step"] = "Paste this ticker's payload into Claude Pro for a committee verdict before acting"
+            details["Next step"] = ("Execute the Mechanical action above, then log it in #buy-log. "
+                                    "Committee payloads are for watchlist curation, not trade approval.")
             idea = cur_eval.get("call_idea")
             if idea and idea.get("contract"):
                 import options_engine
@@ -249,7 +292,8 @@ def main():
                                             f"score {score}/100, conviction {tier}", result["price"])
                 import signal_tracker
                 signal_tracker.record("buy_alert", ticker, result["price"],
-                                      f"score {score}/100, conviction {tier}")
+                                      f"score {score}/100, conviction {tier}, "
+                                      f"earnings_gate={'open' if gate_open else 'closed'}")
                 if idea and idea.get("actionable"):
                     c = idea["contract"]
                     import options_engine

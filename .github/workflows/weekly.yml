@@ -33,6 +33,12 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           DISCORD_UPDATES_WEBHOOK_URL: ${{ secrets.DISCORD_UPDATES_WEBHOOK_URL }}
+      # Machine-vs-committee scorecard: is the human layer earning alpha over
+      # the raw machine book, or are the mechanical gates doing all the work?
+      - run: python signal_tracker.py report --days 90 --discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_UPDATES_WEBHOOK_URL: ${{ secrets.DISCORD_UPDATES_WEBHOOK_URL }}
       - name: Commit updated state
         run: |
           git config user.name "stock-monitor-bot"
