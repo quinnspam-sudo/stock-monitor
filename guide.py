@@ -35,6 +35,15 @@ GUIDE = """\
 **Do:** read for calibration on the scoring engine, not individual trades. If "signal failed" recurs for several weeks running, the momentum/factor weights need revisiting, not just that week's picks.
 
 ━━━━━━━━━━━━━━━━━━
+🟢/🔴 **MARKET REGIME: RISK-ON / RISK-OFF** (updates channel, fires only on a flip)
+**Means:** the SPY/VIX regime gate changed state. RISK-OFF = drawdown posture: no new BUY alerts, sell stops suspended, only the -30% disaster floor armed — expected behavior is silence; hold, don't act. RISK-ON = normal operation resumes; expect a burst of queued alerts.
+**Do:** nothing mechanical — this exists so silence is never ambiguous.
+
+🚨 **DEEP BEAR** (one-time, SPY 20%+ off its 1-year high)
+**Means:** the system has left its tested range — hold-through-drawdown was validated on fast corrections, not multi-year bears.
+**Do:** this is the pre-agreed trigger for a MANUAL review: paste the current book into the committee and decide deliberately whether to keep holding.
+
+━━━━━━━━━━━━━━━━━━
 🔴 **SELL SIGNAL** (posts to the separate #sell-alerts channel — hourly, market hours)
 **Means:** one of three mechanical exit rules fired against a *real open position* (something you actually logged as bought via #buy-log and haven't fully sold yet — not the whole watchlist, and not a committee verdict either):
   - **STOP_LOSS** — down 15%+ from your average cost *while SPY is above its 50-day average*. The market is fine and your stock isn't — that's an idiosyncratic problem, cut it. When SPY is below its 50-day (market-wide drawdown), this stop and TRAIL_STOP are suspended: selling with the whole market tested as sell-low/rebuy-high churn.

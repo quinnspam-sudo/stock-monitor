@@ -1,0 +1,488 @@
+# COMMITTEE DATA PAYLOAD — WEEKLY PERFORMANCE REVIEW
+Generated: 2026-07-13 12:51 local | Source: stock-monitor weekly daemon
+Instructions: Paste into the Investment Committee session. Have the Portfolio
+Manager and Risk Manager lead a review: were past verdicts right, what should be
+re-rated, and is sector concentration acceptable? Free-form output (no template).
+
+## Alert-rate health (measurement only — thresholds are fixed, not adaptive)
+  - BUY alerts, trailing 7 days: 0 — below the 2-6 calibration band (fine in an earnings drought). Persistent drift → recalibrate thresholds deliberately.
+
+## Verdict performance to date (return since verdict | alpha vs SPY)
+  - No verdicts recorded yet — record them with verdict.py add
+
+## Current scoreboard (local proxy, ranked)
+  - V: 93/110 (Strong Buy) | timing 81/100
+  - DUOL: 91/110 (Strong Buy) | timing 88/100
+  - VEEV: 90/110 (Strong Buy) | timing 85/100
+  - PTC: 90/110 (Strong Buy) | timing 18/100
+  - RDDT: 90/110 (Strong Buy) | timing 95/100
+  - QLYS: 89/110 (Strong Buy) | timing 70/100
+  - META: 88/110 (Strong Buy) | timing 54/100
+  - FTNT: 88/110 (Strong Buy) | timing 95/100
+  - AVGO: 87/110 (Buy) | timing 12/100
+  - SPGI: 87/110 (Buy) | timing 73/100
+  - AEM: 87/110 (Buy) | timing 0/100
+  - NVO: 86/110 (Buy) | timing 95/100
+  - MU: 86/110 (Buy) | timing 55/100
+  - MANH: 86/110 (Buy) | timing 85/100
+  - ADSK: 86/110 (Buy) | timing 4/100
+  - WPM: 86/110 (Buy) | timing 0/100
+  - CHKP: 85/110 (Buy) | timing 59/100
+  - TSM: 85/110 (Buy) | timing 30/100
+  - MA: 85/110 (Buy) | timing 71/100
+  - GEN: 85/110 (Buy) | timing 68/100
+  - ICE: 85/110 (Buy) | timing 10/100
+  - NEM: 85/110 (Buy) | timing 0/100
+  - NVDA: 84/110 (Buy) | timing 18/100
+  - AAPL: 84/110 (Buy) | timing 91/100
+  - LLY: 84/110 (Buy) | timing 68/100
+  - PATH: 84/110 (Buy) | timing 71/100
+  - ANET: 84/110 (Buy) | timing 79/100
+  - NOW: 84/110 (Buy) | timing 51/100
+  - INTU: 84/110 (Buy) | timing 17/100
+  - ADBE: 84/110 (Buy) | timing 7/100
+  - CDNS: 83/110 (Buy) | timing 55/100
+  - GILD: 83/110 (Buy) | timing 37/100
+  - DT: 83/110 (Buy) | timing 94/100
+  - EVR: 83/110 (Buy) | timing 15/100
+  - ASML: 82/110 (Buy) | timing 50/100
+  - MSCI: 82/110 (Buy) | timing 49/100
+  - SCCO: 82/110 (Buy) | timing 0/100
+  - ADI: 82/110 (Buy) | timing 14/100
+  - SCHW: 82/110 (Buy) | timing 71/100
+  - APP: 82/110 (Buy) | timing 17/100
+  - NDAQ: 82/110 (Buy) | timing 39/100
+  - BKNG: 82/110 (Buy) | timing 56/100
+  - ABNB: 82/110 (Buy) | timing 86/100
+  - PLTR: 81/110 (Buy) | timing 10/100
+  - MCO: 81/110 (Buy) | timing 78/100
+  - ESTC: 81/110 (Buy) | timing 65/100
+  - DXCM: 81/110 (Buy) | timing 72/100
+  - WDC: 81/110 (Buy) | timing 70/100
+  - RMD: 81/110 (Buy) | timing 15/100
+  - EW: 81/110 (Buy) | timing 74/100
+  - BRO: 81/110 (Buy) | timing 68/100
+  - MSFT: 80/110 (Buy) | timing 13/100
+  - VRTX: 80/110 (Buy) | timing 72/100
+  - SQM: 80/110 (Buy) | timing 0/100
+  - WDAY: 80/110 (Buy) | timing 55/100
+  - ABBV: 80/110 (Buy) | timing 70/100
+  - BLK: 80/110 (Buy) | timing 2/100
+  - ROP: 80/110 (Buy) | timing 64/100
+  - NFLX: 80/110 (Buy) | timing 10/100
+  - AON: 80/110 (Buy) | timing 74/100
+  - EXPE: 80/110 (Buy) | timing 94/100
+  - LRCX: 79/110 (Buy) | timing 35/100
+  - APH: 79/110 (Buy) | timing 46/100
+  - HBM: 79/110 (Buy) | timing 0/100
+  - CME: 79/110 (Buy) | timing 0/100
+  - BX: 79/110 (Buy) | timing 47/100
+  - GOOGL: 78/110 (Buy) | timing 21/100
+  - HUBS: 78/110 (Buy) | timing 49/100
+  - NTAP: 78/110 (Buy) | timing 67/100
+  - PINS: 78/110 (Buy) | timing 85/100
+  - NU: 78/110 (Buy) | timing 65/100
+  - VRSK: 78/110 (Buy) | timing 76/100
+  - OKTA: 77/110 (Buy) | timing 70/100
+  - CRDO: 77/110 (Buy) | timing 55/100
+  - AXP: 77/110 (Buy) | timing 85/100
+  - GOOG: 77/110 (Buy) | timing 13/100
+  - ARGX: 77/110 (Buy) | timing 43/100
+  - IBKR: 77/110 (Buy) | timing 62/100
+  - AMAT: 76/110 (Buy) | timing 61/100
+  - KLAC: 76/110 (Buy) | timing 55/100
+  - TEAM: 76/110 (Buy) | timing 60/100
+  - CRM: 76/110 (Buy) | timing 10/100
+  - BESIY: 76/110 (Buy) | timing 29/100
+  - PODD: 76/110 (Buy) | timing 34/100
+  - CTAS: 76/110 (Buy) | timing 67/100
+  - FSLR: 76/110 (Buy) | timing 10/100
+  - ALL: 76/110 (Buy) | timing 84/100
+  - OWL: 76/110 (Buy) | timing 22/100
+  - DECK: 76/110 (Buy) | timing 45/100
+  - NVS: 76/110 (Buy) | timing 51/100
+  - PANW: 75/110 (Buy) | timing 80/100
+  - REGN: 75/110 (Buy) | timing 42/100
+  - MRK: 75/110 (Buy) | timing 53/100
+  - BHP: 75/110 (Buy) | timing 4/100
+  - CSCO: 75/110 (Buy) | timing 65/100
+  - CGNX: 75/110 (Buy) | timing 37/100
+  - UBER: 75/110 (Buy) | timing 42/100
+  - DHR: 75/110 (Buy) | timing 67/100
+  - ILMN: 75/110 (Buy) | timing 85/100
+  - GWRE: 75/110 (Buy) | timing 50/100
+  - KEYS: 75/110 (Buy) | timing 0/100
+  - IDXX: 75/110 (Buy) | timing 32/100
+  - CB: 75/110 (Buy) | timing 81/100
+  - AJG: 75/110 (Buy) | timing 82/100
+  - TER: 74/110 (Watch) | timing 15/100
+  - HWM: 74/110 (Watch) | timing 55/100
+  - SNPS: 74/110 (Watch) | timing 14/100
+  - AMGN: 74/110 (Watch) | timing 52/100
+  - RBRK: 74/110 (Watch) | timing 80/100
+  - BRZE: 74/110 (Watch) | timing 55/100
+  - WST: 74/110 (Watch) | timing 83/100
+  - MS: 74/110 (Watch) | timing 60/100
+  - RMBS: 74/110 (Watch) | timing 0/100
+  - AZN: 74/110 (Watch) | timing 15/100
+  - GEV: 73/110 (Watch) | timing 55/100
+  - ALAB: 73/110 (Watch) | timing 80/100
+  - GE: 73/110 (Watch) | timing 68/100
+  - TDG: 73/110 (Watch) | timing 52/100
+  - NXPI: 73/110 (Watch) | timing 20/100
+  - AGX: 73/110 (Watch) | timing 15/100
+  - SYK: 73/110 (Watch) | timing 58/100
+  - ERO: 73/110 (Watch) | timing 0/100
+  - SOFI: 73/110 (Watch) | timing 64/100
+  - LPLA: 73/110 (Watch) | timing 60/100
+  - HLT: 73/110 (Watch) | timing 15/100
+  - VST: 72/110 (Watch) | timing 47/100
+  - MRVL: 72/110 (Watch) | timing 35/100
+  - TYL: 72/110 (Watch) | timing 33/100
+  - TXN: 72/110 (Watch) | timing 35/100
+  - BSX: 72/110 (Watch) | timing 10/100
+  - GS: 72/110 (Watch) | timing 53/100
+  - MDT: 72/110 (Watch) | timing 53/100
+  - NDSN: 72/110 (Watch) | timing 18/100
+  - LIN: 72/110 (Watch) | timing 51/100
+  - GGG: 72/110 (Watch) | timing 0/100
+  - TTD: 72/110 (Watch) | timing 19/100
+  - ZTS: 72/110 (Watch) | timing 10/100
+  - DASH: 72/110 (Watch) | timing 85/100
+  - SE: 72/110 (Watch) | timing 90/100
+  - EOG: 72/110 (Watch) | timing 10/100
+  - PGR: 72/110 (Watch) | timing 84/100
+  - ARES: 72/110 (Watch) | timing 20/100
+  - AMD: 71/110 (Watch) | timing 80/100
+  - ISRG: 71/110 (Watch) | timing 10/100
+  - CRWD: 71/110 (Watch) | timing 78/100
+  - ZS: 71/110 (Watch) | timing 40/100
+  - TLN: 71/110 (Watch) | timing 70/100
+  - PFE: 71/110 (Watch) | timing 0/100
+  - JPM: 71/110 (Watch) | timing 83/100
+  - DDOG: 71/110 (Watch) | timing 70/100
+  - HEI: 71/110 (Watch) | timing 64/100
+  - AME: 71/110 (Watch) | timing 18/100
+  - MCHP: 71/110 (Watch) | timing 21/100
+  - IOT: 71/110 (Watch) | timing 70/100
+  - FAST: 71/110 (Watch) | timing 51/100
+  - ALNY: 71/110 (Watch) | timing 30/100
+  - PG: 71/110 (Watch) | timing 37/100
+  - HOOD: 71/110 (Watch) | timing 80/100
+  - BAC: 71/110 (Watch) | timing 83/100
+  - UTHR: 71/110 (Watch) | timing 10/100
+  - IBM: 70/110 (Watch) | timing 63/100
+  - QCOM: 70/110 (Watch) | timing 20/100
+  - TEL: 70/110 (Watch) | timing 0/100
+  - ZBRA: 70/110 (Watch) | timing 85/100
+  - GTLB: 70/110 (Watch) | timing 85/100
+  - TRMB: 70/110 (Watch) | timing 17/100
+  - STX: 70/110 (Watch) | timing 35/100
+  - MAR: 70/110 (Watch) | timing 17/100
+  - WSM: 70/110 (Watch) | timing 47/100
+  - C: 70/110 (Watch) | timing 47/100
+  - TTWO: 69/110 (Watch) | timing 80/100
+  - PH: 69/110 (Watch) | timing 53/100
+  - TMO: 69/110 (Watch) | timing 68/100
+  - CRS: 69/110 (Watch) | timing 57/100
+  - DSCSY: 69/110 (Watch) | timing 15/100
+  - TOST: 69/110 (Watch) | timing 76/100
+  - D: 69/110 (Watch) | timing 78/100
+  - OLED: 69/110 (Watch) | timing 0/100
+  - CMG: 69/110 (Watch) | timing 78/100
+  - VRT: 68/110 (Watch) | timing 5/100
+  - FCX: 68/110 (Watch) | timing 15/100
+  - IRDM: 68/110 (Watch) | timing 65/100
+  - ORCL: 68/110 (Watch) | timing 7/100
+  - EMR: 68/110 (Watch) | timing 15/100
+  - ITW: 68/110 (Watch) | timing 71/100
+  - TECK: 68/110 (Watch) | timing 6/100
+  - NVMI: 68/110 (Watch) | timing 20/100
+  - LHX: 68/110 (Watch) | timing 10/100
+  - MPWR: 68/110 (Watch) | timing 0/100
+  - MELI: 68/110 (Watch) | timing 67/100
+  - TT: 68/110 (Watch) | timing 52/100
+  - SPOT: 68/110 (Watch) | timing 45/100
+  - URI: 68/110 (Watch) | timing 67/100
+  - TMDX: 68/110 (Watch) | timing 33/100
+  - PYPL: 68/110 (Watch) | timing 36/100
+  - WFC: 68/110 (Watch) | timing 70/100
+  - DAL: 68/110 (Watch) | timing 73/100
+  - ALB: 67/110 (Watch) | timing 0/100
+  - ASMIY: 67/110 (Watch) | timing 33/100
+  - ONTO: 67/110 (Watch) | timing 80/100
+  - TENB: 67/110 (Watch) | timing 70/100
+  - TDY: 67/110 (Watch) | timing 26/100
+  - RRX: 67/110 (Watch) | timing 49/100
+  - ALGM: 67/110 (Watch) | timing 44/100
+  - PCOR: 67/110 (Watch) | timing 7/100
+  - GEHC: 67/110 (Watch) | timing 47/100
+  - PEG: 67/110 (Watch) | timing 65/100
+  - MCD: 67/110 (Watch) | timing 10/100
+  - RCL: 67/110 (Watch) | timing 40/100
+  - TMUS: 67/110 (Watch) | timing 33/100
+  - TTEK: 67/110 (Watch) | timing 66/100
+  - WMB: 67/110 (Watch) | timing 59/100
+  - KMI: 67/110 (Watch) | timing 37/100
+  - ECL: 67/110 (Watch) | timing 56/100
+  - CEG: 66/110 (Watch) | timing 6/100
+  - ROK: 66/110 (Watch) | timing 48/100
+  - ABBNY: 66/110 (Watch) | timing 31/100
+  - GD: 66/110 (Watch) | timing 77/100
+  - EME: 66/110 (Watch) | timing 0/100
+  - S: 66/110 (Watch) | timing 70/100
+  - NVT: 66/110 (Watch) | timing 18/100
+  - HPE: 66/110 (Watch) | timing 66/100
+  - DOV: 66/110 (Watch) | timing 15/100
+  - IR: 66/110 (Watch) | timing 55/100
+  - LYSDY: 66/110 (Watch) | timing 0/100
+  - SHW: 66/110 (Watch) | timing 51/100
+  - XYL: 66/110 (Watch) | timing 50/100
+  - BRK-B: 66/110 (Watch) | timing 67/100
+  - RL: 66/110 (Watch) | timing 15/100
+  - WAB: 66/110 (Watch) | timing 15/100
+  - LULU: 66/110 (Watch) | timing 10/100
+  - AMZN: 65/110 (Watch) | timing 17/100
+  - ARM: 65/110 (Watch) | timing 35/100
+  - HUBB: 65/110 (Watch) | timing 16/100
+  - DLR: 65/110 (Watch) | timing 0/100
+  - CLS: 65/110 (Watch) | timing 12/100
+  - RIO: 65/110 (Watch) | timing 5/100
+  - SAIL: 65/110 (Watch) | timing 35/100
+  - NTRA: 65/110 (Watch) | timing 70/100
+  - RSG: 65/110 (Watch) | timing 58/100
+  - UAL: 65/110 (Watch) | timing 76/100
+  - DELL: 64/110 (Watch) | timing 77/100
+  - TOELY: 64/110 (Watch) | timing 60/100
+  - EQIX: 64/110 (Watch) | timing 0/100
+  - MDB: 64/110 (Watch) | timing 65/100
+  - VRNS: 64/110 (Watch) | timing 85/100
+  - GILT: 64/110 (Watch) | timing 0/100
+  - MKSI: 64/110 (Watch) | timing 57/100
+  - CIEN: 64/110 (Watch) | timing 10/100
+  - ET: 64/110 (Watch) | timing 55/100
+  - CAT: 64/110 (Watch) | timing 58/100
+  - NKE: 64/110 (Watch) | timing 34/100
+  - CCJ: 63/110 (Watch) | timing 0/100
+  - NEE: 63/110 (Watch) | timing 16/100
+  - ETN: 63/110 (Watch) | timing 18/100
+  - LITE: 63/110 (Watch) | timing 0/100
+  - FORM: 63/110 (Watch) | timing 15/100
+  - CW: 63/110 (Watch) | timing 15/100
+  - LFUS: 63/110 (Watch) | timing 14/100
+  - ATI: 63/110 (Watch) | timing 48/100
+  - LECO: 63/110 (Watch) | timing 15/100
+  - NOVT: 63/110 (Watch) | timing 72/100
+  - DUK: 63/110 (Watch) | timing 63/100
+  - XEL: 63/110 (Watch) | timing 68/100
+  - GKOS: 63/110 (Watch) | timing 85/100
+  - TRGP: 63/110 (Watch) | timing 84/100
+  - VLO: 63/110 (Watch) | timing 81/100
+  - APD: 63/110 (Watch) | timing 44/100
+  - NET: 62/110 (Watch) | timing 85/100
+  - CAMT: 62/110 (Watch) | timing 0/100
+  - AXON: 62/110 (Watch) | timing 70/100
+  - VALE: 62/110 (Watch) | timing 0/100
+  - MYRG: 62/110 (Watch) | timing 35/100
+  - AKAM: 62/110 (Watch) | timing 30/100
+  - ON: 62/110 (Watch) | timing 20/100
+  - WM: 62/110 (Watch) | timing 66/100
+  - SIEGY: 62/110 (Watch) | timing 69/100
+  - HD: 62/110 (Watch) | timing 50/100
+  - ORLY: 62/110 (Watch) | timing 15/100
+  - FANG: 62/110 (Watch) | timing 12/100
+  - PHM: 62/110 (Watch) | timing 47/100
+  - KKR: 62/110 (Watch) | timing 33/100
+  - FOUR: 62/110 (Watch) | timing 59/100
+  - HXL: 62/110 (Watch) | timing 79/100
+  - FANUY: 61/110 (Watch) | timing 13/100
+  - SNOW: 61/110 (Watch) | timing 70/100
+  - IESC: 61/110 (Watch) | timing 27/100
+  - BWXT: 61/110 (Watch) | timing 0/100
+  - SHOP: 61/110 (Watch) | timing 58/100
+  - SO: 61/110 (Watch) | timing 68/100
+  - DVN: 61/110 (Watch) | timing 10/100
+  - TOL: 61/110 (Watch) | timing 40/100
+  - DIS: 61/110 (Watch) | timing 0/100
+  - FIX: 60/110 (Watch) | timing 6/100
+  - GFS: 60/110 (Watch) | timing 35/100
+  - SWKS: 60/110 (Watch) | timing 4/100
+  - MTSI: 60/110 (Watch) | timing 11/100
+  - OMRNY: 60/110 (Watch) | timing 62/100
+  - EXC: 60/110 (Watch) | timing 66/100
+  - PEN: 60/110 (Watch) | timing 10/100
+  - SLB: 60/110 (Watch) | timing 10/100
+  - BKR: 60/110 (Watch) | timing 10/100
+  - COP: 60/110 (Watch) | timing 10/100
+  - OXY: 60/110 (Watch) | timing 10/100
+  - MPC: 60/110 (Watch) | timing 85/100
+  - RTX: 59/110 (Hold) | timing 60/100
+  - FN: 59/110 (Hold) | timing 0/100
+  - GLW: 59/110 (Hold) | timing 24/100
+  - MTRN: 59/110 (Hold) | timing 55/100
+  - QRVO: 59/110 (Hold) | timing 5/100
+  - RNMBY: 59/110 (Hold) | timing 0/100
+  - TTMI: 59/110 (Hold) | timing 26/100
+  - IRM: 59/110 (Hold) | timing 14/100
+  - HAL: 59/110 (Hold) | timing 10/100
+  - AFRM: 59/110 (Hold) | timing 80/100
+  - CVX: 59/110 (Hold) | timing 30/100
+  - PSX: 59/110 (Hold) | timing 70/100
+  - CMI: 59/110 (Hold) | timing 24/100
+  - PCAR: 59/110 (Hold) | timing 68/100
+  - APO: 59/110 (Hold) | timing 16/100
+  - ENTG: 58/110 (Hold) | timing 15/100
+  - HON: 58/110 (Hold) | timing 15/100
+  - TXT: 58/110 (Hold) | timing 10/100
+  - CACI: 58/110 (Hold) | timing 10/100
+  - SAIC: 58/110 (Hold) | timing 80/100
+  - TJX: 58/110 (Hold) | timing 15/100
+  - VICR: 58/110 (Hold) | timing 35/100
+  - LNG: 58/110 (Hold) | timing 36/100
+  - TSEM: 58/110 (Hold) | timing 24/100
+  - XYZ: 58/110 (Hold) | timing 95/100
+  - DHI: 58/110 (Hold) | timing 19/100
+  - BABA: 58/110 (Hold) | timing 15/100
+  - COST: 57/110 (Hold) | timing 0/100
+  - NBIS: 57/110 (Hold) | timing 35/100
+  - FLEX: 57/110 (Hold) | timing 35/100
+  - LDOS: 57/110 (Hold) | timing 10/100
+  - AA: 57/110 (Hold) | timing 0/100
+  - NRG: 57/110 (Hold) | timing 60/100
+  - MOD: 57/110 (Hold) | timing 0/100
+  - SBUX: 57/110 (Hold) | timing 69/100
+  - BN: 57/110 (Hold) | timing 0/100
+  - INSM: 57/110 (Hold) | timing 45/100
+  - AVAV: 56/110 (Hold) | timing 15/100
+  - PWR: 56/110 (Hold) | timing 8/100
+  - GNRC: 56/110 (Hold) | timing 10/100
+  - CARR: 56/110 (Hold) | timing 42/100
+  - SMCI: 55/110 (Hold) | timing 5/100
+  - KTOS: 55/110 (Hold) | timing 0/100
+  - DRS: 55/110 (Hold) | timing 15/100
+  - PLXS: 55/110 (Hold) | timing 32/100
+  - RBLX: 55/110 (Hold) | timing 60/100
+  - AZO: 55/110 (Hold) | timing 10/100
+  - WMT: 55/110 (Hold) | timing 0/100
+  - NOC: 54/110 (Hold) | timing 10/100
+  - COHR: 54/110 (Hold) | timing 0/100
+  - ACLS: 54/110 (Hold) | timing 35/100
+  - GDS: 54/110 (Hold) | timing 10/100
+  - SANM: 54/110 (Hold) | timing 20/100
+  - YASKY: 54/110 (Hold) | timing 45/100
+  - COIN: 54/110 (Hold) | timing 0/100
+  - XOM: 54/110 (Hold) | timing 10/100
+  - TSCO: 54/110 (Hold) | timing 10/100
+  - VKTX: 53/110 (Hold) | timing 68/100
+  - PL: 53/110 (Hold) | timing 0/100
+  - HII: 53/110 (Hold) | timing 10/100
+  - VECO: 53/110 (Hold) | timing 35/100
+  - MRCY: 53/110 (Hold) | timing 57/100
+  - IONQ: 52/110 (Hold) | timing 20/100
+  - UCTT: 52/110 (Hold) | timing 75/100
+  - OKLO: 52/110 (Hold) | timing 0/100
+  - POWI: 52/110 (Hold) | timing 35/100
+  - AMKR: 52/110 (Hold) | timing 24/100
+  - BHE: 52/110 (Hold) | timing 35/100
+  - JBL: 51/110 (Hold) | timing 25/100
+  - SMTC: 51/110 (Hold) | timing 35/100
+  - DE: 51/110 (Hold) | timing 50/100
+  - ICHR: 51/110 (Hold) | timing 79/100
+  - LMT: 50/110 (Hold) | timing 25/100
+  - NXE: 50/110 (Hold) | timing 0/100
+  - CORZ: 50/110 (Hold) | timing 35/100
+  - LYV: 50/110 (Hold) | timing 71/100
+  - MSTR: 50/110 (Hold) | timing 0/100
+  - GM: 50/110 (Hold) | timing 2/100
+  - SITM: 49/110 (Hold) | timing 20/100
+  - CRSP: 49/110 (Hold) | timing 15/100
+  - BLDR: 49/110 (Hold) | timing 15/100
+  - MP: 49/110 (Hold) | timing 0/100
+  - GLXY: 49/110 (Hold) | timing 15/100
+  - RGTI: 48/110 (Hold) | timing 13/100
+  - ESLT: 48/110 (Hold) | timing 0/100
+  - LUNR: 48/110 (Hold) | timing 0/100
+  - TEM: 48/110 (Hold) | timing 80/100
+  - LEN: 47/110 (Hold) | timing 0/100
+  - TSLA: 47/110 (Hold) | timing 21/100
+  - QBTS: 47/110 (Hold) | timing 20/100
+  - UUUU: 46/110 (Hold) | timing 0/100
+  - RIVN: 46/110 (Hold) | timing 73/100
+  - CRWV: 46/110 (Hold) | timing 0/100
+  - APLD: 46/110 (Hold) | timing 19/100
+  - BA: 45/110 (Hold) | timing 10/100
+  - RKLB: 45/110 (Hold) | timing 8/100
+  - AAOI: 45/110 (Hold) | timing 0/100
+  - LEU: 45/110 (Hold) | timing 1/100
+  - HIMS: 45/110 (Hold) | timing 80/100
+  - UEC: 44/110 (Reduce) | timing 0/100
+  - QUBT: 44/110 (Reduce) | timing 9/100
+  - INTC: 44/110 (Reduce) | timing 35/100
+  - BE: 44/110 (Reduce) | timing 35/100
+  - RIOT: 43/110 (Reduce) | timing 29/100
+  - RDW: 42/110 (Reduce) | timing 0/100
+  - IREN: 42/110 (Reduce) | timing 0/100
+  - ASTS: 42/110 (Reduce) | timing 0/100
+  - IONS: 42/110 (Reduce) | timing 20/100
+  - LAC: 40/110 (Reduce) | timing 0/100
+  - WULF: 39/110 (Reduce) | timing 36/100
+  - SMR: 38/110 (Reduce) | timing 0/100
+  - CLSK: 38/110 (Reduce) | timing 35/100
+  - ACHR: 37/110 (Reduce) | timing 0/100
+  - MARA: 36/110 (Reduce) | timing 32/100
+  - DNN: 33/110 (Reduce) | timing 0/100
+
+## Sector concentration
+  - Technology: 146 (35%)
+  - Industrials: 77 (18%)
+  - Financial Services: 45 (11%)
+  - Healthcare: 40 (10%)
+  - Consumer Cyclical: 32 (8%)
+  - Energy: 24 (6%)
+  - Basic Materials: 22 (5%)
+  - Communication Services: 16 (4%)
+  - Utilities: 12 (3%)
+  - Consumer Defensive: 3 (1%)
+  - Real Estate: 3 (1%)
+
+## Thematic concentration (user-defined groupings)
+  - Healthcare & Biotech: 38 (9%)
+  - Quality Compounders: 37 (9%)
+  - Power & Grid: 32 (8%)
+  - AI Infrastructure: 31 (7%)
+  - Defense & Aerospace: 27 (6%)
+  - Semiconductors & EDA: 27 (6%)
+  - Software & Data (extended): 27 (6%)
+  - Automation & Robotics: 25 (6%)
+  - Critical Minerals & Rare Earths: 18 (4%)
+  - Energy & LNG: 18 (4%)
+  - Semiconductor Equipment: 17 (4%)
+  - Financials & Alt Managers: 17 (4%)
+  - Cybersecurity: 15 (4%)
+  - Software & AI Applications: 15 (4%)
+  - Consumer & Travel: 15 (4%)
+  - Networking & Optics: 10 (2%)
+  - Space Economy: 7 (2%)
+  - Mega-cap Tech (original): 7 (2%)
+  - Heavy Industry & Machinery: 7 (2%)
+  - Media & Telecom: 6 (1%)
+  - Quantum Computing: 5 (1%)
+  - Crypto Ecosystem: 5 (1%)
+  - Housing & Builders: 5 (1%)
+  - EV & Mobility: 3 (1%)
+  - Payments & Fintech: 3 (1%)
+  - Gold & Precious Metals: 3 (1%)
+  - Uncategorized: 1 (0%)
+
+## REAL BOOK concentration (open positions, dollars at cost)
+  - Mega-cap Tech (original): $144 (59%)  ⚠️ CONCENTRATION
+  - AI Infrastructure: $100 (41%)  ⚠️ CONCENTRATION
+
+## Execution adherence (alerts vs #buy-log, last 7 days)
+  - No buy alerts fired this week
+
+## Options engine — conviction calls this week
+  - None this week — silence is the bar working
+
+## Machine book vs committee book (signal_tracker, last 90d)
+  No machine signals recorded yet — the ledger starts accumulating from the first alert after this tracker was deployed (2026-07-09).

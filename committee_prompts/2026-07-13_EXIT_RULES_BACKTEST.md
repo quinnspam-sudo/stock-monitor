@@ -68,3 +68,21 @@ at 5y), and even conditioned exits lagged never-sell in-sample — the exits
 buy drawdown protection, not extra return. Re-run after the next correction.
 Sweep scripts preserved in research/ (sim_exits.py, sim_windows.py,
 sim_regime_exits.py).
+
+
+## Round 3 — robustness & live-formula validation (same day)
+
+1. PARAMETER SENSITIVITY (is -15%/25% overfit?): grid stop {10,12.5,15,20}%
+   x trail {20,25,30}%, market-conditioned, re-entry. 1y edges +7.2..+16.5pts,
+   6m +8.0..+10.5pts — a smooth plateau, monotonically improving as rules
+   loosen. The adopted point is mid-plateau, not a lucky spike. (Gradient
+   direction consistent with never-sell being the in-sample ceiling.)
+2. ACTUAL LIVE FORMULA replayed (monitor.py score_ticker >= 76 + consensus
+   price votes + regime; RSI band, SMA20/50, 3-mo-high, volume ratio —
+   everything but factor-conviction tiers, which need historical
+   fundamentals): 1y +27.7pts never-sell / +15.2pts with frozen exits;
+   6m +11.2 / +10.3. The live formula is MORE selective and tested STRONGER
+   than the 6-vote proxy used to pick the exit rules.
+3. Rules frozen; out-of-sample predictions pre-registered in
+   EVALUATION_PROTOCOL.md, review 2026-10-13. Scripts: research/
+   sim_sensitivity.py, research/sim_live_score.py.

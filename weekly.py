@@ -78,6 +78,63 @@ def main():
                   f"@ ${(r.get('contract') or {}).get('mid')}"
                   for r in week_ideas]
 
+    # Real-book concentration (dollars, not watchlist counts): the watchlist
+    # is heavily one macro theme (AI capex), and the regime gate watches SPY —
+    # a sector-specific bust is the system's blind spot. This section makes
+    # actual exposure visible so the Risk Manager reviews it weekly.
+    book_lines, adherence_lines = [], []
+    try:
+        from performance import compute_open_positions
+        cfg_full = load_config()
+        cat_of = {t: theme for theme, names in cfg_full.get("categories", {}).items()
+                  for t in names}
+        positions = compute_open_positions()
+        by_cat = Counter()
+        for t, pos in positions.items():
+            by_cat[cat_of.get(t, "Uncategorized")] += pos["avg_cost"] * pos["shares"]
+        book_total = sum(by_cat.values())
+        if book_total:
+            for cat, dollars in by_cat.most_common():
+                pct = dollars / book_total
+                flag = "  ⚠️ CONCENTRATION" if pct > 0.40 else ""
+                book_lines.append(f"{cat}: ${dollars:,.0f} ({pct:.0%}){flag}")
+    except Exception as e:
+        book_lines = [f"unavailable this run: {e}"]
+
+    # Execution adherence: the system's edge was measured assuming EVERY buy
+    # alert is executed at equal size. This compares alerts fired vs trades
+    # logged in #buy-log over the past week — the gap between the system as
+    # designed and as operated.
+    try:
+        sigs = json.loads((PROMPTS_DIR.parent / "signals.json").read_text())
+    except Exception:
+        sigs = []
+    week_alerts = [s for s in sigs if s["kind"] == "buy_alert"
+                   and (now - datetime.strptime(s["date"], "%Y-%m-%d")).days <= 7]
+    try:
+        trades = json.loads((PROMPTS_DIR.parent / "actual_trades.json").read_text())
+    except Exception:
+        trades = []
+    week_buys = [t for t in trades if t.get("action") == "BUY"
+                 and (now - datetime.strptime(t["date"], "%Y-%m-%d")).days <= 7]
+    if week_alerts:
+        bought = {t["ticker"] for t in week_buys}
+        executed = [s for s in week_alerts if s["ticker"] in bought]
+        target = load_config().get("buy_amount_usd")
+        sizes = [t["amount"] for t in week_buys if t.get("amount")]
+        adherence_lines.append(f"Alerts fired: {len(week_alerts)} | executed: "
+                               f"{len(executed)} ({len(executed)/len(week_alerts):.0%})")
+        missed = [s["ticker"] for s in week_alerts if s["ticker"] not in bought]
+        if missed:
+            adherence_lines.append(f"NOT executed: {', '.join(sorted(set(missed)))}")
+        if sizes and target:
+            off = [f"${x:,.0f}" for x in sizes if abs(x - target) > target * 0.05]
+            adherence_lines.append(f"Sizing: target ${target} | actual "
+                                   + ", ".join(f"${x:,.0f}" for x in sizes)
+                                   + (f" — {len(off)} trade(s) off-target" if off else " — on target"))
+        adherence_lines.append("Reminder: the backtested edge assumes every alert, equal size. "
+                               "Selective execution samples a median-zero distribution.")
+
     # Machine-vs-committee: does the paste time earn alpha? (signal_tracker)
     try:
         import signal_tracker
@@ -107,6 +164,12 @@ re-rated, and is sector concentration acceptable? Free-form output (no template)
 
 ## Thematic concentration (user-defined groupings)
 {block(theme_lines, 'unavailable')}
+
+## REAL BOOK concentration (open positions, dollars at cost)
+{block(book_lines, 'No open positions logged in #buy-log')}
+
+## Execution adherence (alerts vs #buy-log, last 7 days)
+{block(adherence_lines, 'No buy alerts fired this week')}
 
 ## Options engine — conviction calls this week
 {block(idea_lines, 'None this week — silence is the bar working')}

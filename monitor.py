@@ -83,11 +83,11 @@ def check_regime_transition():
     try:
         r = consensus.market_regime()
         cur = bool(r.get("pass"))
-        prev = None
-        if REGIME_STATE_PATH.exists():
-            prev = json.loads(REGIME_STATE_PATH.read_text()).get("pass")
+        st = json.loads(REGIME_STATE_PATH.read_text()) if REGIME_STATE_PATH.exists() else {}
+        prev = st.get("pass")
+        st["pass"] = cur
         if prev is None or cur == prev:
-            REGIME_STATE_PATH.write_text(json.dumps({"pass": cur}))
+            REGIME_STATE_PATH.write_text(json.dumps(st))
             return
         if cur:
             note = ("🟢 **MARKET REGIME: RISK-ON** — " + r.get("detail", "") +
@@ -105,9 +105,45 @@ def check_regime_transition():
                     "behavior is silence: hold, don't act.")
         send_message(note, kind="REGIME_CHANGE")
         print(f"Regime transition: {'RISK-ON' if cur else 'RISK-OFF'} — updates channel notified")
-        REGIME_STATE_PATH.write_text(json.dumps({"pass": cur}))
+        REGIME_STATE_PATH.write_text(json.dumps(st))
     except Exception as e:
         print(f"regime transition check failed (continuing): {e}")
+
+
+def check_deep_bear():
+    """One-time escalation when SPY closes 20%+ below its 1y high.
+
+    The risk-off posture (hold, stops suspended, -30% floor) was validated on
+    2022-style corrections — a multi-year bear was never tested, and 'hold
+    because everything is falling' is specifically worst-shaped for one. This
+    doesn't change any mechanical rule; it tells the operator the system has
+    left tested territory and a human review of the book is due. Re-arms once
+    SPY recovers to within 10% of its high.
+    """
+    try:
+        st = json.loads(REGIME_STATE_PATH.read_text()) if REGIME_STATE_PATH.exists() else {}
+        spy = yf.Ticker("SPY").history(period="1y")["Close"]
+        if len(spy) < 200:
+            return
+        drawdown = float(spy.iloc[-1] / spy.max() - 1)
+        if drawdown <= -0.20 and not st.get("deep_bear"):
+            st["deep_bear"] = True
+            REGIME_STATE_PATH.write_text(json.dumps(st))
+            send_message(
+                f"🚨 **DEEP BEAR — SPY {drawdown:.0%} from its 1-year high.**\n"
+                "The system is now OUTSIDE its tested range. The hold-through-"
+                "drawdown posture was validated on fast corrections (2022-style), "
+                "not multi-year bears. Mechanical rules remain unchanged (-30% "
+                "disaster floor armed), but this is the pre-agreed trigger for a "
+                "MANUAL review: paste the current book into the committee and "
+                "decide deliberately whether to keep holding. One-time alert; "
+                "re-arms when SPY recovers to -10%.", kind="DEEP_BEAR")
+            print("DEEP BEAR escalation sent")
+        elif drawdown >= -0.10 and st.get("deep_bear"):
+            st["deep_bear"] = False
+            REGIME_STATE_PATH.write_text(json.dumps(st))
+    except Exception as e:
+        print(f"deep-bear check failed (continuing): {e}")
 
 
 def load_state():
@@ -135,6 +171,7 @@ def main():
     now = time.time()
     if not dry_run:
         check_regime_transition()
+        check_deep_bear()
     print(alert_stats.summary(now))  # measurement only — never feeds back into thresholds
     cooldown = cfg.get("cooldown_hours", 24) * 3600
     payloads = []
@@ -273,6 +310,9 @@ def main():
             details = dict(result["details"])
             details["Factor conviction"] = f"{tier}" + (f" ({conv}/100)" if conv is not None else "")
             details["Earnings gate"] = gate_note
+            details["Category"] = next((theme for theme, names in
+                                        cfg.get("categories", {}).items()
+                                        if ticker in names), "Uncategorized")
             if f.get("magic_rank"):
                 details["Magic Formula"] = f"#{f['magic_rank']}/{f['magic_universe']}"
             if f.get("f_score") is not None:

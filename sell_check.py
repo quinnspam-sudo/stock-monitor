@@ -118,10 +118,24 @@ def main():
         if not entry:
             continue
         try:
-            price = float(yf.Ticker(ticker).history(period="1d")["Close"].iloc[-1])
+            recent = yf.Ticker(ticker).history(period="5d")["Close"]
+            price = float(recent.iloc[-1])
         except Exception as e:
             print(f"{ticker}: price fetch failed: {e}")
             continue
+        # Data-sanity guard: everything rides on one free data source, and a
+        # bad print would fire a false stop. If the last close is >25% below
+        # the prior close, require the NEXT run to confirm it (sell checks are
+        # hourly — a real crash re-fires within the hour; a data glitch won't).
+        if len(recent) >= 2 and price < float(recent.iloc[-2]) * 0.75:
+            key = f"{ticker}:SUSPECT"
+            if now.timestamp() - state.get(key, 0) > 2 * 3600:
+                state[key] = now.timestamp()
+                print(f"{ticker}: price ${price:,.2f} is >25% below prior close "
+                      f"(${float(recent.iloc[-2]):,.2f}) — suspect data point, "
+                      "deferring stop evaluation to next run for confirmation")
+                continue
+            print(f"{ticker}: >25% gap CONFIRMED on consecutive runs — evaluating stops")
         checked += 1
         pct_move = price / entry - 1
 
