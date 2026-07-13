@@ -1,0 +1,76 @@
+[
+ {
+  "ticker": "AAPL",
+  "asset_class": "stock",
+  "actionable": true,
+  "judges": {
+   "vol_mispricing": true,
+   "trend": true,
+   "catalyst": null,
+   "flow_proxy": true
+  },
+  "evidence": {
+   "vol": {
+    "iv_rvf": 0.91,
+    "atm_iv": 0.2857,
+    "rv_forecast": 0.3128,
+    "iv_pctile_vs_1y_rv": 0.77
+   },
+   "trend": {
+    "above_smas": true,
+    "sma50_rising": true,
+    "mom_6m": 0.224,
+    "pct_of_52wk_high": 1.0,
+    "rs_vs_spy_6m": 0.14
+   },
+   "catalyst": {
+    "note": "earnings 2026-07-30 outside 15d horizon"
+   },
+   "flow": {
+    "call_vol": 837572,
+    "put_vol": 469846,
+    "call_vol_oi_turnover": 12.77,
+    "call_put_ratio": 1.78
+   },
+   "skew": [
+    "Reference expiry 2026-08-28 (~45d): ATM IV 28.6%",
+    "25\u0394 put IV 27.9% vs 25\u0394 call IV 26.7% \u2014 skew +1.3% (balanced)",
+    "Same-day flow at this expiry: 891 call vol vs 918 put vol (C/P 0.97)"
+   ],
+   "contract_math": {
+    "breakeven_sigma": 0.21,
+    "zero_drift_fair_value": 26.36,
+    "premium_vs_fair": 1.0
+   }
+  },
+  "lead": "trend",
+  "contract": {
+   "expiry": "2026-09-18",
+   "strike": 300.0,
+   "delta": 0.699,
+   "bid": 25.6,
+   "ask": 26.9,
+   "mid": 26.25,
+   "iv": 0.3215,
+   "open_interest": 29824,
+   "volume": 391,
+   "spread_pct": 0.0495,
+   "contract": "AAPL260918C00300000",
+   "breakeven_move": 0.0292,
+   "t_years": 0.1836
+  },
+  "score": 88,
+  "vetoes": [],
+  "reasons": [],
+  "ts": "2026-07-13T12:46:12",
+  "spot": 317.0,
+  "regime": "SPY>50d/200d, VIX 17.3 (max 28.0), term 0.875",
+  "confluence": "3/3 judges bullish (need >=75% of >=3)",
+  "components": {
+   "confluence": 100,
+   "vol_edge": 87,
+   "contract_quality": 75,
+   "expected_value": 81
+  }
+ }
+]
