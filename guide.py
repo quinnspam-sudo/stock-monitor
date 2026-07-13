@@ -37,9 +37,9 @@ GUIDE = """\
 ━━━━━━━━━━━━━━━━━━
 🔴 **SELL SIGNAL** (posts to the separate #sell-alerts channel — hourly, market hours)
 **Means:** one of three mechanical exit rules fired against a *real open position* (something you actually logged as bought via #buy-log and haven't fully sold yet — not the whole watchlist, and not a committee verdict either):
-  - **STOP_LOSS** — down 7%+ from your average cost. CANSLIM's signature rule: cut every loss at -7% to -8%, no exceptions, no "it'll come back."
-  - **TAKE_PROFIT** — up 20%+ from average cost. CANSLIM's "sell into strength" rule for a normal (non-explosive) mover — a nudge to consider trimming, not a hard rule like the stop-loss.
-  - **BOX_BREAKDOWN** — price broke below its trailing 20-day low on above-average volume. The sell-side mirror of the breakout buy signal (Darvas box theory).
+  - **STOP_LOSS** — down 15%+ from your average cost *while SPY is above its 50-day average*. The market is fine and your stock isn't — that's an idiosyncratic problem, cut it. When SPY is below its 50-day (market-wide drawdown), this stop and TRAIL_STOP are suspended: selling with the whole market tested as sell-low/rebuy-high churn.
+  - **TRAIL_STOP** — closed 25%+ below its peak close since entry, in a healthy market. The winner has rolled over; take it. (These two replaced the old -7% stop / TAKE_PROFIT / BOX_BREAKDOWN rules, all of which tested worse than holding SPY — see the 2026-07-13 exit-rule backtest.)
+  - **DISASTER_STOP** — down 30%+ from average cost, fires no matter what the market is doing. The unconditional floor under "hold through the drawdown." No thesis survives -30%.
   - **REBALANCE_DUE** — held 365+ days. Magic Formula's mechanical annual rotation, regardless of current conviction — this one fires on time elapsed, not price action.
 **Do:** STOP_LOSS is the one rule in this whole system meant to be followed mechanically, not judged — that's the point of a stop-loss. The others are decision inputs, same as everything else here: read, don't auto-execute. Note this only covers real positions logged via #buy-log — it has no visibility into anything you hold that was never logged there, and it deliberately ignores committee verdicts/BUY alerts (those are recommendations, not confirmed positions).
 

@@ -1,15 +1,24 @@
 """Sell/exit alert methodologies — checks REAL open positions (from
 actual_trades.json, the Discord buy-log ledger) against three explicit,
-mechanical sell rules that come paired with their buy-side methodologies
-in the literature:
+mechanical sell rules (tuned by the 2026-07-13 exit-rule replay over 6m/1y/5y
+windows — committee_prompts/2026-07-13_EXIT_RULES_BACKTEST.md):
 
-  - CANSLIM (O'Neil) stop-loss: cut every loss at -7% to -8% from entry,
-    no exceptions — arguably O'Neil's most famous rule, more so than his
-    buy criteria. Also flags +20-25% gains as a take-profit consideration
-    ("sell into strength" for a normal, non-explosive mover).
-  - Darvas box breakdown: price breaks below its trailing 20-day low on
-    above-average volume — the sell-side mirror of the 52-week breakout
-    buy signal in factors.py's breakout_score.
+  - Wide stop-loss: position down -15% from average cost — but ONLY while
+    SPY is above its own 50-day SMA. A stock down 15% while the market is
+    healthy is an idiosyncratic problem: cut it. A stock down 15% because
+    the whole market is down usually recovers with it; selling then is
+    sell-low/rebuy-high churn (market-conditioning the stops this way was
+    the best exit tested in every window: +9.9pts vs SPY over 6m, +13.6
+    over 1y, vs +3.5/+6.1 unconditioned).
+  - Trailing stop: close 25% below the position's peak close since entry,
+    same market-health condition. Lets winners run (all of the buy
+    signal's alpha came from a few +150-250% trends) while forcing an
+    exit when a big win rolls over in an otherwise-healthy tape. Replaces
+    the Darvas 20-day-low breakdown and the +20% take-profit sell, both
+    of which tested worse than holding SPY.
+  - Disaster floor: -30% from average cost, UNconditional — the bound on
+    "hold because everything is falling" in a deep bear market (a 2008
+    scenario is outside the tested sample; this is the insurance).
   - Magic Formula (Greenblatt) annual rebalance: a position held >=365
     days is due for mechanical rotation regardless of current conviction,
     per Greenblatt's tax-driven (short-term loss / long-term gain) annual
@@ -43,8 +52,9 @@ from committee import market_open_today
 from performance import compute_open_positions
 
 STATE_PATH = Path(__file__).parent / "sell_alert_state.json"
-STOP_LOSS_PCT = -0.07
-TAKE_PROFIT_PCT = 0.20
+STOP_LOSS_PCT = -0.15
+TRAIL_STOP_PCT = -0.25
+DISASTER_PCT = -0.30
 REBALANCE_DAYS = 365
 COOLDOWN_HOURS = 24
 
@@ -57,22 +67,30 @@ def save_state(state):
     STATE_PATH.write_text(json.dumps(state, indent=2))
 
 
-def box_breakdown(ticker):
-    """Darvas-style: did price break below its trailing 20-day low (prior
-    to today) on above-average volume? Returns (broke, low_20d, vol_ratio)."""
+def market_is_healthy():
+    """SPY above its 50-day SMA. Stops only fire in a healthy tape (see
+    module docstring); the -30% disaster floor ignores this. Fails SAFE:
+    if SPY data can't be fetched, treat the market as healthy so the
+    stops stay armed rather than silently suspended."""
     try:
-        hist = yf.Ticker(ticker).history(period="3mo")
-        if len(hist) < 25:
-            return False, None, None
-        close = hist["Close"]
-        price = float(close.iloc[-1])
-        low_20d = float(close.iloc[-21:-1].min())
-        vol_ratio = (float(hist["Volume"].iloc[-5:].mean() / hist["Volume"].iloc[-60:].mean())
-                     if len(hist) >= 60 else None)
-        broke = price < low_20d and (vol_ratio is None or vol_ratio > 1.1)
-        return broke, low_20d, vol_ratio
+        spy = yf.Ticker("SPY").history(period="4mo")["Close"]
+        if len(spy) < 50:
+            return True
+        return float(spy.iloc[-1]) > float(spy.rolling(50).mean().iloc[-1])
     except Exception:
-        return False, None, None
+        return True
+
+
+def peak_close_since(ticker, held_since):
+    """Highest close since the position was opened (for the trailing stop).
+    Returns None if history can't be fetched."""
+    try:
+        hist = yf.Ticker(ticker).history(start=held_since)
+        if hist.empty:
+            return None
+        return float(hist["Close"].max())
+    except Exception:
+        return None
 
 
 def main():
@@ -91,6 +109,10 @@ def main():
               "Log a buy via the Discord buy-log bot to start tracking one.")
         return
 
+    market_healthy = market_is_healthy()
+    print(f"Market health: SPY {'above' if market_healthy else 'BELOW'} its 50d SMA — "
+          f"{'stops armed' if market_healthy else 'stops suspended, disaster floor only'}")
+
     for ticker, pos in positions.items():
         entry = pos["avg_cost"]
         if not entry:
@@ -104,19 +126,26 @@ def main():
         pct_move = price / entry - 1
 
         alerts = []
-        if pct_move <= STOP_LOSS_PCT:
-            alerts.append(("STOP_LOSS", f"down {pct_move:+.1%} from avg cost ${entry:,.2f} — "
-                            "CANSLIM rule: cut every loss at -7% to -8%, no exceptions."))
-        elif pct_move >= TAKE_PROFIT_PCT:
-            alerts.append(("TAKE_PROFIT", f"up {pct_move:+.1%} from avg cost ${entry:,.2f} — "
-                            "CANSLIM rule: take profits at +20-25% unless the stock shows "
-                            "explosive characteristics justifying a longer hold."))
-
-        broke, low_20d, vol_ratio = box_breakdown(ticker)
-        if broke:
-            alerts.append(("BOX_BREAKDOWN", f"broke below its trailing 20-day low (${low_20d:,.2f})"
-                            + (f" on {vol_ratio:.2f}x average volume" if vol_ratio else "")
-                            + " — Darvas box breakdown, the sell-side mirror of a breakout."))
+        if pct_move <= DISASTER_PCT:
+            alerts.append(("DISASTER_STOP", f"down {pct_move:+.1%} from avg cost ${entry:,.2f} — "
+                            "-30% unconditional floor: fires regardless of market health. "
+                            "No thesis survives this; cut it."))
+        elif not market_healthy:
+            print(f"{ticker}: stops suspended — SPY below its 50d SMA "
+                  f"(market-wide drawdown; only the -30% disaster floor is armed)")
+        elif pct_move <= STOP_LOSS_PCT:
+            alerts.append(("STOP_LOSS", f"down {pct_move:+.1%} from avg cost ${entry:,.2f} "
+                            "while SPY is above its 50d SMA — the market is fine and this "
+                            "stock isn't: idiosyncratic weakness, cut at -15%."))
+        elif pos["held_since"]:
+            peak = peak_close_since(ticker, pos["held_since"])
+            if peak and entry:
+                peak = max(peak, entry)
+                off_peak = price / peak - 1
+                if off_peak <= TRAIL_STOP_PCT:
+                    alerts.append(("TRAIL_STOP", f"down {off_peak:+.1%} from its peak close "
+                                    f"(${peak:,.2f}) since entry, in a healthy market — 25% "
+                                    "trailing stop: the winner has rolled over."))
 
         if pos["held_since"]:
             try:

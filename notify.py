@@ -104,15 +104,16 @@ def send_alert(ticker, score, action, price, details, webhook_url=None):
 def send_sell_alert(ticker, kind, price, entry, pct_move, reason, webhook_url=None):
     """Post a sell/exit-methodology alert to the sell-alerts channel.
 
-    kind: STOP_LOSS / TAKE_PROFIT / BOX_BREAKDOWN / REBALANCE_DUE — see
-    sell_check.py for the mechanical rules behind each (CANSLIM stop-loss/
-    take-profit, Darvas box breakdown, Magic Formula annual rebalance).
+    kind: STOP_LOSS / TRAIL_STOP / DISASTER_STOP / REBALANCE_DUE — see
+    sell_check.py for the mechanical rules behind each (-15% stop and 25%
+    trailing stop, both only while SPY > its 50d SMA; -30% unconditional
+    disaster floor; Magic Formula annual rebalance).
     """
     cfg = load_config()
     url = webhook_url or cfg["discord_sell_webhook_url"]
     if "PASTE_YOUR" in url:
         raise RuntimeError("Set discord_sell_webhook_url in secrets.json first.")
-    color = RED if kind in ("STOP_LOSS", "BOX_BREAKDOWN") else YELLOW if kind == "TAKE_PROFIT" else GREY
+    color = RED if kind in ("STOP_LOSS", "TRAIL_STOP", "DISASTER_STOP") else GREY
     import obsidian
     obsidian.log_ping(kind, f"**{ticker}** {kind.replace('_', ' ')} at ${price:,.2f} "
                       f"(entry ${entry:,.2f}, {pct_move:+.1%}) — {reason}")

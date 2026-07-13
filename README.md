@@ -77,10 +77,16 @@ rotating before then or the jobs will start failing with 401s).
   did over the Mon–Fri just finished, using `history.json` snapshots
 - `sell_check.yml` — hourly ~7:00–12:00 PT Mon–Fri: checks REAL open positions
   (`actual_trades.json`, computed via average-cost-basis accounting in
-  `performance.py`) against three mechanical sell rules — CANSLIM stop-loss
-  (-7% to -8%, no exceptions) / take-profit (+20-25%), Darvas box breakdown
-  (price below its 20-day low on volume), Magic Formula annual rebalance
-  (365+ days held). Posts to a third, separate `#sell-alerts` channel/webhook
+  `performance.py`) against market-conditioned mechanical sell rules — a
+  -15% stop-loss and a 25% trailing stop off the peak close since entry,
+  both active ONLY while SPY is above its 50-day SMA (a stock falling in a
+  healthy market is idiosyncratic — cut it; falling with the market usually
+  recovers with it); an unconditional -30% disaster floor; and the Magic
+  Formula annual rebalance (365+ days held). Rules were retuned per
+  `committee_prompts/2026-07-13_EXIT_RULES_BACKTEST.md` (the old -7% stop /
+  +20% take-profit / Darvas 20-day breakdown erased the buy signal's alpha;
+  market-conditioned stops were the best exit tested over 6m/1y/5y windows).
+  Posts to a third, separate `#sell-alerts` channel/webhook
   (`discord_sell_webhook_url`), independent of the buy/updates split above.
   Every firing is also logged to `recommendations.json` (kind="sell_signal").
   Only covers tickers with an open position in `actual_trades.json` — not
