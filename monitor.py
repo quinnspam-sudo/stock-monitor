@@ -310,9 +310,28 @@ def main():
             details = dict(result["details"])
             details["Factor conviction"] = f"{tier}" + (f" ({conv}/100)" if conv is not None else "")
             details["Earnings gate"] = gate_note
-            details["Category"] = next((theme for theme, names in
-                                        cfg.get("categories", {}).items()
-                                        if ticker in names), "Uncategorized")
+            cat = next((theme for theme, names in cfg.get("categories", {}).items()
+                        if ticker in names), "Uncategorized")
+            details["Category"] = cat
+            # Live concentration read: what share of the REAL book (at cost)
+            # already sits in this alert's category. Informational — the
+            # mechanical every-alert rule stands — but a >40% flag at decision
+            # time beats discovering it in Friday's review.
+            try:
+                from performance import compute_open_positions
+                pos = compute_open_positions()
+                if pos:
+                    cat_of = {t: theme for theme, names in
+                              cfg.get("categories", {}).items() for t in names}
+                    total = sum(p["avg_cost"] * p["shares"] for p in pos.values())
+                    in_cat = sum(p["avg_cost"] * p["shares"] for t, p in pos.items()
+                                 if cat_of.get(t, "Uncategorized") == cat)
+                    if total:
+                        pct = in_cat / total
+                        details["Category"] = (f"{cat} — {pct:.0%} of current book"
+                                               + (" ⚠️ concentrated" if pct > 0.40 else ""))
+            except Exception:
+                pass
             if f.get("magic_rank"):
                 details["Magic Formula"] = f"#{f['magic_rank']}/{f['magic_universe']}"
             if f.get("f_score") is not None:

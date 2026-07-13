@@ -41,8 +41,30 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add -A
           git diff --cached --quiet || git commit -m "sell_check: state update [skip ci]"
+          pushed=""
           for i in 1 2 3 4 5; do
-            git pull --rebase --autostash && git push && break
+            if git pull --rebase --autostash && git push; then pushed=yes; break; fi
+            # A conflicted rebase leaves unmerged files that doom every retry
+            # (observed 2026-07-13: 5 identical failures, state silently lost,
+            # job still green). Recover by rebuilding our state commit on top
+            # of fresh remote: abort the rebase, move to origin/main keeping
+            # our freshly-generated files staged, re-commit. State files are
+            # regenerated every run, so ours winning is correct by design.
+            git rebase --abort 2>/dev/null || true
+            OLD=$(git rev-parse HEAD)
+            FILES=$(git show --name-only --format= "$OLD")
+            git fetch origin main
+            git reset --hard origin/main
+            # Restore ONLY the state files from our commit onto fresh remote —
+            # never code (the CI checkout may be older than origin/main, and a
+            # soft reset would silently revert newer code).
+            if [ -n "$FILES" ]; then git checkout "$OLD" -- $FILES 2>/dev/null || true; fi
+            git add -A
+            git diff --cached --quiet || git commit -m "state update after conflict [skip ci]"
             echo "push attempt $i failed, retrying..."
             sleep $((i * 5))
           done
+          if [ -z "$pushed" ]; then
+            echo "::error::state commit could not be pushed after 5 attempts — state from this run is lost"
+            exit 1
+          fi
