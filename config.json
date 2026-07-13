@@ -1010,5 +1010,17 @@
     "prune_confirmations": 2,
     "per_run_add_cap": 12,
     "sleep": 0.4
+  },
+  "execution": {
+    "enabled": true,
+    "mode": "paper",
+    "trial_end": "2026-08-13",
+    "kill_switch": false,
+    "market_hours_only": true,
+    "max_open_positions": 25,
+    "max_position_usd": null,
+    "per_name_max_usd": null,
+    "daily_deploy_cap_usd": 200,
+    "sell_cooldown_hours": 24
   }
 }

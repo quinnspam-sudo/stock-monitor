@@ -168,6 +168,20 @@ Identical to Card 1 except:
   ( = Saturdays 09:30 Pacific — 30 min after `backtest`, so the two weekend
     yfinance-heavy runs don't overlap; UTC fallback: `30 16 * * 6`)
 
+### Card 5 — execute (paper-trading executor)
+
+Identical to Card 1 except:
+- Title: `stock-monitor execute`
+- URL: `.../actions/workflows/execute.yml/dispatches`
+- Schedule: `5,20,35,50 6-12 * * 1-5`, timezone America/Los_Angeles
+  ( = every 15 min, 5 min after each `monitor` run, ~06:05–12:50 Pacific
+    Mon–Fri so buy_alert signals are already written; UTC fallback:
+    `5,20,35,50 13-19 * * 1-5`)
+- **Prerequisite:** repo secrets `ALPACA_API_KEY` + `ALPACA_SECRET_KEY` (paper
+  keys) must exist, or every run no-ops. See EXECUTION.md.
+- **Trial:** ends 2026-08-13 — `execute.py` stops opening positions after that
+  date; **disable this card on 2026-08-13** to stop it entirely.
+
 ---
 
 ## Step 4 — Test each job you created

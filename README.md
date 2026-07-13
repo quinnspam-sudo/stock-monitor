@@ -102,6 +102,13 @@ rotating before then or the jobs will start failing with 401s).
   in-channel with a ✅/❌ confirming exactly what was parsed. Credentials:
   `discord_bot_token` (Bot Token from the Discord Developer Portal, **not**
   a webhook secret) + `discord_buy_log_channel_id`.
+- `execute.yml` — every 15 min, market hours Mon–Fri (5 min after `monitor`):
+  the **paper-trading executor** (`execute.py`) — places Alpaca *paper* orders
+  for fresh `buy_alert` signals and applies the frozen exit rules to open paper
+  positions, writing the same `actual_trades.json` the Discord buy-log bot does.
+  Removes the human-lag execution step; **paper only**, fully guardrailed, kill
+  switch in `config.json`. One-month trial → 2026-08-13. Requires `ALPACA_*`
+  secrets or it no-ops. See `EXECUTION.md`.
 - `discover.yml` — Saturday ~09:30 PT: the watchlist discovery engine
   (`discover.py`) — sources new names from free Yahoo screens + sector
   top-companies, admits the ones clearing the rigorous-but-optimistic gate
@@ -272,6 +279,8 @@ week-to-week.
 - `discover_log.json` — every discovery run's adds/prunes/near-misses (from `discover.py`)
 - `discover_state.json` — discovery reject cooldowns + prune-confirmation counters
 - `watchlist_health.json` — dead-name report (from `watchlist_health.py`; read by the prune pass)
+- `executed_orders.json` — paper-executor dedup ledger of orders placed (from `execute.py`)
+- `execution_state.json` — paper-executor per-(ticker,exit) cooldowns + last run
 
 ## Committee pipeline (manual Claude Pro workflow)
 

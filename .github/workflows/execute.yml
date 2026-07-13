@@ -1,0 +1,65 @@
+name: execute
+
+# Triggered externally via cron-job.org calling this workflow's
+# workflow_dispatch REST endpoint on a schedule (see CRON_TRIGGERS.md) —
+# GitHub's native `schedule:` trigger doesn't fire on this repo.
+
+# PAPER-TRADING EXECUTOR (execute.py). Runs every 15 min during market hours,
+# a few minutes AFTER monitor.yml so the buy_alert signals it fires are already
+# in signals.json. Places Alpaca *paper* orders for fresh buy_alerts and applies
+# the frozen exit rules to open paper positions. Guardrails + a kill switch live
+# in config.json's `execution` block. Requires repo secrets ALPACA_API_KEY and
+# ALPACA_SECRET_KEY (paper keys); if they're absent the run no-ops cleanly.
+# Trial ends 2026-08-13 — execute.py stops opening positions after that date;
+# disable this workflow's cron-job.org card then to stop it entirely.
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: stock-monitor-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      TZ: America/Los_Angeles
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python execute.py
+        env:
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_UPDATES_WEBHOOK_URL: ${{ secrets.DISCORD_UPDATES_WEBHOOK_URL }}
+      - name: Commit updated state
+        run: |
+          git config user.name "stock-monitor-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "execute: state update [skip ci]"
+          pushed=""
+          for i in 1 2 3 4 5; do
+            if git pull --rebase --autostash && git push; then pushed=yes; break; fi
+            git rebase --abort 2>/dev/null || true
+            OLD=$(git rev-parse HEAD)
+            FILES=$(git show --name-only --format= "$OLD")
+            git fetch origin main
+            git reset --hard origin/main
+            if [ -n "$FILES" ]; then git checkout "$OLD" -- $FILES 2>/dev/null || true; fi
+            git add -A
+            git diff --cached --quiet || git commit -m "state update after conflict [skip ci]"
+            echo "push attempt $i failed, retrying..."
+            sleep $((i * 5))
+          done
+          if [ -z "$pushed" ]; then
+            echo "::error::state commit could not be pushed after 5 attempts — state from this run is lost"
+            exit 1
+          fi
