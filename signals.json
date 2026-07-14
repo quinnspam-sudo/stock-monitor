@@ -39,5 +39,19 @@
   "price": 459.93,
   "detail": "score 85/100, conviction HIGH, earnings_gate=closed",
   "contract": null
+ },
+ {
+  "date": "2026-07-14",
+  "ts": "2026-07-14T12:55:42",
+  "kind": "etf_call_conviction",
+  "ticker": "QQQ",
+  "price": 720.11,
+  "detail": "score 87/100, trend-led",
+  "contract": {
+   "expiry": "2026-09-18",
+   "strike": 690.0,
+   "mid": 52.39,
+   "delta": 0.678
+  }
  }
 ]
