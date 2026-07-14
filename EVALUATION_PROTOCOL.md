@@ -56,3 +56,11 @@ alert, every alert, sells per sell_check.py):
 - 2026-07-13: protocol created; rules frozen (entry: score>=76 + consensus +
   regime, cooldown 24h; exits: -15% stop & 25% trail while SPY>50d SMA, -30%
   unconditional floor, 365d rebalance; sizing: buy_amount_usd equal-weight).
+- 2026-07-14: entry alert **cooldown 24h -> 13h** (Quinn). Rationale is
+  operational cadence, NOT backtest tuning: 13h lets a name re-alert once per
+  trading day (a late-session Monday alert no longer blocks a Tuesday-morning
+  alert), while the ~6.5h market session guarantees it still fires at most once
+  per day. Caveat for the review: this is a mid-window change to a frozen entry
+  parameter, so pre/post-2026-07-14 alert data isn't strictly one regime; weight
+  accordingly when grading. Does not affect the paper executor's per-name cap
+  (still one $10 position per name regardless of re-alerts).
