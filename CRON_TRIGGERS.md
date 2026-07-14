@@ -10,7 +10,7 @@
 
 ## What this is about, in plain English
 
-Quinn runs an automated stock-monitoring system. The programs live in a private
+Quinn runs an automated stock-monitoring system. The programs live in a public
 GitHub repository called `quinnspam-sudo/stock-monitor` and run in the cloud using
 a GitHub feature called **Actions workflows** — think of each workflow as a program
 that runs when poked.
@@ -59,7 +59,7 @@ the code.
 ## Step 0 — Log in
 
 Open `https://console.cron-job.org`. It should already be logged in to Quinn's
-account ([account-email-redacted]). If it shows a login page and you don't have the
+account. If it shows a login page and you don't have the
 password available, STOP and ask Quinn — do not try password recovery.
 
 ## Step 1 — Write down what already exists
@@ -192,9 +192,8 @@ For each new job, use the console's immediate-test function (a button like
 **Success = status 204.** Anything else → Troubleshooting below.
 
 Then verify the poke really started the program on GitHub's side: open
-`https://github.com/quinnspam-sudo/stock-monitor/actions` — this requires being
-logged in to Quinn's GitHub account (`quinnspam-sudo`), because the repository is
-private. A new run of the matching workflow should appear within about a minute of
+`https://github.com/quinnspam-sudo/stock-monitor/actions` (the repository is
+public, so no login is needed to view runs). A new run of the matching workflow should appear within about a minute of
 your test. **If you can't log in to GitHub, skip this sub-step, rely on the 204,
 and flag in your report that GitHub-side verification is still pending.**
 

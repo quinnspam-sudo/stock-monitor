@@ -39,7 +39,7 @@ Secrets (`discord_webhook_url`) live in `secrets.json`, not `config.json` — se
 ## Scheduled jobs (GitHub Actions + cron-job.org, runs even when the Mac is off — 2026-07-08)
 
 As of 2026-07-07 the actual monitoring runs entirely on GitHub Actions
-(`.github/workflows/*.yml` in the private repo `quinnspam-sudo/stock-monitor`),
+(`.github/workflows/*.yml` in the public repo `quinnspam-sudo/stock-monitor`),
 not on this Mac — so alerts fire whether or not this machine is on, awake, or
 connected to WiFi. Each workflow scores/checks, posts to Discord, then commits
 updated state (`scores.json`, `history.json`, `committee_prompts/`, etc.) back
