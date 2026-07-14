@@ -293,59 +293,119 @@ def flatten_pass(bk, ex, state, dry, log):
     return sold
 
 
+def _build_lots(trades):
+    """FIFO lot-matching: each BUY opens a lot; each SELL closes the oldest open
+    lot(s) of that ticker. This is what makes repeated round-trips in the same
+    name pair correctly — the first sell closes the first buy, not the last. The
+    executor sells whole positions, so a sell closes lots in FIFO order until its
+    shares are exhausted. Returns a flat list of lots, each carrying its own
+    entry AND (if closed) its own matched exit + SPY prices at both ends."""
+    trades = sorted(trades, key=lambda t: t["date"])  # stable → intraday order kept
+    open_lots, lots = {}, []
+    for t in trades:
+        tk, spy = t["ticker"], t.get("spy_at_trade")
+        if t["action"] == "BUY":
+            lot = {"ticker": tk, "cost": t["amount"], "shares": t["shares"],
+                   "buy_px": t["price"], "spy_buy": spy, "buy_date": t["date"],
+                   "sell_px": None, "spy_sell": None, "sell_date": None, "open": True}
+            open_lots.setdefault(tk, []).append(lot); lots.append(lot)
+        else:  # SELL — close oldest open lots first (FIFO)
+            rem = t["shares"]
+            for lot in open_lots.get(tk, []):
+                if not lot["open"]:
+                    continue
+                lot.update(sell_px=t["price"], spy_sell=spy, sell_date=t["date"], open=False)
+                rem -= lot["shares"]
+                if rem <= 1e-9:
+                    break
+            open_lots[tk] = [l for l in open_lots.get(tk, []) if l["open"]]
+    return lots
+
+
 def report():
-    """Paper book vs SPY, measured trade-by-trade from the SPY price clocked at
-    each fill (spy_at_trade). For every $10 BUY: compare the stock's return since
-    entry to what the SAME $10 put into SPY at the SAME instant would have done.
-    Open positions marked to current price; closed ones to their sell price."""
+    """Paper book vs a MATCHED dollar-cost SPY benchmark. Every $10 the algo puts
+    into a stock, $10 goes into SPY at the SAME instant (spy_at_trade); the SPY
+    leg closes when the stock's lot does (FIFO-matched). At any moment both routes
+    have identical cost-basis capital deployed — the value gap is the alpha.
+    Prints the current head-to-head PLUS a daily equity curve of both routes."""
     import yfinance as yf
     trades = _load(TRADES, [])
-    buys = [t for t in trades if t["action"] == "BUY"]
-    if not buys:
-        print("No paper trades yet."); return
+    lots = [l for l in _build_lots(trades) if l["spy_buy"]]
+    if not lots:
+        print("No paper trades (with SPY stamp) yet."); return
     spy_now = _spy_price()
-    # the executor closes whole positions, so a ticker is either fully open or
-    # closed by its (single) SELL — index the sell per ticker for exit pricing
-    sells = {t["ticker"]: t for t in trades if t["action"] == "SELL"}
-    px = {}
-    for tk in {t["ticker"] for t in buys}:
+    tickers = sorted({l["ticker"] for l in lots})
+    cur = {}
+    for tk in tickers:
         try:
-            px[tk] = float(yf.Ticker(tk).history(period="1d")["Close"].iloc[-1])
+            cur[tk] = float(yf.Ticker(tk).history(period="1d")["Close"].iloc[-1])
         except Exception:
-            px[tk] = None
+            cur[tk] = None
 
+    # ── current head-to-head (per lot, aggregated by ticker) ──
     inv = paper_val = spy_val = 0.0
-    rows = []
-    for b in buys:
-        sb = b.get("spy_at_trade")
-        if not sb:
-            rows.append((b["ticker"], "no SPY stamp — skipped", None)); continue
-        sell = sells.get(b["ticker"])
-        if sell:
-            exit_px, spy_exit, tag = sell["price"], sell.get("spy_at_trade") or spy_now, "closed"
+    per_tk = {}
+    for l in lots:
+        if l["open"]:
+            exit_px, spy_exit, tag = cur.get(l["ticker"]), spy_now, "open"
         else:
-            exit_px, spy_exit, tag = px.get(b["ticker"]), spy_now, "open"
+            exit_px, spy_exit, tag = l["sell_px"], l["spy_sell"] or spy_now, "closed"
         if not exit_px or not spy_exit:
-            rows.append((b["ticker"], "no price — skipped", None)); continue
-        amt = b["amount"]
-        stock_ret = exit_px / b["price"] - 1
-        spy_ret = spy_exit / sb - 1
-        inv += amt
-        paper_val += amt * (1 + stock_ret)
-        spy_val += amt * (1 + spy_ret)
-        rows.append((b["ticker"], tag, (stock_ret, spy_ret, stock_ret - spy_ret)))
+            continue
+        pv = l["cost"] * exit_px / l["buy_px"]
+        sv = l["cost"] * spy_exit / l["spy_buy"]
+        inv += l["cost"]; paper_val += pv; spy_val += sv
+        a = per_tk.setdefault(l["ticker"], {"inv": 0, "pv": 0, "sv": 0, "tags": set()})
+        a["inv"] += l["cost"]; a["pv"] += pv; a["sv"] += sv; a["tags"].add(tag)
 
-    print(f"\nPAPER BOOK vs SPY  (SPY now ${spy_now:.2f})\n" + "-" * 58)
-    for tk, tag, r in rows:
-        if r is None:
-            print(f"  {tk:6} {tag}")
-        else:
-            print(f"  {tk:6} {tag:6}  stock {r[0]:+.2%}   spy {r[1]:+.2%}   alpha {r[2]:+.2%}")
+    print(f"\nPAPER BOOK vs MATCHED-$ SPY   (SPY now ${spy_now:.2f})\n" + "-" * 62)
+    for tk in sorted(per_tk):
+        a = per_tk[tk]
+        sr, pr = a["pv"] / a["inv"] - 1, a["sv"] / a["inv"] - 1
+        print(f"  {tk:6} {'/'.join(sorted(a['tags'])):12}  stock {sr:+.2%}   spy {pr:+.2%}   "
+              f"alpha {sr - pr:+.2%}")
     if inv:
-        print("-" * 58)
+        print("-" * 62)
         print(f"  invested ${inv:.2f} | paper ${paper_val:.2f} ({paper_val/inv-1:+.2%}) | "
-              f"SPY-equiv ${spy_val:.2f} ({spy_val/inv-1:+.2%})")
+              f"SPY-matched ${spy_val:.2f} ({spy_val/inv-1:+.2%})")
         print(f"  TOTAL ALPHA vs SPY: {(paper_val-spy_val)/inv:+.2%}  (${paper_val-spy_val:+.2f})")
+
+    # ── daily equity curve: both routes, same cash flows, marked to each day's close ──
+    start = min(l["buy_date"] for l in lots)
+    try:
+        hist = yf.download(tickers + ["SPY"], start=start, auto_adjust=True,
+                           progress=False, group_by="column")["Close"]
+        if hasattr(hist, "to_frame"):  # single ticker → Series
+            hist = hist.to_frame()
+        days = [d.strftime("%Y-%m-%d") for d in hist.index]
+        closes = {tk: {d.strftime("%Y-%m-%d"): (float(hist[tk][d]) if tk in hist and hist[tk][d] == hist[tk][d] else None)
+                       for d in hist.index} for tk in tickers + ["SPY"]}
+    except Exception as e:
+        print(f"\n(equity curve unavailable: {e})"); return
+
+    print(f"\nDAILY EQUITY CURVE — matched cash in both routes\n"
+          f"  {'date':10} {'invested':>10} {'algo':>10} {'SPY':>10} {'alpha$':>9} {'alpha%':>8}")
+    for d in days:
+        spd = closes["SPY"].get(d)
+        if not spd:
+            continue
+        inv_d = algo_d = spy_d = 0.0
+        for l in lots:
+            if l["buy_date"] > d:
+                continue
+            inv_d += l["cost"]
+            if l["sell_date"] and l["sell_date"] <= d:      # realized → frozen as cash
+                algo_d += l["cost"] * l["sell_px"] / l["buy_px"]
+                spy_d += l["cost"] * l["spy_sell"] / l["spy_buy"]
+            else:                                            # open → mark to day's close
+                sc = closes.get(l["ticker"], {}).get(d)
+                if not sc:
+                    continue
+                algo_d += l["cost"] * sc / l["buy_px"]
+                spy_d += l["cost"] * spd / l["spy_buy"]
+        if inv_d:
+            print(f"  {d:10} {inv_d:>10.2f} {algo_d:>10.2f} {spy_d:>10.2f} "
+                  f"{algo_d-spy_d:>+9.2f} {(algo_d-spy_d)/inv_d:>+7.2%}")
 
 
 def reconcile(bk, log):

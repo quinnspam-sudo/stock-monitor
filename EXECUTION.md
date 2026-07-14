@@ -59,11 +59,19 @@ it). Everything else executes.
 
 ## vs-SPY tracking (exact benchmark)
 
-Every fill records `spy_at_trade` — SPY's price at the moment of that trade — so
-the benchmark is measured from the same instant as the trade, not the day's
-close. `./venv/bin/python execute.py --report` prints, per position and in
-aggregate, the stock return vs what the same $10 in SPY at the same instant would
-have done (the alpha). This is the clean out-of-sample scorecard for the trial.
+Every fill records `spy_at_trade` — SPY's price at the moment of that trade. The
+benchmark is a **matched dollar-cost SPY**: every $10 the algo puts into a stock,
+$10 goes into SPY at the same instant, and the SPY leg closes when the stock's
+lot does. At any moment both routes hold identical cost-basis capital — the value
+gap is the alpha (no cash-drag artifact, since SPY is funded only when the algo
+funds a trade). Buys/sells are **FIFO lot-matched**, so repeated round-trips in
+one name pair correctly (first sell ↔ first buy).
+
+`./venv/bin/python execute.py --report` prints two things:
+- **Head-to-head snapshot** — per position and total: stock return vs SPY-matched
+  return vs alpha (open positions marked to now; closed to their exit).
+- **Daily equity curve** — both routes valued at each day's close over the trial,
+  with running alpha, so you can watch them track/diverge day by day.
 
 ## Trial end (2026-08-13) — auto-flatten
 
