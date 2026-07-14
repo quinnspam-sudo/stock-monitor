@@ -78,15 +78,40 @@ def _cfg():
     return cfg, ex
 
 
-def _record_trade(action, ticker, fill, note):
+_SPY_CACHE = {}
+
+
+def _spy_price():
+    """SPY's price right now — clocked at each fill so every paper trade carries
+    the exact benchmark it must be measured against. Cached per process so a run
+    with several fills stamps them all against one consistent SPY quote."""
+    if "p" in _SPY_CACHE:
+        return _SPY_CACHE["p"]
+    p = None
+    try:
+        import yfinance as yf
+        p = float(yf.Ticker("SPY").history(period="1d")["Close"].iloc[-1])
+    except Exception:
+        pass
+    _SPY_CACHE["p"] = p
+    return p
+
+
+def _record_trade(action, ticker, fill, note, spy=None):
     """Append to actual_trades.json in the EXACT schema the Discord buy-log bot
     writes (buy_intake.py) so every downstream consumer treats a paper fill
-    identically to a hand-logged trade."""
+    identically to a hand-logged trade — plus `spy_at_trade`, SPY's price at the
+    moment of the fill, so the SPY benchmark is measured from the same instant as
+    the trade (not from the day's close). This is what makes the vs-SPY
+    comparison exact rather than approximate."""
     trades = _load(TRADES, [])
     amount = round(fill["shares"] * fill["price"], 2)
-    trades.append({"date": datetime.now().strftime("%Y-%m-%d"), "ticker": ticker,
-                   "action": action, "amount": amount, "price": fill["price"],
-                   "shares": fill["shares"], "note": note})
+    rec = {"date": datetime.now().strftime("%Y-%m-%d"), "ticker": ticker,
+           "action": action, "amount": amount, "price": fill["price"],
+           "shares": fill["shares"], "note": note}
+    if spy is not None:
+        rec["spy_at_trade"] = round(spy, 4)
+    trades.append(rec)
     TRADES.write_text(json.dumps(trades, indent=2))
     try:
         import obsidian
@@ -119,19 +144,25 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
     deployed = _today_deployed(trades, today)
     acct = bk.account()
     size = ex["max_position_usd"]
+    spy = _spy_price()
     filled = []
 
+    # max_open_positions and daily_deploy_cap_usd are None (unlimited) per Quinn's
+    # config — the paper trial executes EVERY signal for a clean 100%-adherence
+    # record; the only remaining guards are the kill switch, the per-name
+    # anti-double-buy cap (so a re-alert can't stack the same name), and paper
+    # buying power.
     for s in fresh:
         t = s["ticker"]
         key = f"{t}:{s.get('ts', s['date'])}"
         reason = None
         if ex["kill_switch"]:
             reason = "kill switch on"
-        elif len(positions) >= ex["max_open_positions"] and t not in positions:
+        elif ex["max_open_positions"] and len(positions) >= ex["max_open_positions"] and t not in positions:
             reason = f"max_open_positions {ex['max_open_positions']} reached"
-        elif positions.get(t, {}).get("market_value", 0) >= ex["per_name_max_usd"]:
+        elif ex["per_name_max_usd"] and positions.get(t, {}).get("market_value", 0) >= ex["per_name_max_usd"]:
             reason = f"already at per-name cap ${ex['per_name_max_usd']}"
-        elif deployed + size > ex["daily_deploy_cap_usd"]:
+        elif ex["daily_deploy_cap_usd"] and deployed + size > ex["daily_deploy_cap_usd"]:
             reason = f"daily deploy cap ${ex['daily_deploy_cap_usd']} would be exceeded"
         elif acct["buying_power"] < size:
             reason = f"insufficient paper buying power (${acct['buying_power']:.0f})"
@@ -149,7 +180,7 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
         fill = bk.buy_notional(t, size)
         if fill.get("filled"):
             note = f"Paper auto-exec BUY ${size:.2f} on buy_alert ({s.get('detail','')})"
-            _record_trade("BUY", t, fill, note)
+            _record_trade("BUY", t, fill, note, spy)
             deployed += fill["shares"] * fill["price"]
             positions[t] = {"market_value": fill["shares"] * fill["price"]}
             filled.append((t, fill))
@@ -179,6 +210,7 @@ def sell_pass(bk, ex, state, dry, log):
     cooldown = ex["sell_cooldown_hours"] * 3600
     healthy = sc.market_is_healthy()
     log.append(f"market {'HEALTHY (stops armed)' if healthy else 'WEAK (disaster floor only)'}")
+    spy = _spy_price()
     sold = []
 
     # held_since / avg_cost come from OUR ledger (average-cost basis), matching
@@ -227,7 +259,7 @@ def sell_pass(bk, ex, state, dry, log):
                 continue
             fill = bk.close(t)
             if fill.get("filled"):
-                _record_trade("SELL", t, fill, f"Paper auto-exec {kind}: {reason}")
+                _record_trade("SELL", t, fill, f"Paper auto-exec {kind}: {reason}", spy)
                 state[k] = now.timestamp()
                 sold.append((t, kind, fill))
                 log.append(f"SELL {t}: {kind} — {fill['shares']:.4f} @ ${fill['price']:.2f}")
@@ -237,6 +269,83 @@ def sell_pass(bk, ex, state, dry, log):
                 log.append(f"SELL {t}: {kind} not filled ({fill.get('status')})")
             break  # one exit per name per run
     return sold
+
+
+def flatten_pass(bk, ex, state, dry, log):
+    """On/after trial_end, liquidate ALL paper positions once for a clean final
+    tally, then stay flat. Idempotent via state['flattened'] so it happens
+    exactly once even though the workflow keeps firing until its card is
+    disabled."""
+    positions = bk.positions()
+    spy = _spy_price()
+    sold = []
+    for t in list(positions):
+        if dry:
+            log.append(f"[dry] FLATTEN {t}")
+            continue
+        fill = bk.close(t)
+        if fill.get("filled"):
+            _record_trade("SELL", t, fill, "Paper trial end (2026-08-13) — auto-flatten", spy)
+            sold.append((t, "TRIAL_END", fill))
+            log.append(f"FLATTEN {t}: {fill['shares']:.4f} @ ${fill['price']:.2f}")
+    if not dry:
+        state["flattened"] = datetime.now().strftime("%Y-%m-%d")
+    return sold
+
+
+def report():
+    """Paper book vs SPY, measured trade-by-trade from the SPY price clocked at
+    each fill (spy_at_trade). For every $10 BUY: compare the stock's return since
+    entry to what the SAME $10 put into SPY at the SAME instant would have done.
+    Open positions marked to current price; closed ones to their sell price."""
+    import yfinance as yf
+    trades = _load(TRADES, [])
+    buys = [t for t in trades if t["action"] == "BUY"]
+    if not buys:
+        print("No paper trades yet."); return
+    spy_now = _spy_price()
+    # the executor closes whole positions, so a ticker is either fully open or
+    # closed by its (single) SELL — index the sell per ticker for exit pricing
+    sells = {t["ticker"]: t for t in trades if t["action"] == "SELL"}
+    px = {}
+    for tk in {t["ticker"] for t in buys}:
+        try:
+            px[tk] = float(yf.Ticker(tk).history(period="1d")["Close"].iloc[-1])
+        except Exception:
+            px[tk] = None
+
+    inv = paper_val = spy_val = 0.0
+    rows = []
+    for b in buys:
+        sb = b.get("spy_at_trade")
+        if not sb:
+            rows.append((b["ticker"], "no SPY stamp — skipped", None)); continue
+        sell = sells.get(b["ticker"])
+        if sell:
+            exit_px, spy_exit, tag = sell["price"], sell.get("spy_at_trade") or spy_now, "closed"
+        else:
+            exit_px, spy_exit, tag = px.get(b["ticker"]), spy_now, "open"
+        if not exit_px or not spy_exit:
+            rows.append((b["ticker"], "no price — skipped", None)); continue
+        amt = b["amount"]
+        stock_ret = exit_px / b["price"] - 1
+        spy_ret = spy_exit / sb - 1
+        inv += amt
+        paper_val += amt * (1 + stock_ret)
+        spy_val += amt * (1 + spy_ret)
+        rows.append((b["ticker"], tag, (stock_ret, spy_ret, stock_ret - spy_ret)))
+
+    print(f"\nPAPER BOOK vs SPY  (SPY now ${spy_now:.2f})\n" + "-" * 58)
+    for tk, tag, r in rows:
+        if r is None:
+            print(f"  {tk:6} {tag}")
+        else:
+            print(f"  {tk:6} {tag:6}  stock {r[0]:+.2%}   spy {r[1]:+.2%}   alpha {r[2]:+.2%}")
+    if inv:
+        print("-" * 58)
+        print(f"  invested ${inv:.2f} | paper ${paper_val:.2f} ({paper_val/inv-1:+.2%}) | "
+              f"SPY-equiv ${spy_val:.2f} ({spy_val/inv-1:+.2%})")
+        print(f"  TOTAL ALPHA vs SPY: {(paper_val-spy_val)/inv:+.2%}  (${paper_val-spy_val:+.2f})")
 
 
 def reconcile(bk, log):
@@ -256,6 +365,9 @@ def reconcile(bk, log):
 def main():
     dry = "--dry-run" in sys.argv
     force = "--force" in sys.argv
+    if "--report" in sys.argv:
+        report()
+        return
     cfg, ex = _cfg()
 
     if not ex["enabled"]:
@@ -287,8 +399,18 @@ def main():
     state = _load(STATE, {})
     log = []
 
-    bought = buy_pass(bk, cfg, ex, executed, dry, log)
-    sold = sell_pass(bk, ex, state, dry, log)
+    # On/after the trial end date, flatten the book once and stop trading —
+    # no new buys, no rule-based sells, just a clean liquidation for the tally.
+    today = datetime.now().strftime("%Y-%m-%d")
+    trial_over = today >= ex["trial_end"]
+    if trial_over:
+        bought = []
+        sold = [] if state.get("flattened") else flatten_pass(bk, ex, state, dry, log)
+        if state.get("flattened") and not sold:
+            log.append(f"trial ended {ex['trial_end']} — book already flat, idle")
+    else:
+        bought = buy_pass(bk, cfg, ex, executed, dry, log)
+        sold = sell_pass(bk, ex, state, dry, log)
     reconcile(bk, log)
 
     if not dry:
@@ -298,10 +420,13 @@ def main():
 
     # Announce only when something happened (or a guardrail blocked something) —
     # a quiet run stays quiet, same discipline as the rest of the system.
+    flattened_now = any(k == "TRIAL_END" for _, k, _ in sold)
     notable = bought or sold or [l for l in log if l.startswith(("SKIP", "RECONCILE"))]
     if notable and not dry:
         acct = bk.account()
-        lines = [f"🤖 **PAPER EXECUTOR** — equity ${acct['equity']:,.0f}, "
+        header = ("🏁 **PAPER TRIAL COMPLETE (2026-08-13)** — flattened the book. "
+                  if flattened_now else "🤖 **PAPER EXECUTOR** — ")
+        lines = [f"{header}equity ${acct['equity']:,.0f}, "
                  f"cash ${acct['cash']:,.0f} (Alpaca paper)"]
         if bought:
             lines.append("**Bought:** " + ", ".join(f"{t} ${f['shares']*f['price']:.0f}" for t, f in bought))
@@ -310,8 +435,12 @@ def main():
         skips = [l for l in log if l.startswith(("SKIP", "RECONCILE"))]
         if skips:
             lines.append("\n".join(skips))
-        lines.append("_Paper trial → 2026-08-13. Kill switch: config.execution.kill_switch. "
-                     "Frozen trading rules unchanged — this only executes them._")
+        if flattened_now:
+            lines.append("_Trial over — run `execute.py --report` for the vs-SPY tally, "
+                         "then disable the execute cron card. Positions are flat._")
+        else:
+            lines.append("_Paper trial → 2026-08-13. Kill switch: config.execution.kill_switch. "
+                         "Frozen trading rules unchanged — this only executes them._")
         notify.send_message("\n".join(lines), kind="EXECUTE")
 
     print("\n".join(log) or "nothing to do")

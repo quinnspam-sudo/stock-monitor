@@ -47,11 +47,30 @@ writing the identical `actual_trades.json` records — so `performance.py`,
 | `mode` | `"paper"` | paper only; `"live"` is intentionally unsupported here |
 | `trial_end` | `"2026-08-13"` | stop opening new positions after this date |
 | `market_hours_only` | `true` | only trade while the market is open |
-| `max_open_positions` | `25` | never hold more than this many names |
+| `max_open_positions` | `null` | **unlimited** (Quinn: execute every signal) |
 | `max_position_usd` | `buy_amount_usd` ($10) | per-order size |
-| `per_name_max_usd` | = per-order size | don't stack a name past this |
-| `daily_deploy_cap_usd` | `200` | max new dollars deployed per day |
+| `per_name_max_usd` | = per-order size | don't stack a name past this (anti-double-buy) |
+| `daily_deploy_cap_usd` | `null` | **unlimited** — no daily cap |
 | `sell_cooldown_hours` | `24` | per-(ticker,exit) cooldown, mirrors sell_check |
+
+The only active guards are the kill switch, paper buying power, and the per-name
+anti-double-buy cap (one $10 position per name, so a duplicate alert can't stack
+it). Everything else executes.
+
+## vs-SPY tracking (exact benchmark)
+
+Every fill records `spy_at_trade` — SPY's price at the moment of that trade — so
+the benchmark is measured from the same instant as the trade, not the day's
+close. `./venv/bin/python execute.py --report` prints, per position and in
+aggregate, the stock return vs what the same $10 in SPY at the same instant would
+have done (the alpha). This is the clean out-of-sample scorecard for the trial.
+
+## Trial end (2026-08-13) — auto-flatten
+
+On/after `trial_end` the executor **liquidates the entire paper book once**
+(idempotent), posts a 🏁 TRIAL COMPLETE summary, and then stays idle. Run
+`execute.py --report` for the final vs-SPY tally and disable the `execute` cron
+card.
 
 **Kill switch:** flip `config.execution.kill_switch` to `true` and push (or edit
 it in the repo on GitHub) — the next run halts and posts a notice. Nothing else
@@ -84,4 +103,5 @@ Oct 13 out-of-sample review, and it's the evidence for whether to ever go live.
 ```
 ./venv/bin/python execute.py --dry-run   # compute intended orders, place NOTHING
 ./venv/bin/python execute.py --force      # ignore the market-hours gate (testing)
+./venv/bin/python execute.py --report     # paper book vs SPY (alpha per position + total)
 ```
