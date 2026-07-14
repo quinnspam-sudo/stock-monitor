@@ -3,6 +3,118 @@
 Watchlist monitor that scores stocks on momentum/trend signals and posts BUY alerts
 to a private Discord server via webhook. Recommends only — never trades.
 
+## How the ecosystem works (start here)
+
+This isn't a single script — it's a small pipeline of scheduled jobs that all read/write
+a shared set of JSON files in this repo, and talk to Discord for notifications:
+
+1. **Scoring engine** (`monitor.py`, `factors.py`) — pulls price data from yfinance,
+   computes an 11-category momentum/trend score per watchlist ticker, and diffs it
+   against the last known score (`scores.json`). Crossing `alert_threshold` fires a
+   Discord BUY alert.
+2. **Notifications** (`notify.py`) — all Discord posting goes through here, routed to
+   one of several webhooks/bot depending on message type (buy alerts, updates, sells,
+   buy-log bot replies).
+3. **Committee pipeline** (`committee.py`, `COMMITTEE_PROTOCOL.md`) — when a score move
+   is big enough, writes a payload to `committee_prompts/` for you to manually paste into
+   a Claude Pro chat, which acts as an "investment committee" and returns a verdict. This
+   step is manual by design — it's not automated by API.
+4. **Discovery** (`discover.py`, `DISCOVERY.md`) — weekly job that grows/prunes the
+   watchlist automatically using free Yahoo screens, scored with the same pipeline.
+5. **Paper execution** (`execute.py`, `broker.py`, `EXECUTION.md`) — optional: places
+   *paper* (fake-money) trades on Alpaca for fresh BUY alerts and applies mechanical
+   exit rules to open paper positions. No-ops entirely if Alpaca keys aren't set.
+6. **Ledgers** — `recommendations.json` ("what the system said to do") and
+   `actual_trades.json` ("what was actually bought/sold", via paper execution or a
+   Discord buy-log bot) are tracked separately and compared with `performance.py`.
+7. **Scheduling** — in this fork, all of the above run as GitHub Actions
+   (`.github/workflows/*.yml`), triggered by an external cron service (cron-job.org)
+   calling each workflow's `workflow_dispatch` endpoint, since GitHub's native
+   `schedule:` trigger was unreliable on this repo. Each run commits its updated
+   state files back to the repo so the next run picks up where the last left off.
+8. **Obsidian sync** (`obsidian.py`, `obsidian_sync.py`) — optional: mirrors every
+   alert/payload into a local Obsidian vault. Purely cosmetic/archival — nothing else
+   depends on it, and it's best-effort (failures never break monitoring).
+9. **Dashboard** (`dashboard.py` → `dashboard.html`) — static ranked scoreboard,
+   regenerated on every run.
+
+Everything is **recommend-only by default**. The only thing that can place a real
+(paper) order is `execute.py`, and it requires its own credentials to do anything.
+
+## Forking this: what you'll need
+
+To replicate this for yourself, fork the repo, then:
+
+### 1. Required — Discord webhook (for any alerts at all)
+- Create a Discord server (or channel in an existing one).
+- **Server Settings → Integrations → Webhooks → New Webhook** → copy the URL.
+- This becomes `DISCORD_WEBHOOK_URL`.
+
+### 2. Set up secrets
+Two ways to supply credentials, matching where the code runs:
+
+**Locally** — create `secrets.json` in the repo root (already gitignored, never commits):
+```json
+{
+  "discord_webhook_url": "https://discord.com/api/webhooks/...",
+  "discord_updates_webhook_url": "https://discord.com/api/webhooks/...",
+  "discord_sell_webhook_url": "https://discord.com/api/webhooks/...",
+  "discord_bot_token": "...",
+  "discord_buy_log_channel_id": "...",
+  "obsidian_vault": "/absolute/path/to/your/vault"
+}
+```
+Only `discord_webhook_url` is required to get basic alerts working; the rest are
+optional depending on which features you use (see table below).
+
+**GitHub Actions** (if you want it running in the cloud like this fork does) — add
+the same values as **repo secrets**: Settings → Secrets and variables → Actions →
+New repository secret. The workflow YAMLs already reference these names, so no
+code changes needed:
+
+| Secret name | Required for | Where to get it |
+|---|---|---|
+| `DISCORD_WEBHOOK_URL` | Basic BUY alerts (`monitor.yml`) | Discord webhook, see above |
+| `DISCORD_UPDATES_WEBHOOK_URL` | Intraday/close/weekly updates | Discord webhook, separate channel recommended |
+| `DISCORD_SELL_WEBHOOK_URL` | Sell-signal alerts (`sell_check.yml`) | Discord webhook, separate channel recommended |
+| `DISCORD_BOT_TOKEN` | Buy-log intake bot (`buy_intake.yml`) | Discord Developer Portal → New Application → Bot → Token. Needs Message Content intent + read access to your buy-log channel |
+| `DISCORD_BUY_LOG_CHANNEL_ID` | Buy-log intake bot | Right-click the channel in Discord (Developer Mode on) → Copy Channel ID |
+| `ALPACA_API_KEY` / `ALPACA_SECRET_KEY` | Paper-trading executor (`execute.yml`) | Free [Alpaca](https://alpaca.markets) account → Paper Trading → API keys. Without these, `execute.py` just no-ops |
+
+Nothing here needs a **paid** API — yfinance (free), Discord (free), Alpaca paper
+trading (free) are all that's required. Obsidian sync is entirely optional and only
+matters if you use Obsidian locally.
+
+### 3. Wire up the cron scheduler (optional, only if you want it fully automated)
+GitHub's own `schedule:` trigger can silently never fire on new repos/accounts (see
+"Scheduled jobs" below for what happened here). If that happens to you too:
+1. Generate a fine-grained GitHub PAT scoped to **Actions: write** on your fork only.
+2. Create a free [cron-job.org](https://cron-job.org) account.
+3. One job per workflow, POSTing to
+   `https://api.github.com/repos/<you>/<repo>/actions/workflows/<file>.yml/dispatches`
+   with `Authorization: Bearer <PAT>` and body `{"ref":"main"}`, on the schedule you want.
+4. See `CRON_TRIGGERS.md` for the exact schedule this fork uses, and remember your PAT
+   will expire — set a calendar reminder to rotate it.
+
+Otherwise you can just run any script manually (`./venv/bin/python monitor.py`) or rely
+on GitHub's native `schedule:` triggers, which work fine on established accounts/repos.
+
+### 4. Local Python setup
+```bash
+python3 -m venv venv
+./venv/bin/pip install -r requirements.txt
+./venv/bin/python notify.py       # sanity check: should post to Discord
+./venv/bin/python monitor.py --dry-run   # score watchlist, no alerts sent
+```
+
+### 5. Customize
+- `config.json` — your watchlist, alert thresholds, buy amount, categories.
+- `EVALUATION_PROTOCOL.md` — the frozen scoring/exit rules; edit with care, these are
+  what everything downstream (execution, sell rules) trusts.
+- `COMMITTEE_PROTOCOL.md` — the manual Claude Pro committee workflow, optional.
+
+---
+
 ## Setup (one time)
 
 1. Create a private Discord server (or use an existing one) and a channel like `#buy-alerts`.
