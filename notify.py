@@ -35,11 +35,11 @@ def load_config():
       - discord_sell_webhook_url     — sell/exit alerts: CANSLIM stop-loss/
         take-profit, Darvas box breakdown, Magic Formula rebalance-due
         (send_sell_alert's target)
-    Plus two bot credentials for buy_intake.py's inbound channel polling
-    (not a webhook — a real Discord Bot Token, since reading messages
-    requires the bot REST API, not a webhook):
-      - discord_bot_token             — Bot Token from the Discord Developer Portal
-      - discord_buy_log_channel_id    — channel ID buy_intake.py polls for buy-log messages
+    discord_bot_token / discord_buy_log_channel_id were buy_intake.py's inbound
+    channel-polling credentials (a real Discord Bot Token, not a webhook —
+    reading messages requires the bot REST API). Retired 2026-07-15: execute.py
+    auto-logs every trade directly, so nothing polls Discord anymore; the
+    workflow lives in workflows_legacy_backup/ and these keys are unused.
     Each resolves env var > secrets.json > legacy config.json key, same
     precedence as before. If discord_updates_webhook_url or
     discord_sell_webhook_url isn't set, they fall back to the BUY webhook
@@ -83,11 +83,8 @@ def send_alert(ticker, score, action, price, details, webhook_url=None):
     amount = cfg.get("buy_amount_usd")
     if action == "BUY" and amount and price:
         details = {"Mechanical action": f"BUY ${amount:,.2f} (~{amount / price:.4f} sh) — "
-                   "every alert, equal size, no picking",
-                   # Exact string buy_intake.py's TRADE_RE parses — paste into
-                   # #buy-log after executing so the trade ledger (and the
-                   # trailing stop, which needs the entry date) stays complete.
-                   "Log with": f"`bought ${amount:g} of {ticker} at ${price:,.2f}`",
+                   "auto-placed by execute.py, no manual logging needed "
+                   "(#buy-log intake retired 2026-07-15)",
                    **details}
     import obsidian
     obsidian.log_ping(action, f"**{ticker}** score {score}/100 at ${price:,.2f} — "

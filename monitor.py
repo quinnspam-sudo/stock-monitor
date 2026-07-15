@@ -336,8 +336,9 @@ def main():
                 details["Magic Formula"] = f"#{f['magic_rank']}/{f['magic_universe']}"
             if f.get("f_score") is not None:
                 details["F-Score"] = f"{f['f_score']}/9"
-            details["Next step"] = ("Execute the Mechanical action above, then log it in #buy-log. "
-                                    "Committee payloads are for watchlist curation, not trade approval.")
+            details["Next step"] = ("execute.py auto-places the Mechanical action above as a paper "
+                                    "order — no manual logging needed. Committee payloads are for "
+                                    "watchlist curation, not trade approval.")
             idea = cur_eval.get("call_idea")
             if idea and idea.get("contract"):
                 import options_engine

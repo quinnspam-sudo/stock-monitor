@@ -75,9 +75,10 @@ You should land on a dashboard listing existing cronjobs (a menu item like
 - Its most recent execution result: open the job and find its history tab/section —
   the last executions should show status **204**. Record the latest status code.
 
-Expected (but verify, don't assume): six workflows covered by seven jobs —
+Expected (but verify, don't assume): five workflows covered by six jobs —
 `monitor.yml` (twice — it needs two schedule patterns), `pulse.yml`, `close.yml`,
-`sell_check.yml`, `buy_intake.yml` — all enabled, all recently returning 204.
+`sell_check.yml` — all enabled, all recently returning 204. (`buy_intake.yml`
+was retired 2026-07-15 — disable/delete its cron-job.org card if still present.)
 
 Then open ONE known-good job fully (the `close.yml` one is a good pick) and study
 its settings screens. Note (names only, never the secret value):

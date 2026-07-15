@@ -13,8 +13,9 @@ a shared set of JSON files in this repo, and talk to Discord for notifications:
    against the last known score (`scores.json`). Crossing `alert_threshold` fires a
    Discord BUY alert.
 2. **Notifications** (`notify.py`) — all Discord posting goes through here, routed to
-   one of several webhooks/bot depending on message type (buy alerts, updates, sells,
-   buy-log bot replies).
+   one of several webhooks depending on message type (buy alerts, updates, sells).
+   Output only — Discord is not polled for anything (the old inbound buy-log bot
+   was retired 2026-07-15, see below).
 3. **Committee pipeline** (`committee.py`, `COMMITTEE_PROTOCOL.md`) — when a score move
    is big enough, writes a payload to `committee_prompts/` for you to manually paste into
    a Claude Pro chat, which acts as an "investment committee" and returns a verdict. This
@@ -27,8 +28,8 @@ a shared set of JSON files in this repo, and talk to Discord for notifications:
    conviction-call ideas as 1-contract paper option buys, with the same mechanical
    exit rules. No-ops entirely if Alpaca keys aren't set.
 6. **Ledgers** — `recommendations.json` ("what the system said to do") and
-   `actual_trades.json` ("what was actually bought/sold", via paper execution or a
-   Discord buy-log bot) are tracked separately and compared with `performance.py`.
+   `actual_trades.json` ("what was actually bought/sold", auto-written by
+   `execute.py`) are tracked separately and compared with `performance.py`.
 7. **Scheduling** — in this fork, all of the above run as GitHub Actions
    (`.github/workflows/*.yml`), triggered by an external cron service (cron-job.org)
    calling each workflow's `workflow_dispatch` endpoint, since GitHub's native
@@ -61,8 +62,6 @@ Two ways to supply credentials, matching where the code runs:
   "discord_webhook_url": "https://discord.com/api/webhooks/...",
   "discord_updates_webhook_url": "https://discord.com/api/webhooks/...",
   "discord_sell_webhook_url": "https://discord.com/api/webhooks/...",
-  "discord_bot_token": "...",
-  "discord_buy_log_channel_id": "...",
   "obsidian_vault": "/absolute/path/to/your/vault"
 }
 ```
@@ -79,8 +78,6 @@ code changes needed:
 | `DISCORD_WEBHOOK_URL` | Basic BUY alerts (`monitor.yml`) | Discord webhook, see above |
 | `DISCORD_UPDATES_WEBHOOK_URL` | Intraday/close/weekly updates | Discord webhook, separate channel recommended |
 | `DISCORD_SELL_WEBHOOK_URL` | Sell-signal alerts (`sell_check.yml`) | Discord webhook, separate channel recommended |
-| `DISCORD_BOT_TOKEN` | Buy-log intake bot (`buy_intake.yml`) | Discord Developer Portal → New Application → Bot → Token. Needs Message Content intent + read access to your buy-log channel |
-| `DISCORD_BUY_LOG_CHANNEL_ID` | Buy-log intake bot | Right-click the channel in Discord (Developer Mode on) → Copy Channel ID |
 | `ALPACA_API_KEY` / `ALPACA_SECRET_KEY` | Paper-trading executor (`execute.yml`) | Free [Alpaca](https://alpaca.markets) account → Paper Trading → API keys. Without these, `execute.py` just no-ops |
 
 Nothing here needs a **paid** API — yfinance (free), Discord (free), Alpaca paper
@@ -205,17 +202,13 @@ rotating before then or the jobs will start failing with 401s).
   Every firing is also logged to `recommendations.json` (kind="sell_signal").
   Only covers tickers with an open position in `actual_trades.json` — not
   recommendations, since a stop-loss only makes sense against a real entry.
-- `buy_intake.yml` — every 15 min, all day (not just market hours): polls a
-  Discord `#buy-log` channel via a real Discord **Bot** (not a webhook —
-  reading messages requires the bot REST API) for messages like
-  `Bought $20 of NVDA at $374` / `Sold $20 of NVDA at $400`, and records
-  them into `actual_trades.json` — the "what did I actually do" ledger,
-  automatically visible to `sell_check.py` and `performance.py`. Requires
-  the actual ticker symbol in the message (no company-name fuzzy-matching —
-  a misparse there would silently record the wrong stock). Replies
-  in-channel with a ✅/❌ confirming exactly what was parsed. Credentials:
-  `discord_bot_token` (Bot Token from the Discord Developer Portal, **not**
-  a webhook secret) + `discord_buy_log_channel_id`.
+- `buy_intake.yml` — **retired 2026-07-15** (moved to `workflows_legacy_backup/`).
+  Used to poll a Discord `#buy-log` channel via a real Discord Bot every 15
+  min, all day, for hand-typed trade messages and record them into
+  `actual_trades.json`. Made redundant once `execute.py` started
+  auto-executing and auto-logging every trade to that same ledger directly —
+  Discord's role is output-only now. Was ~1,585 GH Actions min/month for a
+  channel nothing was posting to anymore.
 - `execute.yml` — every 15 min, market hours Mon–Fri (5 min after `monitor`):
   the **paper-trading executor** (`execute.py`) — places Alpaca *paper* orders
   for fresh `buy_alert` signals and applies the frozen exit rules to open paper
@@ -239,8 +232,7 @@ merged:
   - `recommendations.json` — committee verdicts (`verdict.py add`, kind
     `committee_verdict`), real BUY alerts (`monitor.py`, kind `buy_alert`),
     and sell signals (`sell_check.py`, kind `sell_signal`)
-  - `actual_trades.json` — real buys/sells logged via the Discord
-    `#buy-log` bot only
+  - `actual_trades.json` — real buys/sells, auto-written by `execute.py`
 
 Compare the two anytime with `performance.py`:
 ```bash
@@ -384,13 +376,14 @@ week-to-week.
 - `history.json` — intraday score history, last 30 days (feeds close.py)
 - `recommendations.json` — "what did the system say to do": committee verdicts,
   real BUY alerts, sell signals (see performance.py)
-- `actual_trades.json` — "what did I actually do": real buys/sells from the
-  Discord buy-log bot only (see performance.py)
+- `actual_trades.json` — "what did I actually do": real buys/sells,
+  auto-written by `execute.py` (see performance.py)
 - `backtest_log.json` — weekly scoring-accuracy history (from `backtest.py`)
 - `committee_prompts/` — generated payloads for Claude Pro (auto-pruned after 14 days)
 - `alert_state.json` — Discord alert cooldowns
 - `sell_alert_state.json` — sell-signal cooldowns (per ticker+kind)
-- `discord_intake_state.json` — buy-log bot's last-processed Discord message ID
+- `discord_intake_state.json` — unused since buy_intake.yml was retired
+  2026-07-15 (was the buy-log bot's last-processed Discord message ID)
 - `discover_log.json` — every discovery run's adds/prunes/near-misses (from `discover.py`)
 - `discover_state.json` — discovery reject cooldowns + prune-confirmation counters
 - `watchlist_health.json` — dead-name report (from `watchlist_health.py`; read by the prune pass)

@@ -1,5 +1,15 @@
 name: buy_intake
 
+# RETIRED 2026-07-15 (Quinn): moved out of .github/workflows/ so it can no
+# longer be dispatched by GitHub Actions or its cron-job.org card. Discord's
+# role is output-only now — execute.py auto-executes and auto-logs every
+# trade to actual_trades.json directly, so nothing needs to poll #buy-log
+# for hand-typed trade messages anymore. This was ~1,585 GH Actions
+# min/month (672 runs/week, 24/7) for a channel nothing was posting to.
+# Kept here for reference in case manual trade logging is ever needed again
+# — just `git mv` it back into .github/workflows/ and re-enable the
+# cron-job.org card.
+
 # Triggered externally via cron-job.org calling this workflow's
 # workflow_dispatch REST endpoint on a schedule (see README) — GitHub's
 # native `schedule:` trigger was silently not firing on this new

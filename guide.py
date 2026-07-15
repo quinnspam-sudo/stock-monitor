@@ -12,7 +12,7 @@ GUIDE = """\
 ━━━━━━━━━━━━━━━━━━
 🟢 **BUY ALERT** (green card with a ticker + score)
 **Means:** a watchlist stock crossed the momentum threshold (75/100) — trend, volume, and relative strength are aligned. The card now includes a **Factor conviction** line (HIGH/MEDIUM/LOW) blending Magic Formula rank, Piotroski F-Score, quality gates, and momentum.
-**Do:** execute the card's **Mechanical action** line — buy the fixed dollar amount (config `buy_amount_usd`), every alert, equal size, then log it in #buy-log. The Jan-Jul backtests showed the alpha lives in a few huge outliers (median alert ≈ 0): picking among alerts is how the edge dies. Committee judgment belongs upstream — deciding what's ON the watchlist — not vetoing individual alerts. If the total dollar flow is too high, lower `buy_amount_usd` or raise `alert_threshold`; don't skip alerts. If a burst still exceeds available cash, fill from the top — alerts in a run arrive highest-score-first — and note in #buy-log which ones went unfilled.
+**Do:** nothing manual — `execute.py` auto-places the card's **Mechanical action** (fixed dollar amount, config `buy_amount_usd`) as a paper order on Alpaca and logs it to `actual_trades.json` automatically (2026-07-13+; #buy-log intake is retired). The Jan-Jul backtests showed the alpha lives in a few huge outliers (median alert ≈ 0): picking among alerts is how the edge dies. Committee judgment belongs upstream — deciding what's ON the watchlist — not vetoing individual alerts. If the total dollar flow is too high, lower `buy_amount_usd` or raise `alert_threshold`; don't skip alerts. Guardrails (daily deploy cap, max positions, kill switch) live in `config.execution` — see EXECUTION.md.
 
 📋 **COMMITTEE PAYLOAD(S) READY**
 **Means:** something *thesis-relevant* changed — score moved ≥8/110, timing ≥15, rating band crossed, Top-5 rank shifted, or a first evaluation. This is the system's core signal; it fires rarely by design.
@@ -45,17 +45,17 @@ GUIDE = """\
 
 ━━━━━━━━━━━━━━━━━━
 🔴 **SELL SIGNAL** (posts to the separate #sell-alerts channel — hourly, market hours)
-**Means:** one of three mechanical exit rules fired against a *real open position* (something you actually logged as bought via #buy-log and haven't fully sold yet — not the whole watchlist, and not a committee verdict either):
+**Means:** one of three mechanical exit rules fired against a *real open position* (something `execute.py` actually bought — or, historically, you logged via #buy-log before intake was retired — and hasn't fully sold yet — not the whole watchlist, and not a committee verdict either):
   - **STOP_LOSS** — down 15%+ from your average cost *while SPY is above its 50-day average*. The market is fine and your stock isn't — that's an idiosyncratic problem, cut it. When SPY is below its 50-day (market-wide drawdown), this stop and TRAIL_STOP are suspended: selling with the whole market tested as sell-low/rebuy-high churn.
   - **TRAIL_STOP** — closed 25%+ below its peak close since entry, in a healthy market. The winner has rolled over; take it. (These two replaced the old -7% stop / TAKE_PROFIT / BOX_BREAKDOWN rules, all of which tested worse than holding SPY — see the 2026-07-13 exit-rule backtest.)
   - **DISASTER_STOP** — down 30%+ from average cost, fires no matter what the market is doing. The unconditional floor under "hold through the drawdown." No thesis survives -30%.
   - **REBALANCE_DUE** — held 365+ days. Magic Formula's mechanical annual rotation, regardless of current conviction — this one fires on time elapsed, not price action.
-**Do:** STOP_LOSS is the one rule in this whole system meant to be followed mechanically, not judged — that's the point of a stop-loss. The others are decision inputs, same as everything else here: read, don't auto-execute. Note this only covers real positions logged via #buy-log — it has no visibility into anything you hold that was never logged there, and it deliberately ignores committee verdicts/BUY alerts (those are recommendations, not confirmed positions).
+**Do:** STOP_LOSS is the one rule in this whole system meant to be followed mechanically, not judged — that's the point of a stop-loss. `execute.py` already applies this automatically to its own paper positions; this alert is for visibility, not action. The others are decision inputs, same as everything else here: read, don't act on your own. This only covers real positions execute.py bought (or, historically, you logged via #buy-log before intake was retired) — it has no visibility into anything you hold that was never logged there, and it deliberately ignores committee verdicts/BUY alerts (those are recommendations, not confirmed positions).
 
 ━━━━━━━━━━━━━━━━━━
-📝 **BUY-LOG CHANNEL** (#buy-log — message it directly, checked every 15 min)
-**Means:** type `Bought $<amount> of <TICKER> at $<price>` or `Sold $<amount> of <TICKER> at $<price>` (e.g. `Bought $20 of NVDA at $374`) and it's recorded into the *actual trades* ledger — separate from anything the system recommends — automatically visible to sell-signal checks and `performance.py actual`. Needs the actual ticker symbol, not a company name — a ✅ reply + reaction confirms exactly what was recorded; a ❌ means it didn't parse (format hint included) or the ticker didn't resolve.
-**Do:** double-check the ✅ confirmation matches what you meant to log — this is the one input in the whole system that's you typing a trade in free text, so it's worth a glance before trusting it silently. Use `performance.py recommendations` vs `performance.py actual` (or just ask Claude) to compare what the system suggested against what you actually did.
+📝 **#buy-log CHANNEL — retired 2026-07-15.** Trades used to be logged here by
+hand; `execute.py` now auto-executes and auto-logs every trade to
+`actual_trades.json` directly, so nothing polls this channel anymore.
 
 ━━━━━━━━━━━━━━━━━━
 **House rules:** the system *recommends only* — every trade goes through you. One alert = information; committee verdict = decision input; your judgment = final. Alerts are noise-gated: silence is normal and good."""
