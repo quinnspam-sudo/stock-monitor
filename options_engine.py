@@ -32,14 +32,26 @@ Judges (each votes bullish / not / not-computable, with evidence):
      alone (yfinance has no historical flow), so it can add conviction but
      a gap here never blocks the other judges.
 
-Confluence bar (ALL required — silence for weeks is the system working):
+Confluence bar (ALL required — silence for weeks is the system working;
+tightened further 2026-07-15 to trade frequency for hit-rate now that this
+fires real, larger-dollar paper orders — see EXECUTION.md):
   - Market regime pass (reuses consensus.market_regime: SPY>50d&200d, VIX<28)
-  - >= 3 judges computable and >= 75% of computable judges bullish
-  - No vetoes: IV/RVf >= 1.35 (paying up for vol kills the trade even in an
-    uptrend), 6-mo momentum < -10%, price below 200d SMA
-  - Contract quality gate: OI >= 500, spread <= 5% of mid, breakeven <= 0.6
-    sigma of the option's own implied move, delta inside the target band
-  - Composite score >= 85/100
+  - >= 3 judges computable and 100% of computable judges bullish (unanimous —
+    was 75% supermajority; one dissenting judge now kills the idea)
+  - No vetoes: IV/RVf >= 1.15 (was 1.35), 6-mo momentum < 0% (was -10% —
+    ANY negative momentum vetoes now, not just a falling knife), price
+    below 200d SMA
+  - Trend judge itself now requires 5/5 internal checks (was >=4/5), mom6
+    bar raised to 20%/12% stock/ETF (was 15%/8%), near-52wk-high raised to
+    93% (was 90%)
+  - Catalyst judge requires implied daily move <= 85% of the stock's own
+    avg earnings move (was just "less than"), term ratio <= 0.95 (was 1.0)
+  - Flow judge requires turnover >= 0.45 (was 0.30), call/put ratio >= 2.0
+    stock / 1.3 ETF (was 1.5 / 1.0)
+  - Contract quality gate: OI >= 1500 (was 500), spread <= 3% of mid (was
+    5%), breakeven <= 0.45 sigma of the option's own implied move (was
+    0.6), delta inside the target band
+  - Composite score >= 92/100 (was 85)
 
 Contract selection is judge-led, not stock-led:
   - TREND-led setup  -> stock-replacement call: delta 0.65-0.75, 45-90 DTE
@@ -50,7 +62,7 @@ Contract selection is judge-led, not stock-led:
 
 Expected-value sanity check: lognormal terminal-price EV of the call under
 the FORECAST vol with zero drift (conservative — no momentum credit). The
-premium must not exceed ~1.15x that zero-drift fair value.
+premium must not exceed ~1.05x that zero-drift fair value (was 1.15x).
 
 State: options_state.json (cooldowns), options_ideas.json (append ledger).
 Every actionable idea is also recorded to signals.json via signal_tracker
@@ -77,20 +89,23 @@ STATE_PATH = os.path.join(DIR, "options_state.json")
 LEDGER_PATH = os.path.join(DIR, "options_ideas.json")
 
 RISK_FREE = 0.04
-SUPERMAJORITY = 0.75
+SUPERMAJORITY = 1.00        # unanimous — every computable judge must agree (Quinn,
+                             # 2026-07-15: tightened from 0.75; this fires on real money
+                             # now, so a single dissenting judge should be enough to pass)
 MIN_JUDGES = 3
-PASS_SCORE = 85
-COOLDOWN_DAYS = 10          # one idea per name per 2 trading weeks, max
+PASS_SCORE = 92              # raised from 85
+COOLDOWN_DAYS = 15          # raised from 10 — fewer, more spaced-out ideas per name
 
-# vetoes
-VETO_IV_RVF = 1.35
-VETO_MOM6 = -0.10
+# vetoes (tightened 2026-07-15 — narrower gray zone before the trade is killed)
+VETO_IV_RVF = 1.15          # was 1.35 — closer to the vol judge's own 1.05 bullish bar
+VETO_MOM6 = 0.0             # was -0.10 — ANY negative 6-mo momentum vetoes, no
+                             # "falling knife" tolerance at all
 
-# contract quality gate (tight, matching the tightened calls.py policy)
-MIN_OI = 500
-MAX_SPREAD_PCT = 0.05
-MAX_BREAKEVEN_SIGMA = 0.6
-MAX_EV_PREMIUM = 1.15       # premium vs zero-drift fair value
+# contract quality gate (tightened 2026-07-15 — fewer, cleaner fills)
+MIN_OI = 1500                # was 500 — real exit liquidity, not just a passable print
+MAX_SPREAD_PCT = 0.03        # was 0.05
+MAX_BREAKEVEN_SIGMA = 0.45   # was 0.6 — breakeven must sit well inside the implied move
+MAX_EV_PREMIUM = 1.05        # was 1.15 — premium vs zero-drift fair value
 
 DELTA_BANDS = {"trend": (0.65, 0.75), "catalyst": (0.50, 0.60), "vol": (0.55, 0.70)}
 DTE_BANDS = {"trend": (45, 90), "catalyst": None, "vol": (45, 75)}  # catalyst uses earnings window
@@ -103,7 +118,20 @@ CATALYST_HORIZON_D = 15     # earnings within ~3 trading weeks counts as a live 
 # score bar) is identical: the liquidity gates were the binding constraint on
 # single names and are trivially met by these chains, so the edge selection
 # still does the work.
-TREND_MOM6_BAR = {"stock": 0.15, "etf": 0.08}
+TREND_MOM6_BAR = {"stock": 0.20, "etf": 0.12}   # raised from 0.15/0.08 2026-07-15
+TREND_NEAR_HIGH = 0.93                           # raised from 0.90 2026-07-15
+TREND_UNANIMOUS = 5                              # was >=4 of 5 checks; now all 5
+
+# catalyst judge (tightened 2026-07-15): event vol must be MEANINGFULLY cheap,
+# not just marginally cheap, and the term structure must be flat-to-inverted
+# for the buyer, not merely non-inverted.
+CATALYST_CHEAP_MARGIN = 0.85   # implied_1d must be <= 85% of avg_earnings_move
+CATALYST_TERM_MAX = 0.95       # was <=1.0
+
+# flow proxy (tightened 2026-07-15): needs a clearer positioning signal, not
+# just "outpacing" OI/hedging flow.
+FLOW_TURNOVER_BAR = 0.45   # was 0.30
+FLOW_CP_BAR = {"stock": 2.0, "etf": 1.3}   # was 1.5 / 1.0
 
 
 # ---------------------------------------------------------------- vol forecast
@@ -148,7 +176,7 @@ def judge_trend(close, spy_close, mom6_bar=0.15):
     rising = float(sma50.iloc[-1]) > float(sma50.iloc[-21]) if len(sma50.dropna()) > 21 else False
     mom6 = px / float(close.iloc[-126]) - 1 if len(close) >= 126 else None
     hi52 = float(close.tail(252).max())
-    near_high = px / hi52 >= 0.90
+    near_high = px / hi52 >= TREND_NEAR_HIGH
     rs = None
     if spy_close is not None and len(spy_close) >= 126 and mom6 is not None:
         spy6 = float(spy_close.iloc[-1]) / float(spy_close.iloc[-126]) - 1
@@ -159,7 +187,7 @@ def judge_trend(close, spy_close, mom6_bar=0.15):
           "mom_6m": round(mom6, 3) if mom6 is not None else None,
           "pct_of_52wk_high": round(px / hi52, 3),
           "rs_vs_spy_6m": round(rs, 3) if rs is not None else None}
-    return sum(bool(c) for c in checks) >= 4, ev
+    return sum(bool(c) for c in checks) >= TREND_UNANIMOUS, ev
 
 
 def judge_catalyst(tk, close, atm_iv, next_earnings, term_ratio):
@@ -172,8 +200,9 @@ def judge_catalyst(tk, close, atm_iv, next_earnings, term_ratio):
         return None, {"note": f"earnings {next_earnings} outside {CATALYST_HORIZON_D}d horizon"}
     em = calls.avg_earnings_move(tk, close)
     implied_1d = atm_iv / math.sqrt(252) if atm_iv else None
-    cheap_event = (em is not None and implied_1d is not None and implied_1d < em)
-    healthy_term = term_ratio is None or term_ratio <= 1.0
+    cheap_event = (em is not None and implied_1d is not None
+                   and implied_1d <= CATALYST_CHEAP_MARGIN * em)
+    healthy_term = term_ratio is None or term_ratio <= CATALYST_TERM_MAX
     ev = {"earnings_date": str(next_earnings), "days_to_earnings": days,
           "avg_earnings_move": round(em, 4) if em else None,
           "implied_daily_move": round(implied_1d, 4) if implied_1d else None,
@@ -206,7 +235,7 @@ def judge_flow_proxy(tk, expiries, cp_bar=1.5):
         cp = cv / pv if pv else None
         ev = {"call_vol": cv, "put_vol": pv, "call_vol_oi_turnover": round(turnover, 2),
               "call_put_ratio": round(cp, 2) if cp else None}
-        return (turnover >= 0.30 and cp is not None and cp >= cp_bar), ev
+        return (turnover >= FLOW_TURNOVER_BAR and cp is not None and cp >= cp_bar), ev
     except Exception:
         return None, {"note": "chain flow unavailable"}
 
@@ -350,7 +379,7 @@ def evaluate(ticker, spy_close=None, asset_class="stock"):
     else:
         votes["catalyst"], out["evidence"]["catalyst"] = judge_catalyst(tk, close, atm_iv, earn, term_ratio)
     votes["flow_proxy"], out["evidence"]["flow"] = judge_flow_proxy(
-        tk, expiries, cp_bar=1.0 if asset_class == "etf" else 1.5)
+        tk, expiries, cp_bar=FLOW_CP_BAR.get(asset_class, FLOW_CP_BAR["stock"]))
     out["judges"] = votes
 
     # vetoes — any one is terminal

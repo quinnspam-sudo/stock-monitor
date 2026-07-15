@@ -12,13 +12,16 @@ Four independent strategy judges, each voting bullish / not / GAPPED:
 | Judge | Edge | Bullish when |
 |---|---|---|
 | vol_mispricing | IV vs forecast RV | ATM IV ≤ 1.05× EWMA-blended 20/60/120d realized vol |
-| trend | momentum persistence | ≥4 of 5: above 50d+200d SMA, rising 50d, 6-mo >+15%, ≥90% of 52-wk high, positive RS vs SPY |
-| catalyst | event asymmetry | earnings ≤15d out, implied daily move < avg historical earnings move, term structure not inverted |
-| flow_proxy | positioning | call vol/OI turnover ≥0.30 and call/put vol ≥1.5 (same-day only — free data) |
+| trend | momentum persistence | **5 of 5** (was ≥4/5): above 50d+200d SMA, rising 50d, 6-mo >+20%/+12% stock/ETF (was +15%/+8%), ≥93% of 52-wk high (was ≥90%), positive RS vs SPY |
+| catalyst | event asymmetry | earnings ≤15d out, implied daily move ≤85% of avg historical earnings move (was just "less than"), term ratio ≤0.95 (was ≤1.0) |
+| flow_proxy | positioning | call vol/OI turnover ≥0.45 (was ≥0.30) and call/put vol ≥2.0 stock / ≥1.3 ETF (was ≥1.5 / ≥1.0), same-day only — free data |
 
-**Confluence bar (all required):** market regime pass (SPY>50d&200d, VIX<28,
-reused from `consensus.py`) · ≥3 judges computable · ≥75% bullish · no vetoes
-(IV/RVf ≥1.35, 6-mo momentum <-10%, price below 200d SMA).
+**Confluence bar (all required; tightened 2026-07-15 — this fires real
+larger-dollar paper orders now, so frequency was traded for hit-rate — see
+EXECUTION.md):** market regime pass (SPY>50d&200d, VIX<28, reused from
+`consensus.py`) · ≥3 judges computable · **100% bullish (unanimous, was
+≥75%)** · no vetoes (IV/RVf ≥1.15 (was ≥1.35), 6-mo momentum <0% (was
+<-10% — any negative momentum vetoes now), price below 200d SMA).
 
 ### ETFs (added 2026-07-09)
 
@@ -28,14 +31,15 @@ asset-class calibrations — not a separate engine, so future tuning stays in
 sync:
 
 - **catalyst is skipped** (no earnings) — confluence runs on the remaining
-  3 judges, so ETF ideas need vol + trend + flow effectively unanimous.
-- **trend 6-mo momentum bar 8%** instead of 15% (baskets compound slower
-  than single names).
-- **flow call/put bar 1.0** instead of 1.5 — ETF put volume is structurally
+  3 judges, so ETF ideas need vol + trend + flow **unanimous** (was
+  effectively unanimous under the 75% bar too, now explicitly required).
+- **trend 6-mo momentum bar 12%** instead of 20% (baskets compound slower
+  than single names; both raised from 8%/15% 2026-07-15).
+- **flow call/put bar 1.3** instead of 2.0 — ETF put volume is structurally
   inflated by portfolio hedging (validated 2026-07-09: at 1.5, flow voted
-  nay on all 35 ETFs).
+  nay on all 35 ETFs; both bars raised 2026-07-15 keeping that same ratio).
 
-Vetoes, contract gate, and the 85 score bar are identical. ETF ideas are
+Vetoes, contract gate, and the score bar are identical. ETF ideas are
 tagged `[ETF]` in alerts and logged as `etf_call_conviction` in the signal
 tracker.
 
@@ -43,10 +47,11 @@ tracker.
 wks past earnings; trend-led → Δ0.65–0.75 stock-replacement, 45–90 DTE;
 vol-led → Δ0.55–0.70, 45–75 DTE.
 
-**Quality gate + score:** OI ≥500, spread ≤5% of mid, breakeven ≤0.6σ of the
-implied move, premium ≤1.15× the zero-drift Black-Scholes fair value at the
-FORECAST vol. Composite score /100 (confluence 35, vol edge 25, contract
-quality 25, expected value 15), pass bar **85**.
+**Quality gate + score (tightened 2026-07-15):** OI ≥1500 (was ≥500), spread
+≤3% of mid (was ≤5%), breakeven ≤0.45σ of the implied move (was ≤0.6σ),
+premium ≤1.05× the zero-drift Black-Scholes fair value at the FORECAST vol
+(was ≤1.15×). Composite score /100 (confluence 35, vol edge 25, contract
+quality 25, expected value 15), pass bar **92** (was 85).
 
 ## Running
 
