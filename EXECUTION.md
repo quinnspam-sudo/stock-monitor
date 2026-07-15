@@ -35,6 +35,21 @@ writing the identical `actual_trades.json` records — so `performance.py`,
 - **SELL** — applies the frozen `sell_check` exit rules to live paper positions
   and closes any that trigger (disaster stop / market-conditioned stop / trailing
   stop / annual rebalance).
+- **BUY CALL** — executes fresh `call_conviction`/`etf_call_conviction`
+  signals from the last 2 calendar days (written by `options_engine.py`) as
+  1-contract paper buys, capped by `option_premium_usd_cap`. The 2-day window
+  (vs. stock BUY's today-only) exists because the options scan runs once
+  daily at 12:45 PT, only 5 minutes before execute's last run of the day
+  (12:50 PT) — too tight a gap to guarantee same-day pickup, so a signal
+  that narrowly misses today's window still fires on tomorrow's first run
+  instead of being silently dropped (Quinn, 2026-07-15). Recorded to a
+  **separate** `option_trades.json`
+  ledger — options never touch `actual_trades.json`, so `performance.py`/
+  `sell_check.py`'s equity math can't be contaminated by an OCC symbol.
+- **SELL CALL** — closes an option position at ±`option_profit_target_pct`/
+  `option_stop_loss_pct` on premium, or force-closes on/after expiry day
+  regardless of P/L (an unattended account should never risk assignment or an
+  expire-worthless outcome by inaction).
 - **RECONCILE** — reports any drift between Alpaca's positions and the ledger.
 - Announces non-quiet runs to the **#updates** Discord channel; commits state.
 
@@ -52,6 +67,9 @@ writing the identical `actual_trades.json` records — so `performance.py`,
 | `per_name_max_usd` | = per-order size | don't stack a name past this (anti-double-buy) |
 | `daily_deploy_cap_usd` | `null` | **unlimited** — no daily cap |
 | `sell_cooldown_hours` | `24` | per-(ticker,exit) cooldown, mirrors sell_check |
+| `option_premium_usd_cap` | `3000` | skip a call idea if 1 contract (premium×100) costs more (raised from the `300` code default 2026-07-15 — real conviction-call ideas run $2.6k-$5.2k/contract, so $300 skipped nearly everything) |
+| `option_profit_target_pct` | `0.50` | close a call at +50% premium gain |
+| `option_stop_loss_pct` | `-0.50` | close a call at -50% premium loss |
 
 The only active guards are the kill switch, paper buying power, and the per-name
 anti-double-buy cap (one $10 position per name, so a duplicate alert can't stack
@@ -87,7 +105,9 @@ needed.
 ## Activation (one-time, requires you)
 
 1. **Create a free Alpaca account** and open a **paper** account (no funding, no
-   real money): <https://alpaca.markets>. Generate **paper** API keys.
+   real money): <https://alpaca.markets>. Generate **paper** API keys, and
+   enable **options trading** on that paper account (account-level setting —
+   required for the call-buying pass, separate from the equity keys below).
 2. **Add two GitHub repo secrets** (Settings → Secrets and variables → Actions):
    `ALPACA_API_KEY` and `ALPACA_SECRET_KEY` (the paper keys).
 3. **Add a cron-job.org card** for `execute.yml` (recipe = Card 5 in

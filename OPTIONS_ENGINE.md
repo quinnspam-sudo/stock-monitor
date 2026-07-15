@@ -59,5 +59,11 @@ quality 25, expected value 15), pass bar **85**.
 ```
 
 State: `options_state.json` (10-day per-name cooldown), `options_ideas.json`
-(append ledger of actionable ideas). Recommend-only — never executes.
-Silence for weeks is the system working, not failing.
+(append ledger of actionable ideas). Every actionable idea is logged to
+`signals.json` (kind `call_conviction`/`etf_call_conviction`) and **fully
+auto-executed** the same day by `execute.py`'s `buy_options_pass` — a
+1-contract paper buy on Alpaca, capped by `config.execution.
+option_premium_usd_cap`, closed by `sell_options_pass` on
+±`option_profit_target_pct`/`option_stop_loss_pct` or force-closed at expiry.
+See `EXECUTION.md`. Silence for weeks is the system working, not failing —
+it just means no trade fires, not that nothing would execute if one did.

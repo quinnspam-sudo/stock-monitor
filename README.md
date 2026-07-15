@@ -23,7 +23,9 @@ a shared set of JSON files in this repo, and talk to Discord for notifications:
    watchlist automatically using free Yahoo screens, scored with the same pipeline.
 5. **Paper execution** (`execute.py`, `broker.py`, `EXECUTION.md`) — optional: places
    *paper* (fake-money) trades on Alpaca for fresh BUY alerts and applies mechanical
-   exit rules to open paper positions. No-ops entirely if Alpaca keys aren't set.
+   exit rules to open paper positions. Also fully executes `options_engine.py`'s
+   conviction-call ideas as 1-contract paper option buys, with the same mechanical
+   exit rules. No-ops entirely if Alpaca keys aren't set.
 6. **Ledgers** — `recommendations.json` ("what the system said to do") and
    `actual_trades.json` ("what was actually bought/sold", via paper execution or a
    Discord buy-log bot) are tracked separately and compared with `performance.py`.
@@ -268,8 +270,9 @@ can't fail silently forever.
 
 The old `~/Library/LaunchAgents/com.stockmonitor.*.plist` jobs are retired
 (backed up in `launchd_legacy_backup/`, not deleted). The only local job left
-is `com.stockmonitor.obsidiansync.plist`, which runs twice daily (9am/6pm,
-Pacific) and on wake-catchup: it pulls the repo, replays any Obsidian events
+is `com.stockmonitor.obsidiansync.plist`, which runs once daily at 1:30pm
+Pacific (shortly after the 1pm PT market close) and on wake-catchup: it pulls
+the repo, replays any Obsidian events
 GitHub Actions queued while the Mac was off (`obsidian_queue.jsonl`) into the
 real Jarbis vault via `obsidian_sync.py`, using each event's original
 timestamp — so catch-up entries file under the day/week/month they actually

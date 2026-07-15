@@ -53,8 +53,13 @@ the FORECAST vol with zero drift (conservative — no momentum credit). The
 premium must not exceed ~1.15x that zero-drift fair value.
 
 State: options_state.json (cooldowns), options_ideas.json (append ledger).
-Recommend-only, free data only, additive — touches nothing in the stock
-pipeline. Run: `python options_engine.py [--discord] [--ticker NVDA]`.
+Every actionable idea is also recorded to signals.json via signal_tracker
+(kind call_conviction/etf_call_conviction, contract expiry/strike/mid/delta
+attached) — execute.py's buy_options_pass reads those same-day and places a
+1-contract paper buy on Alpaca, capped by config.execution.
+option_premium_usd_cap (Quinn, 2026-07-15: promoted from recommend-only to
+fully auto-executed, same discipline as the stock BUY pipeline). Free data
+only. Run: `python options_engine.py [--discord] [--ticker NVDA]`.
 """
 import argparse
 import json

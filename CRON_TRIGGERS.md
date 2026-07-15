@@ -181,6 +181,13 @@ Identical to Card 1 except:
   keys) must exist, or every run no-ops. See EXECUTION.md.
 - **Trial:** ends 2026-08-13 — `execute.py` stops opening positions after that
   date; **disable this card on 2026-08-13** to stop it entirely.
+- **Action item (Quinn, 2026-07-15):** the options scan (Card 6, below) fires
+  at 12:45 PT — only 5 min before this card's last run (12:50 PT). Code now
+  looks back 2 days so a missed same-day pickup still fires tomorrow morning
+  instead of being dropped, but same-day execution is still tighter than
+  ideal. Recommend widening this card's schedule to add a run at 12:55 or
+  13:00 PT on cron-job.org (e.g. `5,20,35,50,55 6-12 * * 1-5`) for same-day
+  reliability.
 
 ---
 

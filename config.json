@@ -1021,6 +1021,9 @@
     "max_position_usd": null,
     "per_name_max_usd": null,
     "daily_deploy_cap_usd": null,
-    "sell_cooldown_hours": 24
+    "sell_cooldown_hours": 24,
+    "option_premium_usd_cap": 3000,
+    "option_profit_target_pct": 0.50,
+    "option_stop_loss_pct": -0.50
   }
 }

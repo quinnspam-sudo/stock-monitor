@@ -19,8 +19,20 @@ What it does each run (scheduled every 15 min during market hours):
   SELL — apply the SAME frozen exit rules as sell_check.py (imported constants,
          no duplicate thresholds) to the live paper positions, and close any
          that trigger.
+  BUY CALL  — execute today's fresh call_conviction / etf_call_conviction
+         signals (written by options_engine.py) as 1-contract paper option
+         buys, capped by config.execution.option_premium_usd_cap. Recorded to
+         option_trades.json — a SEPARATE ledger from actual_trades.json so
+         options can never contaminate performance.py/sell_check's equity math.
+  SELL CALL — closes an option position at +/-option_profit_target_pct /
+         option_stop_loss_pct on premium, or force-closes on/after expiry day
+         regardless of P/L (assignment/pin-risk safety net for an unattended
+         account).
   RECONCILE — compare Alpaca's positions against actual_trades.json and report
          any drift.
+
+Requires options trading enabled on the Alpaca PAPER account (an account-level
+setting, not a code flag) — same ALPACA_API_KEY/ALPACA_SECRET_KEY as stocks.
 
 Nothing here can touch real money: see broker.py (paper hard-wired). It never
 changes the frozen trading RULES (EVALUATION_PROTOCOL.md) — it only executes
@@ -32,7 +44,7 @@ Run: ./venv/bin/python execute.py [--dry-run] [--force]
 """
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import broker
@@ -44,8 +56,12 @@ BASE = Path(__file__).parent
 CONFIG = BASE / "config.json"
 SIGNALS = BASE / "signals.json"
 TRADES = BASE / "actual_trades.json"
+OPTION_TRADES = BASE / "option_trades.json"    # separate ledger — options never touch the
+                                                # frozen stock pipeline (performance.py/sell_check)
 EXECUTED = BASE / "executed_orders.json"      # dedup ledger of orders placed
 STATE = BASE / "execution_state.json"          # per-(ticker,kind) sell cooldowns, last_run
+
+OPTION_KINDS = ("call_conviction", "etf_call_conviction")  # written by options_engine.py
 
 DEFAULTS = {
     "enabled": True,
@@ -58,6 +74,9 @@ DEFAULTS = {
     "per_name_max_usd": None,     # don't add to a name past this; None -> max_position_usd
     "daily_deploy_cap_usd": 200,  # max NEW dollars deployed per calendar day
     "sell_cooldown_hours": 24,    # mirrors sell_check's per-(ticker,kind) cooldown
+    "option_premium_usd_cap": 300,   # skip a call idea if 1 contract (premium x100) costs more
+    "option_profit_target_pct": 0.50,  # close a call position at +50% premium gain
+    "option_stop_loss_pct": -0.50,     # close a call position at -50% premium loss
 }
 
 
@@ -271,6 +290,186 @@ def sell_pass(bk, ex, state, dry, log):
     return sold
 
 
+def _occ_symbol(ticker, expiry, strike):
+    """Build the OCC/Alpaca option symbol, e.g. QQQ + 2026-09-18 + 690.0 call
+    -> 'QQQ260918C00690000'. Calls only — this system never shorts or buys puts."""
+    d = datetime.strptime(expiry, "%Y-%m-%d").strftime("%y%m%d")
+    return f"{ticker}{d}C{int(round(strike * 1000)):08d}"
+
+
+def _record_option_trade(action, ticker, occ_symbol, expiry, strike, fill, note, spy=None):
+    """Append to option_trades.json — deliberately NOT actual_trades.json. Mixing
+    OCC symbols into the stock ledger would corrupt performance.py/sell_check,
+    which assume every ticker there is an equity. contracts x100 = notional."""
+    trades = _load(OPTION_TRADES, [])
+    amount = round(fill["shares"] * fill["price"] * 100, 2)
+    rec = {"date": datetime.now().strftime("%Y-%m-%d"), "ticker": ticker,
+           "occ_symbol": occ_symbol, "expiry": expiry, "strike": strike, "right": "C",
+           "action": action, "contracts": fill["shares"], "premium": fill["price"],
+           "amount": amount, "note": note}
+    if spy is not None:
+        rec["spy_at_trade"] = round(spy, 4)
+    trades.append(rec)
+    OPTION_TRADES.write_text(json.dumps(trades, indent=2))
+    try:
+        import obsidian
+        obsidian.log_actual_trade(action, f"{ticker} {expiry} ${strike:g}C", amount,
+                                  fill["price"], fill["shares"], note=note)
+    except Exception:
+        pass
+
+
+def buy_options_pass(bk, ex, executed, dry, log):
+    """Execute call_conviction / etf_call_conviction signals (written by
+    options_engine.py) under the same discipline as stock buys: 1 contract
+    per idea, capped by option_premium_usd_cap, no re-quote — the scan-time
+    mid is only used for the cap check; the actual fill is a live market
+    order, so a slightly stale mid never mis-prices the trade.
+
+    Unlike the stock side's today-only buy_alert window, this looks back 2
+    calendar days, not just today: options_engine.py's single daily scan
+    fires at 12:45 PT and execute.py's last run of the day is 12:50 PT — a
+    5-minute gap that a slow scan can miss entirely, which silently dropped
+    every conviction-call idea before this was widened (Quinn, 2026-07-15)."""
+    today = datetime.now().strftime("%Y-%m-%d")
+    if today > ex["trial_end"]:
+        return []
+    cutoff = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
+    sigs = _load(SIGNALS, [])
+    done_keys = {e["signal_key"] for e in executed}
+    fresh = [s for s in sigs if s.get("kind") in OPTION_KINDS and s.get("date", "") >= cutoff
+             and f"{s['ticker']}:{s['kind']}:{s.get('ts', s['date'])}" not in done_keys]
+    if not fresh:
+        return []
+
+    acct = bk.account()
+    positions = bk.positions()
+    spy = _spy_price()
+    filled = []
+
+    for s in fresh:
+        t = s["ticker"]
+        c = s.get("contract") or {}
+        key = f"{t}:{s['kind']}:{s.get('ts', s['date'])}"
+        expiry, strike, premium = c.get("expiry"), c.get("strike"), c.get("mid")
+        reason = None
+        if ex["kill_switch"]:
+            reason = "kill switch on"
+        elif not (expiry and strike and premium):
+            reason = "signal missing contract expiry/strike/premium"
+        else:
+            occ = _occ_symbol(t, expiry, strike)
+            cost = premium * 100
+            if occ in positions:
+                reason = "already holding this exact contract"
+            elif cost > ex["option_premium_usd_cap"]:
+                reason = f"premium ${cost:.0f}/contract exceeds cap ${ex['option_premium_usd_cap']}"
+            elif acct["buying_power"] < cost:
+                reason = f"insufficient paper buying power (${acct['buying_power']:.0f})"
+        if reason:
+            log.append(f"SKIP CALL {t}: {reason}")
+            continue
+
+        if dry:
+            log.append(f"[dry] BUY CALL {t} {expiry} ${strike:g}C ~${premium*100:.0f} "
+                       f"(signal {s.get('detail','')})")
+            executed.append({"signal_key": key, "ticker": t, "action": "BUY_CALL",
+                             "dry": True, "when": datetime.now().isoformat(timespec='minutes')})
+            continue
+
+        try:
+            fill = bk.buy_option(occ, qty=1)
+        except Exception as e:
+            # Alpaca rejects the whole submit_order call (e.g. options trading
+            # not enabled on the account) rather than returning a rejected-order
+            # status — without this catch that exception would propagate out of
+            # main() and crash the run before stock buys/sells even got their
+            # state persisted. Record it as a non-fill and keep going.
+            log.append(f"SKIP CALL {t}: order rejected ({e})")
+            executed.append({"signal_key": key, "ticker": t, "action": "BUY_CALL",
+                             "filled": False, "error": str(e),
+                             "when": datetime.now().isoformat(timespec='minutes')})
+            continue
+        if fill.get("filled"):
+            note = f"Paper auto-exec CALL BUY on {s['kind']} ({s.get('detail','')})"
+            _record_option_trade("BUY", t, occ, expiry, strike, fill, note, spy)
+            positions[occ] = {"market_value": fill["shares"] * fill["price"] * 100}
+            filled.append((t, occ, fill))
+            log.append(f"BUY CALL {t} {expiry} ${strike:g}C: {fill['shares']:.0f} contract(s) "
+                      f"@ ${fill['price']:.2f}")
+        else:
+            log.append(f"BUY CALL {t}: not filled ({fill.get('status')}) — will retry next run")
+        executed.append({"signal_key": key, "ticker": t, "action": "BUY_CALL",
+                         "order_id": fill.get("order_id"), "filled": fill.get("filled", False),
+                         "when": datetime.now().isoformat(timespec='minutes')})
+    return filled
+
+
+def _open_option_lots():
+    """FIFO-open option contracts still outstanding, keyed by occ_symbol, from
+    our own ledger — mirrors compute_open_positions() but for options."""
+    trades = _load(OPTION_TRADES, [])
+    open_lots = {}
+    for t in sorted(trades, key=lambda x: x["date"]):
+        occ = t["occ_symbol"]
+        if t["action"] == "BUY":
+            open_lots[occ] = {"ticker": t["ticker"], "expiry": t["expiry"], "strike": t["strike"],
+                              "premium": t["premium"], "contracts": t["contracts"]}
+        else:
+            open_lots.pop(occ, None)
+    return open_lots
+
+
+def sell_options_pass(bk, ex, state, dry, log):
+    """Close option positions on a simple mechanical rule (Quinn, 2026-07-15):
+    +/- option_profit_target_pct / option_stop_loss_pct on premium. Plus a hard
+    safety net independent of that choice — force-close on/after expiry day
+    regardless of P/L, since an unattended account should never risk assignment
+    or letting a contract expire worthless by inaction."""
+    lots = _open_option_lots()
+    if not lots:
+        return []
+    positions = bk.positions()
+    today = datetime.now().strftime("%Y-%m-%d")
+    spy = _spy_price()
+    sold = []
+
+    for occ, lot in lots.items():
+        p = positions.get(occ)
+        if p is None:
+            continue  # already closed on Alpaca (assignment/expiry) — ledger will drift; reconcile reports it
+        cost = lot["premium"] * lot["contracts"] * 100
+        pct = (p["market_value"] / cost - 1) if cost else 0
+        kind, reason = None, None
+        if today >= lot["expiry"]:
+            kind, reason = "EXPIRY_SAFETY", f"on/after expiry {lot['expiry']} — force-closing"
+        elif pct >= ex["option_profit_target_pct"]:
+            kind, reason = "PROFIT_TARGET", f"premium {pct:+.0%} >= target {ex['option_profit_target_pct']:+.0%}"
+        elif pct <= ex["option_stop_loss_pct"]:
+            kind, reason = "STOP_LOSS", f"premium {pct:+.0%} <= stop {ex['option_stop_loss_pct']:+.0%}"
+        if not kind:
+            continue
+
+        if dry:
+            log.append(f"[dry] SELL CALL {occ} ({kind}: {reason})")
+            continue
+        try:
+            fill = bk.close(occ)
+        except Exception as e:
+            log.append(f"SKIP CALL CLOSE {occ}: order rejected ({e}) — will retry next run")
+            continue
+        if fill.get("filled"):
+            note = f"Paper auto-exec {kind}: {reason}"
+            _record_option_trade("SELL", lot["ticker"], occ, lot["expiry"], lot["strike"],
+                                 fill, note, spy)
+            sold.append((lot["ticker"], occ, kind, fill))
+            log.append(f"SELL CALL {lot['ticker']} {occ}: {kind} — {fill['shares']:.0f} "
+                      f"contract(s) @ ${fill['price']:.2f}")
+        else:
+            log.append(f"SELL CALL {occ}: {kind} not filled ({fill.get('status')})")
+    return sold
+
+
 def flatten_pass(bk, ex, state, dry, log):
     """On/after trial_end, liquidate ALL paper positions once for a clean final
     tally, then stay flat. Idempotent via state['flattened'] so it happens
@@ -279,15 +478,24 @@ def flatten_pass(bk, ex, state, dry, log):
     positions = bk.positions()
     spy = _spy_price()
     sold = []
+    option_lots = _open_option_lots()
     for t in list(positions):
         if dry:
             log.append(f"[dry] FLATTEN {t}")
             continue
         fill = bk.close(t)
-        if fill.get("filled"):
+        if not fill.get("filled"):
+            continue
+        if t in option_lots:
+            lot = option_lots[t]
+            _record_option_trade("SELL", lot["ticker"], t, lot["expiry"], lot["strike"], fill,
+                                 "Paper trial end (2026-08-13) — auto-flatten", spy)
+            log.append(f"FLATTEN CALL {lot['ticker']} {t}: {fill['shares']:.0f} contract(s) "
+                      f"@ ${fill['price']:.2f}")
+        else:
             _record_trade("SELL", t, fill, "Paper trial end (2026-08-13) — auto-flatten", spy)
-            sold.append((t, "TRIAL_END", fill))
             log.append(f"FLATTEN {t}: {fill['shares']:.4f} @ ${fill['price']:.2f}")
+        sold.append((t, "TRIAL_END", fill))
     if not dry:
         state["flattened"] = datetime.now().strftime("%Y-%m-%d")
     return sold
@@ -468,9 +676,13 @@ def main():
         sold = [] if state.get("flattened") else flatten_pass(bk, ex, state, dry, log)
         if state.get("flattened") and not sold:
             log.append(f"trial ended {ex['trial_end']} — book already flat, idle")
+        bought_calls = []
+        sold_calls = []
     else:
         bought = buy_pass(bk, cfg, ex, executed, dry, log)
         sold = sell_pass(bk, ex, state, dry, log)
+        bought_calls = buy_options_pass(bk, ex, executed, dry, log)
+        sold_calls = sell_options_pass(bk, ex, state, dry, log)
     reconcile(bk, log)
 
     if not dry:
@@ -481,7 +693,8 @@ def main():
     # Announce only when something happened (or a guardrail blocked something) —
     # a quiet run stays quiet, same discipline as the rest of the system.
     flattened_now = any(k == "TRIAL_END" for _, k, _ in sold)
-    notable = bought or sold or [l for l in log if l.startswith(("SKIP", "RECONCILE"))]
+    notable = (bought or sold or bought_calls or sold_calls
+              or [l for l in log if l.startswith(("SKIP", "RECONCILE"))])
     if notable and not dry:
         acct = bk.account()
         header = ("🏁 **PAPER TRIAL COMPLETE (2026-08-13)** — flattened the book. "
@@ -490,8 +703,14 @@ def main():
                  f"cash ${acct['cash']:,.0f} (Alpaca paper)"]
         if bought:
             lines.append("**Bought:** " + ", ".join(f"{t} ${f['shares']*f['price']:.0f}" for t, f in bought))
+        if bought_calls:
+            lines.append("**Bought calls:** " + ", ".join(
+                f"{t} ${f['shares']*f['price']*100:.0f}" for t, _, f in bought_calls))
         if sold:
             lines.append("**Sold:** " + ", ".join(f"{t} ({k})" for t, k, _ in sold))
+        if sold_calls:
+            lines.append("**Sold calls:** " + ", ".join(
+                f"{t} ({k})" for t, _, k, _ in sold_calls))
         skips = [l for l in log if l.startswith(("SKIP", "RECONCILE"))]
         if skips:
             lines.append("\n".join(skips))
@@ -505,12 +724,14 @@ def main():
 
     print("\n".join(log) or "nothing to do")
     import os
-    if not dry and (bought or sold) and os.environ.get("GITHUB_ACTIONS") != "true":
+    if not dry and (bought or sold or bought_calls or sold_calls) and os.environ.get("GITHUB_ACTIONS") != "true":
         try:
             import git_sync
+            files = ["actual_trades.json", "executed_orders.json", "execution_state.json"]
+            if bought_calls or sold_calls:
+                files.append("option_trades.json")
             git_sync.commit_and_push(
-                ["actual_trades.json", "executed_orders.json", "execution_state.json"],
-                f"paper-exec: +{len(bought)} / -{len(sold)}")
+                files, f"paper-exec: +{len(bought) + len(bought_calls)} / -{len(sold) + len(sold_calls)}")
         except Exception as e:
             print(f"push skipped: {e}")
 

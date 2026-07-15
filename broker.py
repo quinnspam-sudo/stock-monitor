@@ -83,6 +83,18 @@ class Broker:
         order = self._c.submit_order(req)
         return self._await_fill(order.id, poll_s)
 
+    def buy_option(self, occ_symbol, qty=1, poll_s=12):
+        """Submit a DAY market BUY for `qty` option contracts (OCC symbol, e.g.
+        'QQQ260918C00690000'). Options don't support notional orders — always
+        whole contracts. Same fill-dict shape as buy_notional; 'shares' here
+        means contracts, 'price' is premium per contract (not x100)."""
+        from alpaca.trading.requests import MarketOrderRequest
+        from alpaca.trading.enums import OrderSide, TimeInForce
+        req = MarketOrderRequest(symbol=occ_symbol, qty=qty,
+                                 side=OrderSide.BUY, time_in_force=TimeInForce.DAY)
+        order = self._c.submit_order(req)
+        return self._await_fill(order.id, poll_s)
+
     def close(self, symbol, poll_s=12):
         """Liquidate the ENTIRE paper position in `symbol` at market. Returns
         the same fill dict shape as buy_notional (shares/price of the close)."""
