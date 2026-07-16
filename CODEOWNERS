@@ -1,0 +1,11 @@
+# Files where a change needs a second look before merging — trading
+# logic, execution/order code, and anything that touches CI permissions
+# or secrets. See CLAUDE.md for the invariants these files must respect.
+
+/broker.py            @quinnspam-sudo
+/execute.py            @quinnspam-sudo
+/sell_check.py         @quinnspam-sudo
+/config.json           @quinnspam-sudo
+/.github/workflows/    @quinnspam-sudo
+/CLAUDE.md              @quinnspam-sudo
+/SECURITY.md            @quinnspam-sudo
