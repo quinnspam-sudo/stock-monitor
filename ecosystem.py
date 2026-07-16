@@ -348,7 +348,10 @@ code{{font-size:12px;background:var(--grid);padding:1px 5px;border-radius:4px}}
 <div class='card'><h2>🩺 Pipeline health</h2><ul>{ops}</ul>
 <p class='muted' style='font-size:12px'>Runs in GitHub Actions (cron-job.org dispatch):
 monitor every 15 min · pulse hourly · close 13:35 PT · weekly Friday.
-State commits sync to this Mac via launchd.</p></div>
+State commits sync to this Mac via launchd.
+New to this system? <a href='https://github.com/quinnspam-sudo/stock-monitor/blob/main/docs/ARCHITECTURE.md'
+style='color:var(--series1)'>docs/ARCHITECTURE.md</a> explains how it all fits together
+(paper trading only — no real money).</p></div>
 </div>
 </div></body></html>"""
     OUT.write_text(page)

@@ -1,7 +1,15 @@
 # stock-monitor
 
-Watchlist monitor that scores stocks on momentum/trend signals and posts BUY alerts
-to a private Discord server via webhook. Recommends only — never trades.
+Watchlist monitor that scores stocks on momentum/trend signals, posts BUY alerts
+to a private Discord server via webhook, and (optionally) auto-executes them as
+**paper trades** on an Alpaca fake-money account. **Never touches real money** —
+`paper=True` is hard-wired; see [docs/LIVE_TRADING_READINESS.md](docs/LIVE_TRADING_READINESS.md)
+for the explicit gate that would have to pass before that could ever change.
+
+> **New here?** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) is the third-party
+> walkthrough — one diagram, every component, what runs when, and the system's
+> boundaries. [docs/DATA_CLASSIFICATION.md](docs/DATA_CLASSIFICATION.md) explains
+> why the trading state in this repo is public on purpose.
 
 ## How the ecosystem works (start here)
 
@@ -41,8 +49,10 @@ a shared set of JSON files in this repo, and talk to Discord for notifications:
 9. **Dashboard** (`dashboard.py` → `dashboard.html`) — static ranked scoreboard,
    regenerated on every run.
 
-Everything is **recommend-only by default**. The only thing that can place a real
-(paper) order is `execute.py`, and it requires its own credentials to do anything.
+The only thing that can place a (paper) order is `execute.py`, and it requires its
+own credentials to do anything — without Alpaca keys the whole system is
+recommend-only. Nothing anywhere can place a real-money trade
+(`broker.py` hard-wires `paper=True`; `execute.py` halts on any non-paper mode).
 
 ## Forking this: what you'll need
 
@@ -276,8 +286,8 @@ to `monitor.log` (auto-rotated at ~1 MB). Edit schedule with `crontab -e`.
 
 ## Obsidian integration
 
-All pings are offloaded to the Jarbis vault (`obsidian_vault` in config.json)
-under `Claude-Code/Stock Monitor/`:
+All pings are offloaded to the Jarbis vault (`obsidian_vault` in the gitignored
+`secrets.json`) under `Claude-Code/Stock Monitor/`:
 
 - `Pings/YYYY-MM-DD.md` — every alert/notice appended to a daily note
 - `Weeks/YYYY-Www.md` — rollup of that ISO week's day notes, plus any weekly
