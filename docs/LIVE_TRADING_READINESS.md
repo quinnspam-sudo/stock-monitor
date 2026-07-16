@@ -16,9 +16,12 @@ this repo's actual code.
   [broker.py:136](../broker.py), with no live code path in that module.
 - `execute.py` refuses any non-paper mode: `if ex["mode"] != "paper": ...
   halting` at [execute.py:649](../execute.py).
-- A kill switch exists (`config.execution.kill_switch`) and halts all
-  execution at [execute.py:644](../execute.py) — but it lives *inside* the
-  repo it controls (in-band; see item 5).
+- Two kill switches exist (2026-07-15): the in-repo
+  `config.execution.kill_switch`, plus an out-of-band one — the
+  `STOCKMON_KILL_SWITCH` GitHub Actions repo *variable*, which halts
+  execution without a git commit (`_cfg()` in `execute.py`; see
+  EXECUTION.md). A fully repo-independent halt (broker key revocation /
+  broker-side trading block) remains the live-grade backstop (item 5).
 - Order submission is idempotent (2026-07-15): every buy carries a
   deterministic `client_order_id` derived from the signal (`_coid()` in
   `execute.py`), Alpaca rejects duplicates, and `broker._submit()` recovers
@@ -62,11 +65,11 @@ this repo's actual code.
    them (today the guards are simply skipped when `null`,
    [execute.py:180-185](../execute.py)).
 
-5. **Out-of-band kill switch.** A halt mechanism that does not depend on
-   this repo, GitHub Actions, or a git push landing — e.g. revoking the
-   broker key or a broker-side trading block. Today's
-   `config.execution.kill_switch` requires committing to the same pipeline
-   it's meant to stop.
+5. **Out-of-band kill switch.** Partially done 2026-07-15: the
+   `STOCKMON_KILL_SWITCH` repo variable halts execution without a git
+   commit, so a broken/compromised push pipeline can no longer block a
+   halt. Still missing for live: a mechanism independent of GitHub
+   entirely — revoking the broker key or a broker-side trading block.
 
 6. **Real reconciliation.** Partially done 2026-07-15: `reconcile()` now
    compares share/contract quantities (stocks and options) as well as

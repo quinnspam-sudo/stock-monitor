@@ -98,9 +98,16 @@ On/after `trial_end` the executor **liquidates the entire paper book once**
 `execute.py --report` for the final vs-SPY tally and disable the `execute` cron
 card.
 
-**Kill switch:** flip `config.execution.kill_switch` to `true` and push (or edit
-it in the repo on GitHub) — the next run halts and posts a notice. Nothing else
-needed.
+**Kill switch (two independent paths):**
+1. **Out-of-band (preferred, no commit needed):** set the GitHub Actions repo
+   *variable* `STOCKMON_KILL_SWITCH` to `true` — Settings → Secrets and
+   variables → Actions → Variables, or
+   `gh variable set STOCKMON_KILL_SWITCH --body true`. The next run halts and
+   posts a notice. This works even when pushes are failing or repo state is
+   suspect, because it doesn't travel through git. Clear it with
+   `gh variable delete STOCKMON_KILL_SWITCH` (or set it to `false`).
+2. **In-repo fallback:** flip `config.execution.kill_switch` to `true` and push
+   (or edit it in the repo on GitHub). Same effect, but requires a commit.
 
 ## Activation (one-time, requires you)
 

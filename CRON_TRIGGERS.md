@@ -4,9 +4,10 @@
 > jobs verified. Every job now runs in timezone America/Los_Angeles (was UTC —
 > would have made close/weekly fire before the closing bell after the November
 > DST change), the options job was moved to 12:45 PT and enabled, and the jobs
-> formerly named for UTC times are now `close-1335pt` / `monitor-1300pt`. The
-> PAT behind every job expires ~2026-08-07; when rotated, update the
-> Authorization header on ALL 9 jobs (see Step 3 for where it lives).
+> formerly named for UTC times are now `close-1335pt` / `monitor-1300pt`.
+> Fine-grained PATs expire; when the one behind these jobs is rotated, update
+> the Authorization header on ALL 9 jobs (see Step 3 for where it lives).
+> Track the actual expiry date privately (calendar reminder), not in this file.
 
 ## What this is about, in plain English
 
@@ -246,6 +247,7 @@ Side effects observed (Discord posts etc.): ...
 ## Note for Quinn (not part of the Cowork task)
 
 The secret token behind every one of these jobs is a fine-grained GitHub PAT,
-scoped to this repo's Actions permission only, **expiring ~2026-08-07**. When it is
+scoped to this repo's Actions permission only. Fine-grained PATs **expire** —
+track the actual date privately (calendar reminder), not here. When the PAT is
 rotated, the `Authorization` header of EVERY job must be updated or all triggers
 start failing with 401. This document doubles as the runbook for that.

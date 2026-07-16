@@ -4,3 +4,20 @@ __pycache__/
 *.pyc
 monitor.log
 pull_state.log
+
+# Defense-in-depth: credential-shaped files must never be committable,
+# even if one is accidentally created in the repo root (Codex audit rec).
+.env
+.env.*
+!.env.example
+secrets*.json
+credentials*.json
+*.pem
+*.key
+*.p12
+*.pfx
+.DS_Store
+
+# Retired local launchd jobs — kept on disk, no longer tracked (audit rec:
+# no personal/system config in the public repo).
+launchd_legacy_backup/

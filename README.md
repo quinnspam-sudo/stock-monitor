@@ -185,8 +185,9 @@ close/weekly fire BEFORE the closing bell once DST ended in November,
 since the market is ET-anchored and US zones shift together). Job titles
 `close-1335pt` and `monitor-1300pt` reflect the Pacific times. Manage/inspect the jobs at cron-job.org's console (account is Quinn's);
 the API token used is a fine-grained GitHub PAT scoped only to this repo's
-Actions permission, expiring ~2026-08-07 (30 days from creation — needs
-rotating before then or the jobs will start failing with 401s).
+Actions permission. Fine-grained PATs expire — rotate before the expiry date
+(tracked privately, e.g. a calendar reminder — not in this public repo) or
+the jobs start failing with 401s. Runbook: `CRON_TRIGGERS.md`.
 
 - `monitor.yml` — every 15 min, ~6:00–13:00 PT Mon–Fri: scores, delta triggers, Template A payloads
 - `pulse.yml` — hourly ~7:00–12:00 PT Mon–Fri: Template C intraday pulse payload

@@ -44,6 +44,7 @@ Run: ./venv/bin/python execute.py [--dry-run] [--force]
 """
 import hashlib
 import json
+import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -112,6 +113,13 @@ def _cfg():
     size = ex["max_position_usd"] or cfg.get("buy_amount_usd") or 20
     ex["max_position_usd"] = size
     ex["per_name_max_usd"] = ex["per_name_max_usd"] or size
+    # Out-of-band kill switch: STOCKMON_KILL_SWITCH is fed from a GitHub Actions
+    # repo *variable* (Settings → Secrets and variables → Actions → Variables,
+    # or `gh variable set STOCKMON_KILL_SWITCH --body true`). Unlike
+    # config.execution.kill_switch it needs no git commit to flip, so it works
+    # even if pushes are failing or the repo state is suspect.
+    if os.environ.get("STOCKMON_KILL_SWITCH", "").strip().lower() in ("1", "true", "yes", "on"):
+        ex["kill_switch"] = True
     return cfg, ex
 
 
@@ -703,7 +711,16 @@ def main():
 
     bk = broker.connect()
     if bk is None:
-        return  # reason already printed; broker unconfigured is not an error
+        api, sec = broker._keys()
+        if api and sec:
+            # Keys ARE configured, so this scheduled run was expected to trade —
+            # a connection/SDK failure must fail the workflow (red run + GitHub
+            # email), not silently no-op like the unconfigured case below.
+            notify.send_message("⚠️ **PAPER EXECUTOR** — Alpaca keys are set but the broker "
+                                "connection failed this run; no orders were checked or placed. "
+                                "See the Actions log.", kind="EXECUTE")
+            sys.exit(1)
+        return  # no keys at all = intentionally unconfigured, clean no-op
 
     acct = bk.account()
     if acct["trading_blocked"]:

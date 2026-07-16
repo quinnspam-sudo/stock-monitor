@@ -39,6 +39,11 @@ jobs:
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           DISCORD_UPDATES_WEBHOOK_URL: ${{ secrets.DISCORD_UPDATES_WEBHOOK_URL }}
+          # Out-of-band kill switch: a repo VARIABLE (not secret) — flip it in
+          # Settings → Secrets and variables → Actions → Variables (or
+          # `gh variable set STOCKMON_KILL_SWITCH --body true`) to halt all
+          # execution without a git commit. See EXECUTION.md.
+          STOCKMON_KILL_SWITCH: ${{ vars.STOCKMON_KILL_SWITCH }}
       - name: Commit updated state
         run: |
           git config user.name "stock-monitor-bot"

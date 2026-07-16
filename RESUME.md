@@ -156,7 +156,30 @@ components can only be built/maintained during a connected session.
 | 2 | Stop using git as a transactional DB | Proposed: local SQLite once/if live execution moves local; **not implemented** |
 | 3 | Idempotent order submission (client_order_id) | Pure code, free, **not implemented** |
 | 4 | Fail-closed live discipline, non-null risk limits, dedicated live Alpaca account | **Not implemented**; `execute.py` still hard-blocks to paper-only (`broker.py` `paper=True` hard-wired, `execute.py` rejects non-paper mode) — this is the safety net currently preventing any live-money exposure regardless of the above |
-| 5 | Out-of-band kill switch (currently a `config.json` field, requires a git commit to flip) | **Not implemented** |
+| 5 | Out-of-band kill switch (currently a `config.json` field, requires a git commit to flip) | **Partially done 2026-07-15**: `STOCKMON_KILL_SWITCH` GitHub repo variable halts execute.py without a commit (see EXECUTION.md); GitHub-independent halt (key revocation) still the live-grade backstop |
+
+## Third session, 2026-07-15 (evening) — audit hardening round 2
+
+Prompted by Quinn re-sharing the full Codex report. Changes (all free, all
+paper-safe):
+- **Out-of-band kill switch** (audit §7): `execute.py _cfg()` honors env
+  `STOCKMON_KILL_SWITCH`, fed from a GitHub Actions repo *variable* in
+  `execute.yml` — flip with `gh variable set STOCKMON_KILL_SWITCH --body
+  true`, no commit needed. Verified via unit check.
+- **Fail loud, not silent** (audit §9): when Alpaca keys ARE configured but
+  `broker.connect()` fails, `execute.py` now posts a Discord ⚠️ and exits 1
+  (red run + GitHub email) instead of silently no-opping. No-keys case is
+  unchanged (clean no-op).
+- **PAT expiry disclosure scrubbed** (audit §6): removed the ~2026-08-07
+  date and operational status from README.md + CRON_TRIGGERS.md — rotation
+  guidance stays, the actual date now lives only privately (Quinn's
+  calendar + Claude memory).
+- **.gitignore hardening** (audit rec): credential-shaped patterns (.env,
+  *.pem, *.key, credentials*.json, …) + `launchd_legacy_backup/` untracked
+  (files kept on disk; history retains them, as the audit notes).
+- **Aug 1 constraint noted**: the Phase 1 privacy split (private repo /
+  private state storage) stays deferred until ~2026-08-01 per Quinn —
+  that's the budget gate, not a technical one.
 
 ## Follow-up session, 2026-07-15 (later same day) — status of the 5 open items
 
