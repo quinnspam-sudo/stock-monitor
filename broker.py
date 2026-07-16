@@ -70,29 +70,49 @@ class Broker:
             return False
 
     # ── write (paper) ──
-    def buy_notional(self, symbol, usd, poll_s=12):
+    def buy_notional(self, symbol, usd, poll_s=12, client_order_id=None):
         """Submit a DAY market BUY for `usd` dollars (fractional). Polls briefly
         for the fill and returns {'filled': bool, 'shares', 'price', 'order_id'}.
         A market order in regular hours fills in well under a second; if it
         hasn't filled by poll_s the caller records it as pending and reconciles
-        on the next run rather than double-submitting."""
+        on the next run rather than double-submitting.
+
+        `client_order_id` (a deterministic id derived from the signal) makes
+        the submit idempotent: Alpaca rejects a duplicate client_order_id, and
+        _submit() recovers the ORIGINAL order instead — so a crash/retry after
+        submit can never place the same order twice."""
         from alpaca.trading.requests import MarketOrderRequest
         from alpaca.trading.enums import OrderSide, TimeInForce
         req = MarketOrderRequest(symbol=symbol, notional=round(usd, 2),
-                                 side=OrderSide.BUY, time_in_force=TimeInForce.DAY)
-        order = self._c.submit_order(req)
-        return self._await_fill(order.id, poll_s)
+                                 side=OrderSide.BUY, time_in_force=TimeInForce.DAY,
+                                 client_order_id=client_order_id)
+        return self._submit(req, client_order_id, poll_s)
 
-    def buy_option(self, occ_symbol, qty=1, poll_s=12):
+    def buy_option(self, occ_symbol, qty=1, poll_s=12, client_order_id=None):
         """Submit a DAY market BUY for `qty` option contracts (OCC symbol, e.g.
         'QQQ260918C00690000'). Options don't support notional orders — always
         whole contracts. Same fill-dict shape as buy_notional; 'shares' here
-        means contracts, 'price' is premium per contract (not x100)."""
+        means contracts, 'price' is premium per contract (not x100).
+        client_order_id: same idempotency semantics as buy_notional."""
         from alpaca.trading.requests import MarketOrderRequest
         from alpaca.trading.enums import OrderSide, TimeInForce
         req = MarketOrderRequest(symbol=occ_symbol, qty=qty,
-                                 side=OrderSide.BUY, time_in_force=TimeInForce.DAY)
-        order = self._c.submit_order(req)
+                                 side=OrderSide.BUY, time_in_force=TimeInForce.DAY,
+                                 client_order_id=client_order_id)
+        return self._submit(req, client_order_id, poll_s)
+
+    def _submit(self, req, client_order_id, poll_s):
+        """Submit an order; if Alpaca rejects it as a duplicate client_order_id
+        (this exact signal was already submitted — e.g. the previous run crashed
+        between submit and persisting executed_orders.json), fetch and return
+        the original order's status instead of raising."""
+        try:
+            order = self._c.submit_order(req)
+        except Exception as e:
+            if client_order_id and "client_order_id" in str(e):
+                order = self._c.get_order_by_client_id(client_order_id)
+            else:
+                raise
         return self._await_fill(order.id, poll_s)
 
     def close(self, symbol, poll_s=12):

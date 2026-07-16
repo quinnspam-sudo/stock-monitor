@@ -42,6 +42,7 @@ Run: ./venv/bin/python execute.py [--dry-run] [--force]
   --dry-run : compute intended orders and print them, place NOTHING
   --force   : ignore the market-hours gate (for off-hours testing)
 """
+import hashlib
 import json
 import sys
 from datetime import datetime, timedelta
@@ -78,6 +79,23 @@ DEFAULTS = {
     "option_profit_target_pct": 0.50,  # close a call position at +50% premium gain
     "option_stop_loss_pct": -0.50,     # close a call position at -50% premium loss
 }
+
+
+def _coid(signal_key):
+    """Deterministic Alpaca client_order_id for a signal — same signal, same id,
+    every time. Alpaca enforces client_order_id uniqueness, so even if the dedup
+    ledger is lost or a run crashes between submit and persist, resubmitting this
+    signal recovers the original order instead of placing a second one
+    (broker._submit). 43 chars, under Alpaca's 48-char limit."""
+    return "sm-" + hashlib.sha1(signal_key.encode()).hexdigest()
+
+
+def _persist_executed(executed, dry):
+    """Write the dedup ledger NOW, not at end-of-run — shrinks the crash window
+    in which an order exists at Alpaca but not in executed_orders.json to the
+    single submit call (which the deterministic client_order_id covers anyway)."""
+    if not dry:
+        EXECUTED.write_text(json.dumps(executed, indent=2))
 
 
 def _load(path, default):
@@ -196,7 +214,7 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
             deployed += size
             continue
 
-        fill = bk.buy_notional(t, size)
+        fill = bk.buy_notional(t, size, client_order_id=_coid(key))
         if fill.get("filled"):
             note = f"Paper auto-exec BUY ${size:.2f} on buy_alert ({s.get('detail','')})"
             _record_trade("BUY", t, fill, note, spy)
@@ -212,6 +230,7 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
         executed.append({"signal_key": key, "ticker": t, "action": "BUY",
                          "order_id": fill.get("order_id"), "filled": fill.get("filled", False),
                          "when": datetime.now().isoformat(timespec='minutes')})
+        _persist_executed(executed, dry)
     return filled
 
 
@@ -378,7 +397,7 @@ def buy_options_pass(bk, ex, executed, dry, log):
             continue
 
         try:
-            fill = bk.buy_option(occ, qty=1)
+            fill = bk.buy_option(occ, qty=1, client_order_id=_coid(key))
         except Exception as e:
             # Alpaca rejects the whole submit_order call (e.g. options trading
             # not enabled on the account) rather than returning a rejected-order
@@ -389,6 +408,7 @@ def buy_options_pass(bk, ex, executed, dry, log):
             executed.append({"signal_key": key, "ticker": t, "action": "BUY_CALL",
                              "filled": False, "error": str(e),
                              "when": datetime.now().isoformat(timespec='minutes')})
+            _persist_executed(executed, dry)
             continue
         if fill.get("filled"):
             note = f"Paper auto-exec CALL BUY on {s['kind']} ({s.get('detail','')})"
@@ -402,6 +422,7 @@ def buy_options_pass(bk, ex, executed, dry, log):
         executed.append({"signal_key": key, "ticker": t, "action": "BUY_CALL",
                          "order_id": fill.get("order_id"), "filled": fill.get("filled", False),
                          "when": datetime.now().isoformat(timespec='minutes')})
+        _persist_executed(executed, dry)
     return filled
 
 
@@ -620,14 +641,26 @@ def reconcile(bk, log):
     """Report drift between the broker's paper positions and our ledger — a
     silent divergence (a fill we missed, a manual paper trade) would corrupt the
     track record, so surface it."""
-    broker_pos = set(bk.positions())
-    ledger_pos = set(compute_open_positions())
-    only_broker = broker_pos - ledger_pos
-    only_ledger = ledger_pos - broker_pos
+    broker_pos = bk.positions()
+    ledger_pos = compute_open_positions()  # equities (actual_trades.json)
+    option_lots = _open_option_lots()      # options live in their own ledger
+    ledger_qty = {t: p["shares"] for t, p in ledger_pos.items()}
+    ledger_qty.update({occ: lot["contracts"] for occ, lot in option_lots.items()})
+
+    only_broker = set(broker_pos) - set(ledger_qty)
+    only_ledger = set(ledger_qty) - set(broker_pos)
     if only_broker:
         log.append(f"RECONCILE: on Alpaca but not in ledger: {', '.join(sorted(only_broker))}")
     if only_ledger:
         log.append(f"RECONCILE: in ledger but not on Alpaca: {', '.join(sorted(only_ledger))}")
+    # symbol match isn't enough — a missed partial fill or manual paper trade
+    # leaves the symbol present on both sides with the wrong size, silently
+    # corrupting the track record. Compare quantities too (0.1% tolerance for
+    # fractional-share rounding).
+    for sym in set(broker_pos) & set(ledger_qty):
+        b, l = broker_pos[sym]["shares"], ledger_qty[sym]
+        if l and abs(b - l) > 0.001 * max(abs(b), abs(l)):
+            log.append(f"RECONCILE: {sym} quantity drift — Alpaca {b:g} vs ledger {l:g}")
 
 
 def main():

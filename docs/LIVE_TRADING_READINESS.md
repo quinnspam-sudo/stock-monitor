@@ -19,11 +19,15 @@ this repo's actual code.
 - A kill switch exists (`config.execution.kill_switch`) and halts all
   execution at [execute.py:644](../execute.py) — but it lives *inside* the
   repo it controls (in-band; see item 5).
-- Idempotency-by-signal exists: `executed_orders.json` dedups signals so a
-  re-run doesn't re-buy ([execute.py:156](../execute.py)) — but order
-  *submission* itself is not idempotent (see item 2).
-- A reconcile pass compares Alpaca positions against the ledger each run
-  ([execute.py:619](../execute.py)) — but only as a symbol-set diff (item 6).
+- Order submission is idempotent (2026-07-15): every buy carries a
+  deterministic `client_order_id` derived from the signal (`_coid()` in
+  `execute.py`), Alpaca rejects duplicates, and `broker._submit()` recovers
+  the original order on a duplicate — plus the dedup ledger is persisted
+  immediately after each submission, not at end of run (item 2 ✅).
+- The reconcile pass compares symbols AND quantities (stocks + option
+  contracts, 0.1% fractional tolerance) between Alpaca and the ledgers
+  (`reconcile()` in `execute.py`) — though drift still only warns via
+  Discord rather than halting (item 6, partially).
 - Broker-unavailable degrades gracefully — `connect()` returns `None` and
   the run skips ([broker.py:121](../broker.py)). Correct for paper;
   fail-*open* behavior a live system must not have (item 7).
@@ -38,13 +42,12 @@ this repo's actual code.
    experiment. **Not true today:** all execution state is committed to a
    public repo by the workflows' `STATE_FILES` allowlists.
 
-2. **Idempotent order submission.** Every order carries a deterministic
-   client-order ID derived from the signal, so a crash/retry/duplicate run
-   can never double-submit. **Not true today:** `buy_notional()` /
-   `buy_option()` ([broker.py:73](../broker.py)) submit without a client
-   order ID; dedup happens only after the fact via `executed_orders.json`,
-   which is written at the *end* of the run ([execute.py:689](../execute.py))
-   — a crash between submit and persist re-submits.
+2. **Idempotent order submission.** ✅ Done 2026-07-15: every buy carries a
+   deterministic client-order ID (`sm-` + SHA-1 of the signal key), Alpaca
+   rejects duplicates, `broker._submit()` recovers the original order, and
+   `executed_orders.json` is persisted after each submission rather than at
+   end of run. At go-live, re-verify against the *live* endpoint's
+   client-order-id semantics before trusting it there.
 
 3. **Dedicated broker account isolation.** Live trading uses a separate
    Alpaca account, separate keys, separate ledger, separate deployment and
@@ -65,9 +68,10 @@ this repo's actual code.
    `config.execution.kill_switch` requires committing to the same pipeline
    it's meant to stop.
 
-6. **Real reconciliation.** Beyond `reconcile()`'s symbol-set comparison:
-   share/contract quantities, cost basis, cash, and pending orders must
-   match, with a hard halt (not a Discord note) on drift.
+6. **Real reconciliation.** Partially done 2026-07-15: `reconcile()` now
+   compares share/contract quantities (stocks and options) as well as
+   symbols. Still missing for live: cost basis, cash, and pending-order
+   comparison, and a hard halt (not a Discord note) on drift.
 
 7. **Fail-closed credentials and connections.** Missing keys, a failed
    connection, or unparseable config must abort loudly, not skip quietly.
