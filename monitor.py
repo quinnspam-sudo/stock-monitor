@@ -3,6 +3,7 @@
 Run once:            ./venv/bin/python monitor.py
 Run without alerts:  ./venv/bin/python monitor.py --dry-run
 """
+import concurrent.futures
 import json
 import sys
 import time
@@ -146,6 +147,42 @@ def check_deep_bear():
         print(f"deep-bear check failed (continuing): {e}")
 
 
+FETCH_WORKERS = 10
+
+
+def fetch_ticker(ticker):
+    """Network-bound fetch + compute for one ticker (score, committee, factors).
+
+    Split out from the main loop so it can run on a thread pool — these are
+    all yfinance HTTP calls (score_ticker, committee.gather, factors.compute),
+    I/O-bound and GIL-releasing, and were previously the ~11.6 min/run
+    bottleneck from running ~3s/ticker sequentially across 440 tickers.
+    Returns a plain dict; no disk writes or Discord calls happen here so it's
+    safe to run concurrently — all stateful work stays in the sequential
+    pass below.
+    """
+    out = {"ticker": ticker, "result": None, "result_error": None,
+           "cur": None, "factors_error": None, "committee_error": None}
+    try:
+        out["result"] = score_ticker(ticker)
+    except Exception as e:
+        out["result_error"] = str(e)
+        return out
+    if out["result"] is None:
+        return out
+    momentum_score = out["result"]["score"]
+    try:
+        cur = committee.gather(ticker, momentum_score)
+        try:
+            cur["factors"] = factors.compute(ticker)
+        except Exception as e:
+            out["factors_error"] = str(e)
+        out["cur"] = cur
+    except Exception as e:
+        out["committee_error"] = str(e)
+    return out
+
+
 def load_state():
     return json.loads(STATE_PATH.read_text()) if STATE_PATH.exists() else {}
 
@@ -194,12 +231,23 @@ def main():
         run_list = shard
 
     print(f"{'TICKER':<8}{'PRICE':>10}{'SCORE':>7}  ACTION")
+
+    # Fetch phase: parallelized across a thread pool since these are all
+    # network-bound yfinance calls. Order isn't guaranteed here, so results
+    # are collected into a dict and replayed in run_list order below —
+    # everything stateful (prints, ledger, history, Discord) stays
+    # single-threaded and in the original sequence.
+    fetched = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=FETCH_WORKERS) as pool:
+        for out in pool.map(fetch_ticker, run_list):
+            fetched[out["ticker"]] = out
+
     for ticker in run_list:
-        try:
-            result = score_ticker(ticker)
-        except Exception as e:
-            print(f"{ticker:<8}  error: {e}")
+        fx = fetched[ticker]
+        if fx["result_error"] is not None:
+            print(f"{ticker:<8}  error: {fx['result_error']}")
             continue
+        result = fx["result"]
         if result is None:
             print(f"{ticker:<8}  insufficient data")
             continue
@@ -209,18 +257,15 @@ def main():
         # hold decision now (used to just confirm a decision already made on
         # momentum alone). This is what makes the new methodologies a real
         # entry-filter input, not just a downstream confirmation gate.
-        cur = None
-        try:
-            cur = committee.gather(ticker, momentum_score)
-            try:
-                cur["factors"] = factors.compute(ticker)
-            except Exception as e:
-                print(f"         factors error: {e}")
+        cur = fx["cur"]
+        if fx["factors_error"] is not None:
+            print(f"         factors error: {fx['factors_error']}")
+        if fx["committee_error"] is not None:
+            print(f"         committee error: {fx['committee_error']}")
+        if cur is not None:
             evaluations[ticker] = (cur, ledger.get(ticker))
             if not dry_run:  # dry runs must not consume triggers or pollute history
                 committee.append_history(ticker, cur)
-        except Exception as e:
-            print(f"         committee error: {e}")
 
         # Blended score: 55% momentum (the timing/entry signal) + 45% factor
         # conviction (the 11-methodology confirmation blend) — factors weighted
