@@ -50,7 +50,10 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           # Explicit allowlist, not `git add -A` — only files execute.py is known to write.
           STATE_FILES="actual_trades.json executed_orders.json execution_state.json option_trades.json obsidian_queue.jsonl"
-          git add $STATE_FILES
+          # Stage only allowlisted files that exist — a not-yet-created file
+          # (e.g. option_trades.json before the first option trade) must not
+          # abort the step under `bash -e`. Still an explicit allowlist, never -A.
+          for f in $STATE_FILES; do [ -e "$f" ] && git add "$f"; done
           git diff --cached --quiet || git commit -m "execute: state update [skip ci]"
           pushed=""
           for i in 1 2 3 4 5; do
@@ -61,7 +64,7 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             if [ -n "$FILES" ]; then git checkout "$OLD" -- $FILES 2>/dev/null || true; fi
-            git add $FILES
+            for f in $FILES; do [ -e "$f" ] && git add "$f"; done
             git diff --cached --quiet || git commit -m "state update after conflict [skip ci]"
             echo "push attempt $i failed, retrying..."
             sleep $((i * 5))
