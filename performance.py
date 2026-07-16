@@ -1,15 +1,18 @@
-"""Performance query tool — compares "what the system recommended" against
+"""Performance query tool — compares "what the committee recommended" against
 "what you actually did," using average-cost-basis accounting for real trades.
 
-Two separate ledgers, deliberately never merged:
-  - recommendations.json — committee verdicts (verdict.py), real BUY alerts
-    (monitor.py), and sell signals (sell_check.py). What the system SAID.
-  - actual_trades.json   — real buys/sells logged via the Discord buy-log
-    bot. What you ACTUALLY DID.
+This tool covers two of the system's three ledgers:
+  - recommendations.json — the committee book: committee_verdict entries only
+    (verdict.py). Created on the first recorded verdict, so may not exist yet.
+    What the COMMITTEE SAID.
+  - actual_trades.json   — the execution ledger: real (paper) buys/sells,
+    auto-written by execute.py. What you ACTUALLY DID.
+The third ledger, signals.json (the machine book: buy_alert / conviction-call
+signals), is scored separately by signal_tracker.py, not here.
 
 Run:
     ./venv/bin/python performance.py actual
-    ./venv/bin/python performance.py recommendations [--kind buy_alert|sell_signal|committee_verdict]
+    ./venv/bin/python performance.py recommendations [--kind committee_verdict]
 """
 import json
 import sys

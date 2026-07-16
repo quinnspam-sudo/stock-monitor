@@ -184,6 +184,15 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
     spy = _spy_price()
     filled = []
 
+    # A legitimate buy_alert only ever names a config.watchlist ticker (monitor.py
+    # scores nothing else). signals.json is a tracked file this unattended executor
+    # trusts, so anything writing to it — a merged PR, the cron PAT, direct repo
+    # access — could otherwise inject an arbitrary ticker and have it bought. The
+    # watchlist gate makes that class of state-poisoning a no-op regardless of the
+    # dollar caps (which are None by design for the trial). Not a substitute for
+    # protecting write access — a defense-in-depth backstop.
+    allowed = set(cfg.get("watchlist", []))
+
     # max_open_positions and daily_deploy_cap_usd are None (unlimited) per Quinn's
     # config — the paper trial executes EVERY signal for a clean 100%-adherence
     # record; the only remaining guards are the kill switch, the per-name
@@ -193,7 +202,9 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
         t = s["ticker"]
         key = f"{t}:{s.get('ts', s['date'])}"
         reason = None
-        if ex["kill_switch"]:
+        if t not in allowed:
+            reason = "ticker not in config.watchlist — rejected (possible signals.json poisoning)"
+        elif ex["kill_switch"]:
             reason = "kill switch on"
         elif ex["max_open_positions"] and len(positions) >= ex["max_open_positions"] and t not in positions:
             reason = f"max_open_positions {ex['max_open_positions']} reached"
@@ -338,7 +349,7 @@ def _record_option_trade(action, ticker, occ_symbol, expiry, strike, fill, note,
         pass
 
 
-def buy_options_pass(bk, ex, executed, dry, log):
+def buy_options_pass(bk, cfg, ex, executed, dry, log):
     """Execute call_conviction / etf_call_conviction signals (written by
     options_engine.py) under the same discipline as stock buys: 1 contract
     per idea, capped by option_premium_usd_cap, no re-quote — the scan-time
@@ -366,13 +377,20 @@ def buy_options_pass(bk, ex, executed, dry, log):
     spy = _spy_price()
     filled = []
 
+    # Conviction-call ideas only ever name a watchlist (call_conviction) or
+    # etf_watchlist (etf_call_conviction) ticker — same signals.json-poisoning
+    # backstop as buy_pass. See the note there.
+    allowed = set(cfg.get("watchlist", [])) | set(cfg.get("etf_watchlist", []))
+
     for s in fresh:
         t = s["ticker"]
         c = s.get("contract") or {}
         key = f"{t}:{s['kind']}:{s.get('ts', s['date'])}"
         expiry, strike, premium = c.get("expiry"), c.get("strike"), c.get("mid")
         reason = None
-        if ex["kill_switch"]:
+        if t not in allowed:
+            reason = "ticker not in watchlist/etf_watchlist — rejected (possible signals.json poisoning)"
+        elif ex["kill_switch"]:
             reason = "kill switch on"
         elif not (expiry and strike and premium):
             reason = "signal missing contract expiry/strike/premium"
@@ -714,7 +732,7 @@ def main():
     else:
         bought = buy_pass(bk, cfg, ex, executed, dry, log)
         sold = sell_pass(bk, ex, state, dry, log)
-        bought_calls = buy_options_pass(bk, ex, executed, dry, log)
+        bought_calls = buy_options_pass(bk, cfg, ex, executed, dry, log)
         sold_calls = sell_options_pass(bk, ex, state, dry, log)
     reconcile(bk, log)
 

@@ -68,15 +68,18 @@ Pulls free price data (yfinance) for every ticker in `config.json`'s
 `watchlist` and computes a momentum/trend score (price vs 50-day SMA, 1/3
 month returns, proximity to highs, RSI, volume). Diffs against the last run
 (`scores.json`); a score crossing `alert_threshold` (currently 76) fires a
-Discord BUY alert, records a `buy_alert` in `signals.json` and
-`recommendations.json`, and starts a per-ticker cooldown
+Discord BUY alert, records a `buy_alert` in `signals.json` (via
+`signal_tracker.py`), and starts a per-ticker cooldown
 (`alert_state.json`). `earnings_gate.py` suppresses buys too close to an
 earnings date.
 
-### 2. Signals ledger — `signals.json`
+### 2. Signals ledger — `signals.json` (the machine book)
 The handoff point between "the system said buy" and "something acted on
-it." Written by `monitor.py` (kind `buy_alert`) and `options_engine.py`
-(kinds `call_conviction` / `etf_call_conviction`). Consumed by `execute.py`.
+it," and the record used to score machine-signal hit-rate
+(`signal_tracker.py`). Written by `monitor.py` (kind `buy_alert`) and
+`options_engine.py` (kinds `call_conviction` / `etf_call_conviction`).
+Consumed by `execute.py`. Distinct from `recommendations.json`, which holds
+only human/committee verdicts (see §5).
 
 ### 3. Paper execution — `execute.py` → `broker.py`
 Runs 5 minutes after each monitor run. For each fresh, not-yet-executed
@@ -97,12 +100,17 @@ only while SPY > its 50-day SMA), an unconditional -30% disaster floor, and
 a 365-day rebalance. `execute.py` imports the same constants — the rules
 exist in one place and are considered frozen (`EVALUATION_PROTOCOL.md`).
 
-### 5. Performance accounting — `performance.py`
-Two ledgers, deliberately never merged: `recommendations.json` ("what the
-system said") and `actual_trades.json` ("what actually happened"). Each
-paper dollar is benchmarked against the same dollar put into SPY at the
-same instant (`spy_at_trade`), FIFO lot-matched — `execute.py --report`
-prints the head-to-head and a daily equity curve of both routes.
+### 5. Performance accounting — `performance.py`, `signal_tracker.py`
+Three ledgers, deliberately never merged, each answering a different
+question: `signals.json` (the machine book — what the algorithm flagged),
+`recommendations.json` (the committee book — `committee_verdict` entries
+from `verdict.py`, created on the first recorded verdict), and
+`actual_trades.json` (the execution ledger — what actually got bought/sold).
+`performance.py` reports the committee book and the execution ledger;
+`signal_tracker.py report` scores the machine book. Each paper dollar is
+benchmarked against the same dollar put into SPY at the same instant
+(`spy_at_trade`), FIFO lot-matched — `execute.py --report` prints the
+head-to-head and a daily equity curve of both routes.
 
 ### 6. Watchlist curation — `discover.py`, `watchlist_health.py`
 Weekly (Saturdays). Sources candidates from free Yahoo screens and sector

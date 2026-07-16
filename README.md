@@ -35,9 +35,13 @@ a shared set of JSON files in this repo, and talk to Discord for notifications:
    exit rules to open paper positions. Also fully executes `options_engine.py`'s
    conviction-call ideas as 1-contract paper option buys, with the same mechanical
    exit rules. No-ops entirely if Alpaca keys aren't set.
-6. **Ledgers** — `recommendations.json` ("what the system said to do") and
-   `actual_trades.json` ("what was actually bought/sold", auto-written by
-   `execute.py`) are tracked separately and compared with `performance.py`.
+6. **Ledgers** — three separate books, deliberately never merged: `signals.json`
+   ("what the machine flagged" — every `buy_alert`/conviction-call, written by
+   `signal_tracker.py`), `recommendations.json` ("what the Claude Pro committee
+   said" — `committee_verdict` entries, written by `verdict.py`; created on the
+   first recorded verdict), and `actual_trades.json` ("what was actually
+   bought/sold" — paper fills auto-written by `execute.py`). `performance.py`
+   and `signal_tracker.py` report against them.
 7. **Scheduling** — in this fork, all of the above run as GitHub Actions
    (`.github/workflows/*.yml`), triggered by an external cron service (cron-job.org)
    calling each workflow's `workflow_dispatch` endpoint, since GitHub's native
@@ -234,26 +238,33 @@ rotating before then or the jobs will start failing with 401s).
   input). Adds to the watchlist only — never touches the frozen trading rules.
   See `DISCOVERY.md`.
 
-### Two separate ledgers — recommendations vs actual trades (2026-07-08)
+### Three separate ledgers — machine signals vs committee vs actual trades
 
-`recommendations.json` ("what did the system say to do") and
-`actual_trades.json` ("what did I actually do") are deliberately never
-merged:
-  - `recommendations.json` — committee verdicts (`verdict.py add`, kind
-    `committee_verdict`), real BUY alerts (`monitor.py`, kind `buy_alert`),
-    and sell signals (`sell_check.py`, kind `sell_signal`)
-  - `actual_trades.json` — real buys/sells, auto-written by `execute.py`
+Three books are kept deliberately un-merged, each answering a different
+question:
+  - `signals.json` — **the machine book**: every machine signal —
+    `buy_alert` (`monitor.py`) and `call_conviction`/`etf_call_conviction`
+    (`options_engine.py`) — appended by `signal_tracker.py`. This is what
+    `execute.py` reads to decide what to buy. Scored by `signal_tracker.py`.
+  - `recommendations.json` — **the committee book**: `committee_verdict`
+    entries only, written by `verdict.py add`. Created on the first recorded
+    verdict, so it may not exist until you've run one. (Sell signals from
+    `sell_check.py` are logged only to the Obsidian vault, not to a JSON
+    ledger.)
+  - `actual_trades.json` — **the execution ledger**: real (paper)
+    buys/sells, auto-written by `execute.py`.
 
-Compare the two anytime with `performance.py`:
+Report against them:
 ```bash
-./venv/bin/python performance.py actual                       # open positions (unrealized) + closed lots (realized)
-./venv/bin/python performance.py recommendations               # every recommendation's % change vs price now
-./venv/bin/python performance.py recommendations --kind buy_alert
+./venv/bin/python performance.py actual                        # open positions (unrealized) + closed lots (realized)
+./venv/bin/python performance.py recommendations               # every committee verdict's % change vs price now
+./venv/bin/python performance.py recommendations --kind committee_verdict
+./venv/bin/python signal_tracker.py report --days 90           # machine-signal (signals.json) hit-rate vs SPY
 ```
-Both are also mirrored into Obsidian as two separate running logs:
-`Recommendations Log.md` and `Actual Trades Log.md` (under
-`Claude-Code/Stock Monitor/`), so browsing the vault keeps the same
-never-merged separation.
+The committee book and the execution ledger are also mirrored into Obsidian
+as two separate running logs, `Recommendations Log.md` and
+`Actual Trades Log.md` (under `Claude-Code/Stock Monitor/`), so browsing the
+vault keeps the same never-merged separation.
 
 Cron times assume PDT (UTC-7); during standard time (~Nov–Mar) runs land about
 an hour later than the equivalent PT time — harmless slack given the
@@ -381,12 +392,14 @@ week-to-week.
 
 ## Files
 
-- `config.json` — watchlist, thresholds, Discord webhook
+- `config.json` — watchlist, thresholds, buy amount, categories (never secrets)
 - `scores.json` — ledger of last proxy scores per ticker (delta baseline)
 - `history.json` — intraday score history, last 30 days (feeds close.py)
-- `recommendations.json` — "what did the system say to do": committee verdicts,
-  real BUY alerts, sell signals (see performance.py)
-- `actual_trades.json` — "what did I actually do": real buys/sells,
+- `signals.json` — the machine book: every `buy_alert`/conviction-call signal
+  (from `signal_tracker.py`); what `execute.py` reads to place paper buys
+- `recommendations.json` — the committee book: `committee_verdict` entries only
+  (from `verdict.py`); created on first verdict, so may not exist yet (see performance.py)
+- `actual_trades.json` — the execution ledger: real (paper) buys/sells,
   auto-written by `execute.py` (see performance.py)
 - `backtest_log.json` — weekly scoring-accuracy history (from `backtest.py`)
 - `committee_prompts/` — generated payloads for Claude Pro (auto-pruned after 14 days)

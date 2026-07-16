@@ -195,7 +195,7 @@ components can only be built/maintained during a connected session.
 
 ## Key facts worth not re-deriving
 
-- Repo root: `~/Claude/stock-monitor` (i.e. `/Users/quinnmccarn/Claude/stock-monitor`)
+- Repo root: `~/Claude/stock-monitor`
 - Repo is **public**: `quinnspam-sudo/stock-monitor` — unlimited free GH Actions minutes as a result
 - `gh` CLI is authenticated in this environment (account `quinnspam-sudo`) — useful for pulling real run history instead of guessing
 - Obsidian vault path: `~/Claude/Jarbis` (`Claude-Code/Stock Monitor/` subtree)
