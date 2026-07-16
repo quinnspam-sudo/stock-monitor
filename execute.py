@@ -61,7 +61,7 @@ TRADES = BASE / "actual_trades.json"
 OPTION_TRADES = BASE / "option_trades.json"    # separate ledger — options never touch the
                                                 # frozen stock pipeline (performance.py/sell_check)
 EXECUTED = BASE / "executed_orders.json"      # dedup ledger of orders placed
-STATE = BASE / "execution_state.json"          # per-(ticker,kind) sell cooldowns, last_run
+STATE = BASE / "execution_state.json"          # per-(ticker,kind) sell + per-name buy cooldowns, last_run
 
 OPTION_KINDS = ("call_conviction", "etf_call_conviction")  # written by options_engine.py
 
@@ -73,7 +73,8 @@ DEFAULTS = {
     "market_hours_only": True,
     "max_open_positions": 25,     # never hold more than this many names at once
     "max_position_usd": None,     # per-order size; None -> config.buy_amount_usd
-    "per_name_max_usd": None,     # don't add to a name past this; None -> max_position_usd
+    "per_name_max_usd": None,     # optional total-$ ceiling per name; None -> unlimited
+    "buy_cooldown_hours": 24,     # min hours between repeat buys of the SAME name
     "daily_deploy_cap_usd": 200,  # max NEW dollars deployed per calendar day
     "sell_cooldown_hours": 24,    # mirrors sell_check's per-(ticker,kind) cooldown
     "option_premium_usd_cap": 300,   # skip a call idea if 1 contract (premium x100) costs more
@@ -112,7 +113,8 @@ def _cfg():
     ex.update(cfg.get("execution", {}))
     size = ex["max_position_usd"] or cfg.get("buy_amount_usd") or 20
     ex["max_position_usd"] = size
-    ex["per_name_max_usd"] = ex["per_name_max_usd"] or size
+    # per_name_max_usd stays as configured — None means no total ceiling per name
+    # (repeat buys are gated by buy_cooldown_hours, not a market-value cap).
     # Out-of-band kill switch: STOCKMON_KILL_SWITCH is fed from a GitHub Actions
     # repo *variable* (Settings → Secrets and variables → Actions → Variables,
     # or `gh variable set STOCKMON_KILL_SWITCH --body true`). Unlike
@@ -171,9 +173,10 @@ def _today_deployed(trades, today):
                if t.get("action") == "BUY" and t.get("date") == today)
 
 
-def buy_pass(bk, cfg, ex, executed, dry, log):
+def buy_pass(bk, cfg, ex, executed, state, dry, log):
     """Execute today's fresh buy_alert signals under the guardrails."""
-    today = datetime.now().strftime("%Y-%m-%d")
+    now = datetime.now()
+    today = now.strftime("%Y-%m-%d")
     if today > ex["trial_end"]:
         log.append(f"trial ended {ex['trial_end']} — no new positions opened")
         return []
@@ -189,6 +192,7 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
     deployed = _today_deployed(trades, today)
     acct = bk.account()
     size = ex["max_position_usd"]
+    buy_cooldown = ex["buy_cooldown_hours"] * 3600
     spy = _spy_price()
     filled = []
 
@@ -203,9 +207,10 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
 
     # max_open_positions and daily_deploy_cap_usd are None (unlimited) per Quinn's
     # config — the paper trial executes EVERY signal for a clean 100%-adherence
-    # record; the only remaining guards are the kill switch, the per-name
-    # anti-double-buy cap (so a re-alert can't stack the same name), and paper
-    # buying power.
+    # record. Repeat buys of the SAME name are allowed (no total ceiling unless
+    # per_name_max_usd is set), but gated by buy_cooldown_hours so a single name
+    # can add at most once per cooldown window. Other guards: kill switch, the
+    # optional per-name ceiling, and paper buying power.
     for s in fresh:
         t = s["ticker"]
         key = f"{t}:{s.get('ts', s['date'])}"
@@ -217,7 +222,9 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
         elif ex["max_open_positions"] and len(positions) >= ex["max_open_positions"] and t not in positions:
             reason = f"max_open_positions {ex['max_open_positions']} reached"
         elif ex["per_name_max_usd"] and positions.get(t, {}).get("market_value", 0) >= ex["per_name_max_usd"]:
-            reason = f"already at per-name cap ${ex['per_name_max_usd']}"
+            reason = f"already at per-name ceiling ${ex['per_name_max_usd']}"
+        elif now.timestamp() - state.get(f"buy:{t}", 0) < buy_cooldown:
+            reason = f"buy cooldown {ex['buy_cooldown_hours']}h not elapsed for {t}"
         elif ex["daily_deploy_cap_usd"] and deployed + size > ex["daily_deploy_cap_usd"]:
             reason = f"daily deploy cap ${ex['daily_deploy_cap_usd']} would be exceeded"
         elif acct["buying_power"] < size:
@@ -229,8 +236,9 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
         if dry:
             log.append(f"[dry] BUY {t} ~${size} (signal {s.get('detail','')})")
             executed.append({"signal_key": key, "ticker": t, "action": "BUY",
-                             "dry": True, "when": datetime.now().isoformat(timespec='minutes')})
+                             "dry": True, "when": now.isoformat(timespec='minutes')})
             deployed += size
+            state[f"buy:{t}"] = now.timestamp()  # start the per-name cooldown
             continue
 
         fill = bk.buy_notional(t, size, client_order_id=_coid(key))
@@ -238,7 +246,9 @@ def buy_pass(bk, cfg, ex, executed, dry, log):
             note = f"Paper auto-exec BUY ${size:.2f} on buy_alert ({s.get('detail','')})"
             _record_trade("BUY", t, fill, note, spy)
             deployed += fill["shares"] * fill["price"]
-            positions[t] = {"market_value": fill["shares"] * fill["price"]}
+            prev = positions.get(t, {}).get("market_value", 0)
+            positions[t] = {"market_value": prev + fill["shares"] * fill["price"]}
+            state[f"buy:{t}"] = now.timestamp()  # start the per-name cooldown
             filled.append((t, fill))
             log.append(f"BUY {t}: {fill['shares']:.4f} @ ${fill['price']:.2f}")
         else:
@@ -747,7 +757,7 @@ def main():
         bought_calls = []
         sold_calls = []
     else:
-        bought = buy_pass(bk, cfg, ex, executed, dry, log)
+        bought = buy_pass(bk, cfg, ex, executed, state, dry, log)
         sold = sell_pass(bk, ex, state, dry, log)
         bought_calls = buy_options_pass(bk, cfg, ex, executed, dry, log)
         sold_calls = sell_options_pass(bk, ex, state, dry, log)

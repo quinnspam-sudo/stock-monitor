@@ -64,16 +64,19 @@ writing the identical `actual_trades.json` records — so `performance.py`,
 | `market_hours_only` | `true` | only trade while the market is open |
 | `max_open_positions` | `null` | **unlimited** (Quinn: execute every signal) |
 | `max_position_usd` | `buy_amount_usd` ($10) | per-order size |
-| `per_name_max_usd` | = per-order size | don't stack a name past this (anti-double-buy) |
+| `per_name_max_usd` | `null` | **unlimited** — optional total-$ ceiling per name; `null` = no ceiling |
+| `buy_cooldown_hours` | `24` | min hours between repeat buys of the SAME name |
 | `daily_deploy_cap_usd` | `null` | **unlimited** — no daily cap |
 | `sell_cooldown_hours` | `24` | per-(ticker,exit) cooldown, mirrors sell_check |
 | `option_premium_usd_cap` | `3000` | skip a call idea if 1 contract (premium×100) costs more (raised from the `300` code default 2026-07-15 — real conviction-call ideas run $2.6k-$5.2k/contract, so $300 skipped nearly everything) |
 | `option_profit_target_pct` | `0.50` | close a call at +50% premium gain |
 | `option_stop_loss_pct` | `-0.50` | close a call at -50% premium loss |
 
-The only active guards are the kill switch, paper buying power, and the per-name
-anti-double-buy cap (one $10 position per name, so a duplicate alert can't stack
-it). Everything else executes.
+The only active guards are the kill switch, paper buying power, and a per-name
+buy cooldown: the same name can be bought at most once every `buy_cooldown_hours`
+(24h), but there's **no total ceiling** — a name that keeps alerting keeps
+accumulating $10 rounds day after day (set `per_name_max_usd` to cap the total).
+Everything else executes.
 
 ## vs-SPY tracking (exact benchmark)
 
