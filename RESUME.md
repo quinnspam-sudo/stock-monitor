@@ -1,8 +1,9 @@
 # RESUME — stock-monitor session continuity
 
-Last updated: 2026-07-15, ~17:55 PT. Working tree clean, HEAD = `beaea2f`,
-fully pushed to `origin/main`. Read this file first in any new session
-before touching this repo — it's the fastest way back to full context.
+Last updated: 2026-07-15 (later same day). Working tree clean, HEAD =
+`6b48afa`, fully pushed to `origin/main`. Read this file first in any new
+session before touching this repo — it's the fastest way back to full
+context.
 
 ## How to resume
 
@@ -157,23 +158,40 @@ components can only be built/maintained during a connected session.
 | 4 | Fail-closed live discipline, non-null risk limits, dedicated live Alpaca account | **Not implemented**; `execute.py` still hard-blocks to paper-only (`broker.py` `paper=True` hard-wired, `execute.py` rejects non-paper mode) — this is the safety net currently preventing any live-money exposure regardless of the above |
 | 5 | Out-of-band kill switch (currently a `config.json` field, requires a git commit to flip) | **Not implemented** |
 
-## Also still open from earlier in this session (lower priority)
+## Follow-up session, 2026-07-15 (later same day) — status of the 5 open items
 
-- **`monitor.py` concurrency fix** — parallelize the sequential yfinance
-  fetch loop across 440 watchlist tickers. Biggest remaining GH Actions
-  minutes lever (~5,700 min/month), discussed but not implemented.
-  Not urgent since the repo is public (no billing impact), but would
-  speed up every monitor run and free headroom for whatever's next.
-- **`buy_intake.yml`'s cron-job.org card** — I moved the workflow file to
-  `workflows_legacy_backup/`, but if a cron-job.org card still exists
-  pointing at it, Quinn should disable/delete it there (external service,
-  I can't touch it). Unconfirmed whether this was done.
-- **GitHub PAT expiring ~2026-08-07** — powers every cron-job.org trigger.
-  `CRON_TRIGGERS.md` is the rotation runbook. Needs rotating before that
-  date or every scheduled workflow starts failing with 401s.
-- **Paper trial ends 2026-08-13** — `execute.py` stops opening new
-  positions after that date automatically; the `execute` cron-job.org
-  card should be disabled around then per `EXECUTION.md`.
+1. **`monitor.py` concurrency fix — DONE** (commit `6b48afa`). Split the
+   per-ticker yfinance work (score_ticker + committee.gather +
+   factors.compute) into `fetch_ticker()`, run on a 10-worker
+   `ThreadPoolExecutor` (I/O-bound, GIL-releasing), then replayed through
+   the unchanged sequential decision/state/alert logic in original ticker
+   order. Verified with `--dry-run --force`: a 123-ticker shard completed
+   in ~10s (vs. the prior ~3s/ticker sequential baseline — would've been
+   several minutes for that shard alone). No behavior change to alerts,
+   ledger, or Discord output.
+2. **Discord-relay + local Obsidian plan — deliberately NOT built.** On
+   reflection this is speculative infrastructure for a feature
+   (live trading) that doesn't exist yet — `execute.py` still hard-blocks
+   to paper-only, and the only data currently flowing through the
+   git-committed `obsidian_queue.jsonl` is paper-trading state, which
+   `CLAUDE.md` already treats as fine to be public. The design is still
+   fully written up above if/when live trading actually gets built —
+   build it then, not preemptively.
+3. **`buy_intake.yml`'s cron-job.org card — confirmed already handled.**
+   Checked console.cron-job.org directly: the `buy-intake-15min` card
+   exists but shows **Inactive** (no next-execution time). Nothing left
+   to do here.
+4. **GitHub PAT expiring ~2026-08-07** — still open, **needs Quinn**.
+   Rotating it means pasting a new token into cron-job.org's Authorization
+   header on all 9 jobs — that's credential entry, which I won't do even
+   on request. `CRON_TRIGGERS.md` has the exact runbook. Not urgent yet
+   (3+ weeks out as of 2026-07-15) but don't let it lapse.
+5. **Paper trial ends 2026-08-13** — still open, **needs Quinn closer to
+   the date**. `execute.py` already stops opening new positions
+   automatically after that date (code-side handled), but the
+   `execute-15min` cron-job.org card should be disabled around then per
+   `EXECUTION.md`. Didn't touch it now — 4 weeks early is premature for
+   disabling a live production job.
 
 ## Key facts worth not re-deriving
 
