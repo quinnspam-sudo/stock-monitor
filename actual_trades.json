@@ -118,5 +118,15 @@
     "shares": 0.244577192,
     "note": "Paper auto-exec BUY $10.00 on buy_alert (score 88/100, conviction HIGH, earnings_gate=closed)",
     "spy_at_trade": 753.37
+  },
+  {
+    "date": "2026-07-17",
+    "ticker": "DELL",
+    "action": "SELL",
+    "amount": 8.4,
+    "price": 385.166,
+    "shares": 0.021812322,
+    "note": "Paper auto-exec STOP_LOSS: down -15.8% vs $458.00, SPY>50d",
+    "spy_at_trade": 745.15
   }
 ]
