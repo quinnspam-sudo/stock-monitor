@@ -439,7 +439,8 @@
     "SNX",
     "NTR",
     "BBD",
-    "TAL"
+    "TAL",
+    "NXST"
   ],
   "alert_threshold": 76,
   "cooldown_hours": 13,
@@ -911,7 +912,8 @@
       "LYV",
       "RDDT",
       "SE",
-      "BABA"
+      "BABA",
+      "NXST"
     ],
     "Housing & Builders": [
       "DHI",
@@ -1024,7 +1026,7 @@
     "daily_deploy_cap_usd": null,
     "sell_cooldown_hours": 24,
     "option_premium_usd_cap": 3000,
-    "option_profit_target_pct": 0.50,
-    "option_stop_loss_pct": -0.50
+    "option_profit_target_pct": 0.5,
+    "option_stop_loss_pct": -0.5
   }
 }
