@@ -337,6 +337,188 @@
         "HST"
       ],
       "watchlist_size": 440
+    },
+    {
+      "when": "2026-07-18T09:30",
+      "dry_run": false,
+      "sourced": 114,
+      "evaluated": 114,
+      "added": [
+        {
+          "ticker": "DINO",
+          "category": "Energy & LNG",
+          "overall": 68,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 81,
+          "rank": 81,
+          "promise": "MEDIUM tier + +12% rev growth",
+          "price": 88.59
+        },
+        {
+          "ticker": "RY",
+          "category": "Financials & Alt Managers",
+          "overall": 73,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 80,
+          "rank": 80,
+          "promise": "MEDIUM tier + +16% rev growth",
+          "price": 215.43
+        },
+        {
+          "ticker": "PM",
+          "category": "Quality Compounders",
+          "overall": 77,
+          "rating": "Buy",
+          "tier": "MEDIUM",
+          "blend": 82,
+          "rank": 78,
+          "promise": "MEDIUM tier, near-buyable (blend 82 vs 76)",
+          "price": 192.98
+        },
+        {
+          "ticker": "MO",
+          "category": "Quality Compounders",
+          "overall": 80,
+          "rating": "Buy",
+          "tier": "HIGH",
+          "blend": 82,
+          "rank": 78,
+          "promise": "HIGH conviction tier",
+          "price": 74.21
+        },
+        {
+          "ticker": "UNP",
+          "category": "Heavy Industry & Machinery",
+          "overall": 80,
+          "rating": "Buy",
+          "tier": "MEDIUM",
+          "blend": 73,
+          "rank": 77,
+          "promise": "MEDIUM tier, near-buyable (blend 73 vs 76)",
+          "price": 301.75
+        },
+        {
+          "ticker": "EXPD",
+          "category": "Quality Compounders",
+          "overall": 67,
+          "rating": "Watch",
+          "tier": "HIGH",
+          "blend": 81,
+          "rank": 77,
+          "promise": "HIGH conviction tier",
+          "price": 182.8
+        },
+        {
+          "ticker": "MNST",
+          "category": "Quality Compounders",
+          "overall": 84,
+          "rating": "Buy",
+          "tier": "MEDIUM",
+          "blend": 80,
+          "rank": 76,
+          "promise": "MEDIUM tier + +27% rev growth",
+          "price": 97.5
+        },
+        {
+          "ticker": "TD",
+          "category": "Financials & Alt Managers",
+          "overall": 65,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 75,
+          "rank": 75,
+          "promise": "MEDIUM tier, near-buyable (blend 75 vs 76)",
+          "price": 123.6
+        },
+        {
+          "ticker": "UNH",
+          "category": "Healthcare & Biotech",
+          "overall": 63,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 78,
+          "rank": 74,
+          "promise": "MEDIUM tier, near-buyable (blend 78 vs 76)",
+          "price": 426.09
+        },
+        {
+          "ticker": "CVS",
+          "category": "Healthcare & Biotech",
+          "overall": 61,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 77,
+          "rank": 73,
+          "promise": "MEDIUM tier, near-buyable (blend 77 vs 76)",
+          "price": 107.47
+        },
+        {
+          "ticker": "CTVA",
+          "category": "Critical Minerals & Rare Earths",
+          "overall": 75,
+          "rating": "Buy",
+          "tier": "MEDIUM",
+          "blend": 73,
+          "rank": 73,
+          "promise": "MEDIUM tier + +11% rev growth",
+          "price": 87.3
+        },
+        {
+          "ticker": "WELL",
+          "category": "Quality Compounders",
+          "overall": 73,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 77,
+          "rank": 73,
+          "promise": "MEDIUM tier + +38% rev growth",
+          "price": 243.25
+        }
+      ],
+      "pruned": [],
+      "rejected_count": 70,
+      "near_misses": [
+        {
+          "ticker": "ATAI",
+          "overall": 48,
+          "tier": "MEDIUM",
+          "blend": 78,
+          "why": "overall 48 < 60"
+        },
+        {
+          "ticker": "CCRN",
+          "overall": 47,
+          "tier": "MEDIUM",
+          "blend": 75,
+          "why": "overall 47 < 60"
+        },
+        {
+          "ticker": "FICO",
+          "overall": 87,
+          "tier": "MEDIUM",
+          "blend": 72,
+          "why": "veto: 6-mo momentum -20% < -10% (falling knife)"
+        },
+        {
+          "ticker": "SPG",
+          "overall": 83,
+          "tier": "MEDIUM",
+          "blend": 71,
+          "why": "veto: estimate revisions -3.0% < -2%"
+        },
+        {
+          "ticker": "SMWB",
+          "overall": 60,
+          "tier": "MEDIUM",
+          "blend": 69,
+          "why": "veto: estimate revisions -16.4% < -2%"
+        }
+      ],
+      "errors": [],
+      "budget_hit": false,
+      "watchlist_size": 453
     }
   ]
 }
