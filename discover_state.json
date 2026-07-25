@@ -667,8 +667,88 @@
     "CFLT": {
       "until": "2026-08-17T09:30:29.579609",
       "reason": "no price history"
+    },
+    "VNO": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "veto: estimate revisions -456.9% < -2%"
+    },
+    "WTI": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "veto: estimate revisions -123.3% < -2%"
+    },
+    "VET": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "overall 57 < 60"
+    },
+    "KREF": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "overall 59 < 60"
+    },
+    "CAPR": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "overall 51 < 60"
+    },
+    "LESL": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "overall 44 < 60"
+    },
+    "TWO": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "veto: F-Score 2 <= 3 (Piotroski short zone)"
+    },
+    "GRPN": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "veto: F-Score 3 <= 3 (Piotroski short zone); estimate revisions -77.5% < -2%"
+    },
+    "MAX": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "veto: estimate revisions -4.3% < -2%"
+    },
+    "RERE": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "veto: estimate revisions -2.7% < -2%; 6-mo momentum -31% < -10% (falling knife)"
+    },
+    "HAS": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "tier LOW below MEDIUM (insufficient factor conviction)"
+    },
+    "CLF": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "overall 41 < 60"
+    },
+    "AMC": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "overall 54 < 60"
+    },
+    "FRMI": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "confidence 40 < 45 (too little real data)"
+    },
+    "AUR": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "overall 41 < 60"
+    },
+    "TGT": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "overall 58 < 60"
+    },
+    "AEP": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "tier LOW below MEDIUM (insufficient factor conviction)"
+    },
+    "TRU": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "tier LOW below MEDIUM (insufficient factor conviction)"
+    },
+    "CHRW": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "overall 59 < 60"
+    },
+    "DOCN": {
+      "until": "2026-08-24T09:30:33.225442",
+      "reason": "tier LOW below MEDIUM (insufficient factor conviction)"
     }
   },
   "unratable": {},
-  "last_run": "2026-07-18T09:30"
+  "last_run": "2026-07-25T09:30"
 }

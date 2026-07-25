@@ -519,6 +519,188 @@
       "errors": [],
       "budget_hit": false,
       "watchlist_size": 453
+    },
+    {
+      "when": "2026-07-25T09:30",
+      "dry_run": false,
+      "sourced": 38,
+      "evaluated": 38,
+      "added": [
+        {
+          "ticker": "THC",
+          "category": "Healthcare & Biotech",
+          "overall": 76,
+          "rating": "Buy",
+          "tier": "MEDIUM",
+          "blend": 84,
+          "rank": 80,
+          "promise": "MEDIUM tier, near-buyable (blend 84 vs 76)",
+          "price": 233.2
+        },
+        {
+          "ticker": "TRV",
+          "category": "Financials & Alt Managers",
+          "overall": 76,
+          "rating": "Buy",
+          "tier": "MEDIUM",
+          "blend": 80,
+          "rank": 80,
+          "promise": "MEDIUM tier, near-buyable (blend 80 vs 76)",
+          "price": 387.26
+        },
+        {
+          "ticker": "PCG",
+          "category": "Power & Grid",
+          "overall": 62,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 71,
+          "rank": 67,
+          "promise": "MEDIUM tier, near-buyable (blend 71 vs 76)",
+          "price": 17.85
+        },
+        {
+          "ticker": "CF",
+          "category": "Critical Minerals & Rare Earths",
+          "overall": 78,
+          "rating": "Buy",
+          "tier": "MEDIUM",
+          "blend": 66,
+          "rank": 66,
+          "promise": "MEDIUM tier + +19% rev growth",
+          "price": 125.07
+        },
+        {
+          "ticker": "A",
+          "category": "Healthcare & Biotech",
+          "overall": 76,
+          "rating": "Buy",
+          "tier": "MEDIUM",
+          "blend": 70,
+          "rank": 66,
+          "promise": "MEDIUM tier + +10% rev growth",
+          "price": 138.57
+        },
+        {
+          "ticker": "VG",
+          "category": "Energy & LNG",
+          "overall": 66,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 65,
+          "rank": 65,
+          "promise": "MEDIUM tier + +59% rev growth",
+          "price": 14.31
+        },
+        {
+          "ticker": "GWW",
+          "category": "Quality Compounders",
+          "overall": 73,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 68,
+          "rank": 64,
+          "promise": "MEDIUM tier + +10% rev growth",
+          "price": 1382.6
+        },
+        {
+          "ticker": "OKE",
+          "category": "Energy & LNG",
+          "overall": 66,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 63,
+          "rank": 63,
+          "promise": "MEDIUM tier + +20% rev growth",
+          "price": 93.16
+        },
+        {
+          "ticker": "ROST",
+          "category": "Consumer & Travel",
+          "overall": 72,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 58,
+          "rank": 62,
+          "promise": "MEDIUM tier + +21% rev growth",
+          "price": 238.89
+        },
+        {
+          "ticker": "EA",
+          "category": "Media & Telecom",
+          "overall": 80,
+          "rating": "Buy",
+          "tier": "MEDIUM",
+          "blend": 54,
+          "rank": 58,
+          "promise": "MEDIUM tier + +12% rev growth",
+          "price": 209.06
+        },
+        {
+          "ticker": "CNQ",
+          "category": "Energy & LNG",
+          "overall": 71,
+          "rating": "Watch",
+          "tier": "HIGH",
+          "blend": 54,
+          "rank": 54,
+          "promise": "HIGH conviction tier",
+          "price": 46.44
+        },
+        {
+          "ticker": "APA",
+          "category": "Energy & LNG",
+          "overall": 73,
+          "rating": "Watch",
+          "tier": "HIGH",
+          "blend": 51,
+          "rank": 51,
+          "promise": "HIGH conviction tier",
+          "price": 36.15
+        }
+      ],
+      "pruned": [],
+      "rejected_count": 20,
+      "near_misses": [
+        {
+          "ticker": "VNO",
+          "overall": 61,
+          "tier": "MEDIUM",
+          "blend": 69,
+          "why": "veto: estimate revisions -456.9% < -2%"
+        },
+        {
+          "ticker": "AMC",
+          "overall": 54,
+          "tier": "LOW",
+          "blend": 67,
+          "why": "overall 54 < 60"
+        },
+        {
+          "ticker": "GRPN",
+          "overall": 63,
+          "tier": "LOW",
+          "blend": 66,
+          "why": "veto: F-Score 3 <= 3 (Piotroski short zone); estimate revisions -77.5% < -2%"
+        },
+        {
+          "ticker": "TWO",
+          "overall": 73,
+          "tier": "LOW",
+          "blend": 61,
+          "why": "veto: F-Score 2 <= 3 (Piotroski short zone)"
+        },
+        {
+          "ticker": "MAX",
+          "overall": 66,
+          "tier": "LOW",
+          "blend": 59,
+          "why": "veto: estimate revisions -4.3% < -2%"
+        }
+      ],
+      "errors": [],
+      "budget_hit": false,
+      "watchlist_size": 465
     }
   ]
 }
