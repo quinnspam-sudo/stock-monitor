@@ -56,5 +56,34 @@
       "beat_spy_rate": 0.4304932735426009
     },
     "signal_held": true
+  },
+  {
+    "week": "2026-07-20_2026-07-24",
+    "spy_return": -0.004258289513844882,
+    "buy_stats": {
+      "n": 116,
+      "avg_return": -0.012483220686276745,
+      "hit_rate": 0.45689655172413796,
+      "beat_spy_rate": 0.47413793103448276
+    },
+    "bear_stats": {
+      "n": 12,
+      "avg_return": -0.02124870085290509,
+      "hit_rate": 0.3333333333333333,
+      "beat_spy_rate": 0.3333333333333333
+    },
+    "top_half_stats": {
+      "n": 221,
+      "avg_return": -0.009037975698384763,
+      "hit_rate": 0.45248868778280543,
+      "beat_spy_rate": 0.502262443438914
+    },
+    "bottom_half_stats": {
+      "n": 221,
+      "avg_return": 0.00519252343252816,
+      "hit_rate": 0.5429864253393665,
+      "beat_spy_rate": 0.5882352941176471
+    },
+    "signal_held": false
   }
 ]
