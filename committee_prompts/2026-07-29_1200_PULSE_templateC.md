@@ -1,0 +1,138 @@
+# COMMITTEE DATA PAYLOAD — HOURLY MARKET PULSE (Template C)
+Generated: 2026-07-29 12:00 local | Source: stock-monitor pulse daemon
+Instructions: Paste into the Investment Committee session. Output Template C only.
+
+## Timestamp
+12:00 local
+
+## Market Regime Snapshot (raw)
+  - S&P 500: 741.83 (+0.13% d/d)
+  - Nasdaq 100: 678.75 (+0.48% d/d)
+  - VIX: 17.77 (-2.42% d/d)
+
+## Intraday breach scan (3% price shock / 2.0x volume pace thresholds)
+  - VRT @ $232.47 — price -13.8% vs prior close; volume 4.2x normal pace
+  - KLAC @ $179.71 — price -5.8% vs prior close
+  - RGTI @ $13.97 — price -3.8% vs prior close
+  - SMCI @ $27.28 — price -4.1% vs prior close
+  - ALAB @ $270.03 — price +3.8% vs prior close
+  - AVAV @ $148.32 — price -5.1% vs prior close
+  - KTOS @ $46.13 — price -5.2% vs prior close
+  - NET @ $278.98 — price +5.6% vs prior close
+  - PATH @ $12.69 — price +4.1% vs prior close
+  - ENTG @ $113.20 — price -4.2% vs prior close
+  - TER @ $345.76 — price +7.8% vs prior close; volume 2.0x normal pace
+  - MU @ $790.54 — price -3.7% vs prior close
+  - ETN @ $370.97 — price -4.0% vs prior close
+  - TOELY @ $155.41 — price -6.3% vs prior close
+  - APH @ $154.62 — price +7.5% vs prior close
+  - NOW @ $116.39 — price +5.2% vs prior close
+  - TEAM @ $105.20 — price +5.2% vs prior close
+  - NBIS @ $160.37 — price -5.5% vs prior close
+  - CRM @ $188.72 — price +4.0% vs prior close
+  - EME @ $683.39 — price -3.2% vs prior close
+  - WDAY @ $168.05 — price +5.2% vs prior close
+  - BESIY @ $219.12 — price -3.1% vs prior close
+  - COHR @ $234.15 — price -3.8% vs prior close
+  - SNOW @ $292.51 — price +8.2% vs prior close
+  - HUBB @ $466.40 — price -3.6% vs prior close
+  - HUBS @ $249.76 — price +4.9% vs prior close
+  - ONTO @ $228.92 — price -5.4% vs prior close
+  - DDOG @ $272.87 — price +8.8% vs prior close
+  - NVT @ $137.07 — price -3.3% vs prior close
+  - VEEV @ $207.76 — price +3.3% vs prior close
+  - CAMT @ $133.83 — price -4.4% vs prior close
+  - MDB @ $332.03 — price +6.9% vs prior close
+  - FIX @ $1,568.72 — price -3.5% vs prior close
+  - NVMI @ $383.15 — price -4.8% vs prior close
+  - FN @ $431.41 — price -4.1% vs prior close
+  - INTU @ $333.68 — price +6.6% vs prior close
+  - IESC @ $516.75 — price -4.9% vs prior close
+  - RIO @ $94.80 — price +3.4% vs prior close
+  - VRNS @ $41.82 — price -6.4% vs prior close
+  - MKSI @ $272.99 — price -4.3% vs prior close
+  - GLW @ $130.16 — price +3.3% vs prior close
+  - ADBE @ $262.24 — price +5.2% vs prior close
+  - HII @ $287.04 — price -4.3% vs prior close
+  - BSX @ $46.35 — volume 2.4x normal pace
+  - ROP @ $406.34 — price +3.9% vs prior close
+  - GS @ $1,001.50 — price -3.1% vs prior close
+  - FLEX @ $106.53 — price -6.0% vs prior close
+  - LYSDY @ $9.66 — price -4.0% vs prior close
+  - CW @ $698.41 — price -4.2% vs prior close
+  - SAIL @ $16.46 — price +4.3% vs prior close
+  - ESTC @ $65.70 — price +5.8% vs prior close
+  - UCTT @ $73.94 — price -4.6% vs prior close
+  - HBM @ $22.85 — price +4.9% vs prior close
+  - RBRK @ $73.62 — price +3.0% vs prior close
+  - GTLB @ $34.75 — price +5.4% vs prior close
+  - WDC @ $496.44 — price +7.1% vs prior close
+  - LFUS @ $420.60 — price +7.3% vs prior close
+  - BWXT @ $163.49 — price -3.6% vs prior close
+  - MTRN @ $195.14 — price -6.9% vs prior close
+  - STX @ $810.41 — price +8.4% vs prior close
+  - CACI @ $493.62 — price -3.2% vs prior close
+  - BRZE @ $26.40 — price +5.1% vs prior close
+  - SAIC @ $117.94 — price -3.0% vs prior close
+  - RRX @ $194.77 — price -4.0% vs prior close
+  - TT @ $455.37 — price -3.1% vs prior close
+  - IOT @ $39.72 — price +5.9% vs prior close
+  - SWKS @ $62.94 — volume 2.7x normal pace
+  - MRCY @ $94.04 — price -5.4% vs prior close
+  - GWRE @ $168.04 — price +5.4% vs prior close
+  - QRVO @ $91.33 — volume 2.5x normal pace
+  - DRS @ $47.50 — price -3.5% vs prior close
+  - MANH @ $205.75 — price +22.3% vs prior close; volume 3.3x normal pace
+  - GNRC @ $198.99 — volume 2.3x normal pace
+  - ESLT @ $789.47 — price -3.6% vs prior close
+  - CORZ @ $19.36 — price -6.7% vs prior close; volume 2.4x normal pace
+  - RNMBY @ $266.20 — price +6.8% vs prior close
+  - GEHC @ $71.36 — price +11.3% vs prior close; volume 2.4x normal pace
+  - PLXS @ $244.60 — volume 2.3x normal pace
+  - MTSI @ $239.03 — price -4.1% vs prior close
+  - TTMI @ $106.29 — volume 2.4x normal pace
+  - SOFI @ $15.69 — price -6.3% vs prior close; volume 2.4x normal pace
+  - TMDX @ $78.74 — price +3.2% vs prior close
+  - GKOS @ $165.29 — price +9.2% vs prior close; volume 3.4x normal pace
+  - ADSK @ $245.75 — price +3.5% vs prior close
+  - COP @ $118.26 — price +3.7% vs prior close
+  - EOG @ $145.41 — price +4.1% vs prior close
+  - FANG @ $199.60 — price +4.9% vs prior close
+  - DVN @ $44.40 — price +4.1% vs prior close
+  - OXY @ $56.06 — price +3.9% vs prior close
+  - BKR @ $60.40 — price +3.3% vs prior close
+  - EVR @ $311.23 — price -8.6% vs prior close; volume 3.2x normal pace
+  - IBKR @ $88.13 — price -3.1% vs prior close
+  - EXPE @ $310.51 — price +5.0% vs prior close
+  - MSTR @ $99.49 — price +3.5% vs prior close
+  - MARA @ $10.70 — price -5.9% vs prior close
+  - RIOT @ $19.77 — price -6.9% vs prior close
+  - CLSK @ $12.75 — price -5.4% vs prior close
+  - RDDT @ $184.87 — price +3.6% vs prior close
+  - BLDR @ $69.86 — price -5.2% vs prior close
+  - CAT @ $798.71 — price -5.0% vs prior close
+  - DE @ $615.19 — price -3.9% vs prior close
+  - CMI @ $620.10 — price -3.4% vs prior close
+  - MOD @ $188.93 — price -9.2% vs prior close; volume 2.8x normal pace
+  - CARR @ $61.18 — price -3.1% vs prior close
+  - CRWV @ $65.14 — price -3.2% vs prior close
+  - APLD @ $25.11 — price -5.7% vs prior close
+  - IREN @ $31.97 — price -5.8% vs prior close
+  - WULF @ $16.20 — price -5.2% vs prior close
+  - AAOI @ $83.16 — price -5.7% vs prior close
+  - BE @ $180.99 — price +8.5% vs prior close; volume 2.8x normal pace
+  - HIMS @ $26.19 — price -10.7% vs prior close
+  - MP @ $40.04 — price -3.0% vs prior close
+  - TTEK @ $34.59 — price +3.2% vs prior close
+  - GLXY @ $19.66 — price -6.1% vs prior close
+  - TBLA @ $5.22 — price +4.0% vs prior close
+  - SNX @ $257.46 — price +4.2% vs prior close
+  - TAL @ $10.95 — price +4.9% vs prior close; volume 2.8x normal pace
+  - CF @ $126.96 — price +3.3% vs prior close
+  - VG @ $13.02 — price +6.9% vs prior close
+  - CNQ @ $46.44 — price +5.1% vs prior close
+  - APA @ $36.56 — price +4.7% vs prior close
+
+## Gapped intraday sources
+  - Trading halts feed: Data Status: GAPPED
+  - Options flow: Data Status: GAPPED
