@@ -701,6 +701,144 @@
       "errors": [],
       "budget_hit": false,
       "watchlist_size": 465
+    },
+    {
+      "when": "2026-08-01T09:30",
+      "dry_run": false,
+      "sourced": 23,
+      "evaluated": 23,
+      "added": [
+        {
+          "ticker": "CLBK",
+          "category": "Financials & Alt Managers",
+          "overall": 61,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 74,
+          "rank": 70,
+          "promise": "MEDIUM tier + +13% rev growth",
+          "price": 10.81
+        },
+        {
+          "ticker": "STLD",
+          "category": "Critical Minerals & Rare Earths",
+          "overall": 67,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 56,
+          "rank": 56,
+          "promise": "MEDIUM tier + +33% rev growth",
+          "price": 251.26
+        },
+        {
+          "ticker": "NUE",
+          "category": "Critical Minerals & Rare Earths",
+          "overall": 65,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 55,
+          "rank": 55,
+          "promise": "MEDIUM tier + +23% rev growth",
+          "price": 257.29
+        },
+        {
+          "ticker": "RIG",
+          "category": "Energy & LNG",
+          "overall": 69,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 39,
+          "rank": 39,
+          "promise": "MEDIUM tier + +19% rev growth",
+          "price": 5.32
+        },
+        {
+          "ticker": "UMC",
+          "category": "Semiconductors & EDA",
+          "overall": 65,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 40,
+          "rank": 36,
+          "promise": "MEDIUM tier + +17% rev growth",
+          "price": 19.03
+        },
+        {
+          "ticker": "TWLO",
+          "category": "Software & Data (extended)",
+          "overall": 64,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 39,
+          "rank": 35,
+          "promise": "MEDIUM tier + +20% rev growth",
+          "price": 197.35
+        },
+        {
+          "ticker": "ASX",
+          "category": "Semiconductors & EDA",
+          "overall": 65,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 38,
+          "rank": 34,
+          "promise": "MEDIUM tier + +27% rev growth",
+          "price": 35.17
+        },
+        {
+          "ticker": "KLIC",
+          "category": "Semiconductor Equipment",
+          "overall": 62,
+          "rating": "Watch",
+          "tier": "MEDIUM",
+          "blend": 30,
+          "rank": 34,
+          "promise": "MEDIUM tier + +50% rev growth",
+          "price": 89.2
+        }
+      ],
+      "pruned": [],
+      "rejected_count": 15,
+      "near_misses": [
+        {
+          "ticker": "LNC",
+          "overall": 71,
+          "tier": "MEDIUM",
+          "blend": 83,
+          "why": "veto: F-Score 2 <= 3 (Piotroski short zone)"
+        },
+        {
+          "ticker": "NWL",
+          "overall": 57,
+          "tier": "MEDIUM",
+          "blend": 61,
+          "why": "overall 57 < 60"
+        },
+        {
+          "ticker": "TASK",
+          "overall": 60,
+          "tier": "LOW",
+          "blend": 57,
+          "why": "veto: 6-mo momentum -14% < -10% (falling knife)"
+        },
+        {
+          "ticker": "ULCC",
+          "overall": 43,
+          "tier": "LOW",
+          "blend": 53,
+          "why": "overall 43 < 60"
+        },
+        {
+          "ticker": "PAR",
+          "overall": 57,
+          "tier": "LOW",
+          "blend": 52,
+          "why": "overall 57 < 60"
+        }
+      ],
+      "errors": [],
+      "budget_hit": false,
+      "watchlist_size": 473
     }
   ]
 }
