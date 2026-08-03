@@ -1,0 +1,520 @@
+# COMMITTEE DATA PAYLOAD — DAILY CLOSING BELL (Template D)
+Generated: 2026-08-03 13:35 local | Source: stock-monitor close daemon
+Instructions: Paste into the Investment Committee session. Output Template D only.
+
+## Market Close Date
+2026-08-03
+
+## Score increases (local proxy, first vs last run today)
+  - SOFI | 72/110 | Δ+4 intraday
+  - ANET | 84/110 | Δ+3 intraday
+  - BA | 50/110 | Δ+3 intraday
+
+## Score decreases (local proxy, first vs last run today)
+  - SO | 55/110 | Δ-4 intraday
+  - SBUX | 55/110 | Δ-3 intraday
+  - TYL | 73/110 | Δ-2 intraday
+
+## Rating-band crossings today
+  - AVGO: Buy → Strong Buy
+  - CGNX: Buy → Watch
+  - DLO: Strong Buy → Buy
+  - GNRC: Watch → Hold
+  - HXL: Hold → Watch
+  - ILMN: Buy → Watch
+  - KLAC: Buy → Watch
+  - PFE: Watch → Buy
+  - STX: Watch → Buy
+  - TMO: Watch → Buy
+  - TYL: Buy → Watch
+  - ZTS: Watch → Buy
+
+## Closing scoreboard
+  - AA: 67/110 (Watch) | timing 0/100
+  - AAL: 60/110 (Watch) | timing 65/100
+  - AAOI: 47/110 (Hold) | timing 0/100
+  - AAPL: 80/110 (Buy) | timing 30/100
+  - ABBNY: 64/110 (Watch) | timing 0/100
+  - ABBV: 74/110 (Watch) | timing 64/100
+  - ABNB: 80/110 (Buy) | timing 71/100
+  - ACHR: 40/110 (Reduce) | timing 10/100
+  - ACLS: 54/110 (Hold) | timing 0/100
+  - ADBE: 89/110 (Strong Buy) | timing 60/100
+  - ADI: 82/110 (Buy) | timing 0/100
+  - ADSK: 92/110 (Strong Buy) | timing 60/100
+  - AEM: 88/110 (Strong Buy) | timing 10/100
+  - AFRM: 56/110 (Hold) | timing 49/100
+  - AGX: 74/110 (Watch) | timing 10/100
+  - AIG: 72/110 (Watch) | timing 47/100
+  - AJG: 74/110 (Watch) | timing 65/100
+  - AKAM: 62/110 (Watch) | timing 18/100
+  - ALAB: 67/110 (Watch) | timing 20/100
+  - ALB: 67/110 (Watch) | timing 0/100
+  - ALGM: 61/110 (Watch) | timing 5/100
+  - ALL: 75/110 (Buy) | timing 73/100
+  - ALLY: 67/110 (Watch) | timing 48/100
+  - ALNY: 70/110 (Watch) | timing 5/100
+  - AMAT: 73/110 (Watch) | timing 20/100
+  - AMD: 66/110 (Watch) | timing 20/100
+  - AME: 75/110 (Buy) | timing 70/100
+  - AMGN: 76/110 (Buy) | timing 68/100
+  - AMKR: 56/110 (Hold) | timing 5/100
+  - AMZN: 71/110 (Watch) | timing 70/100
+  - ANET: 84/110 (Buy) | timing 77/100
+  - AON: 75/110 (Buy) | timing 64/100
+  - APD: 59/110 (Hold) | timing 35/100
+  - APH: 80/110 (Buy) | timing 61/100
+  - APLD: 39/110 (Reduce) | timing 15/100
+  - APO: 60/110 (Watch) | timing 40/100
+  - APP: 80/110 (Buy) | timing 5/100
+  - ARES: 66/110 (Watch) | timing 87/100
+  - ARGX: 78/110 (Buy) | timing 18/100
+  - ARM: 64/110 (Watch) | timing 17/100
+  - ASMIY: 71/110 (Watch) | timing 5/100
+  - ASML: 82/110 (Buy) | timing 19/100
+  - ATI: 64/110 (Watch) | timing 65/100
+  - AVAH: 64/110 (Watch) | timing 81/100
+  - AVAV: 54/110 (Hold) | timing 10/100
+  - AVGO: 88/110 (Strong Buy) | timing 17/100
+  - AXON: 60/110 (Watch) | timing 65/100
+  - AXP: 73/110 (Watch) | timing 43/100
+  - AZN: 69/110 (Watch) | timing 5/100
+  - AZO: 60/110 (Watch) | timing 13/100
+  - BA: 50/110 (Hold) | timing 56/100
+  - BABA: 61/110 (Watch) | timing 50/100
+  - BAC: 74/110 (Watch) | timing 86/100
+  - BBD: 65/110 (Watch) | timing 51/100
+  - BESIY: 78/110 (Buy) | timing 5/100
+  - BHE: 55/110 (Hold) | timing 10/100
+  - BHP: 76/110 (Buy) | timing 17/100
+  - BKNG: 83/110 (Buy) | timing 71/100
+  - BKR: 63/110 (Watch) | timing 50/100
+  - BLDR: 49/110 (Hold) | timing 15/100
+  - BLK: 83/110 (Buy) | timing 83/100
+  - BN: 58/110 (Hold) | timing 15/100
+  - BRK-B: 65/110 (Watch) | timing 61/100
+  - BRZE: 74/110 (Watch) | timing 63/100
+  - BSX: 75/110 (Buy) | timing 36/100
+  - BWXT: 61/110 (Watch) | timing 10/100
+  - BX: 86/110 (Buy) | timing 83/100
+  - C: 66/110 (Watch) | timing 16/100
+  - CACI: 60/110 (Watch) | timing 32/100
+  - CAMT: 62/110 (Watch) | timing 5/100
+  - CARR: 54/110 (Hold) | timing 5/100
+  - CAT: 60/110 (Watch) | timing 5/100
+  - CB: 71/110 (Watch) | timing 52/100
+  - CCJ: 49/110 (Hold) | timing 10/100
+  - CDNS: 82/110 (Buy) | timing 5/100
+  - CEG: 69/110 (Watch) | timing 45/100
+  - CGNX: 74/110 (Watch) | timing 49/100
+  - CHKP: 79/110 (Buy) | timing 25/100
+  - CIEN: 64/110 (Watch) | timing 0/100
+  - CLS: 68/110 (Watch) | timing 15/100
+  - CLSK: 38/110 (Reduce) | timing 37/100
+  - CME: 78/110 (Buy) | timing 35/100
+  - CMG: 70/110 (Watch) | timing 92/100
+  - CMI: 58/110 (Hold) | timing 0/100
+  - CNQ: 73/110 (Watch) | timing 60/100
+  - COHR: 54/110 (Hold) | timing 15/100
+  - COIN: 49/110 (Hold) | timing 5/100
+  - COP: 65/110 (Watch) | timing 60/100
+  - CORZ: 56/110 (Hold) | timing 25/100
+  - COST: 57/110 (Hold) | timing 11/100
+  - CRDO: 77/110 (Buy) | timing 20/100
+  - CRM: 81/110 (Buy) | timing 61/100
+  - CRS: 69/110 (Watch) | timing 40/100
+  - CRSP: 48/110 (Hold) | timing 10/100
+  - CRWD: 69/110 (Watch) | timing 57/100
+  - CSCO: 75/110 (Buy) | timing 33/100
+  - CTAS: 76/110 (Buy) | timing 85/100
+  - CVX: 78/110 (Buy) | timing 76/100
+  - CW: 64/110 (Watch) | timing 34/100
+  - D: 63/110 (Watch) | timing 45/100
+  - DAL: 68/110 (Watch) | timing 80/100
+  - DASH: 72/110 (Watch) | timing 86/100
+  - DDOG: 73/110 (Watch) | timing 91/100
+  - DE: 52/110 (Hold) | timing 50/100
+  - DECK: 73/110 (Watch) | timing 2/100
+  - DELL: 63/110 (Watch) | timing 72/100
+  - DHI: 57/110 (Hold) | timing 2/100
+  - DHR: 74/110 (Watch) | timing 67/100
+  - DIS: 62/110 (Watch) | timing 16/100
+  - DLO: 87/110 (Buy) | timing 74/100
+  - DLR: 75/110 (Buy) | timing 45/100
+  - DNN: 33/110 (Reduce) | timing 0/100
+  - DOV: 66/110 (Watch) | timing 5/100
+  - DRS: 62/110 (Watch) | timing 46/100
+  - DSCSY: 72/110 (Watch) | timing 5/100
+  - DT: 82/110 (Buy) | timing 75/100
+  - DUK: 60/110 (Watch) | timing 15/100
+  - DUOL: 89/110 (Strong Buy) | timing 72/100
+  - DVN: 64/110 (Watch) | timing 45/100
+  - DXCM: 83/110 (Buy) | timing 90/100
+  - EA: 80/110 (Buy) | timing 63/100
+  - ECL: 68/110 (Watch) | timing 70/100
+  - EME: 70/110 (Watch) | timing 41/100
+  - EMR: 72/110 (Watch) | timing 63/100
+  - ENTG: 58/110 (Hold) | timing 5/100
+  - EOG: 79/110 (Buy) | timing 79/100
+  - EQIX: 68/110 (Watch) | timing 19/100
+  - ERO: 78/110 (Buy) | timing 46/100
+  - ESLT: 49/110 (Hold) | timing 23/100
+  - ESTC: 84/110 (Buy) | timing 95/100
+  - ET: 65/110 (Watch) | timing 70/100
+  - ETN: 68/110 (Watch) | timing 61/100
+  - EVR: 72/110 (Watch) | timing 5/100
+  - EW: 77/110 (Buy) | timing 37/100
+  - EXC: 54/110 (Hold) | timing 20/100
+  - EXPD: 64/110 (Watch) | timing 57/100
+  - EXPE: 80/110 (Buy) | timing 95/100
+  - FANG: 67/110 (Watch) | timing 60/100
+  - FANUY: 61/110 (Watch) | timing 0/100
+  - FAST: 73/110 (Watch) | timing 73/100
+  - FCX: 68/110 (Watch) | timing 52/100
+  - FIX: 61/110 (Watch) | timing 15/100
+  - FLEX: 57/110 (Hold) | timing 20/100
+  - FN: 62/110 (Watch) | timing 10/100
+  - FORM: 71/110 (Watch) | timing 0/100
+  - FOUR: 65/110 (Watch) | timing 89/100
+  - FSLR: 74/110 (Watch) | timing 27/100
+  - FTNT: 90/110 (Strong Buy) | timing 76/100
+  - GD: 65/110 (Watch) | timing 77/100
+  - GDS: 55/110 (Hold) | timing 19/100
+  - GE: 73/110 (Watch) | timing 80/100
+  - GEHC: 69/110 (Watch) | timing 76/100
+  - GEN: 89/110 (Strong Buy) | timing 89/100
+  - GEV: 73/110 (Watch) | timing 15/100
+  - GFS: 58/110 (Hold) | timing 0/100
+  - GGG: 78/110 (Buy) | timing 72/100
+  - GILD: 84/110 (Buy) | timing 47/100
+  - GILT: 60/110 (Watch) | timing 10/100
+  - GKOS: 64/110 (Watch) | timing 90/100
+  - GLW: 59/110 (Hold) | timing 5/100
+  - GLXY: 48/110 (Hold) | timing 0/100
+  - GM: 56/110 (Hold) | timing 81/100
+  - GNRC: 59/110 (Hold) | timing 5/100
+  - GOOG: 80/110 (Buy) | timing 33/100
+  - GOOGL: 80/110 (Buy) | timing 33/100
+  - GS: 73/110 (Watch) | timing 29/100
+  - GTLB: 71/110 (Watch) | timing 93/100
+  - GWRE: 75/110 (Buy) | timing 70/100
+  - HAL: 60/110 (Watch) | timing 0/100
+  - HBM: 74/110 (Watch) | timing 18/100
+  - HD: 63/110 (Watch) | timing 55/100
+  - HEI: 73/110 (Watch) | timing 80/100
+  - HII: 56/110 (Hold) | timing 40/100
+  - HLT: 71/110 (Watch) | timing 6/100
+  - HON: 67/110 (Watch) | timing 58/100
+  - HOOD: 69/110 (Watch) | timing 33/100
+  - HPE: 70/110 (Watch) | timing 80/100
+  - HUBB: 64/110 (Watch) | timing 5/100
+  - HUBS: 79/110 (Buy) | timing 60/100
+  - HWM: 76/110 (Buy) | timing 84/100
+  - HXL: 60/110 (Watch) | timing 66/100
+  - IBKR: 74/110 (Watch) | timing 22/100
+  - IBM: 66/110 (Watch) | timing 10/100
+  - ICE: 86/110 (Buy) | timing 55/100
+  - IDXX: 78/110 (Buy) | timing 61/100
+  - IESC: 68/110 (Watch) | timing 53/100
+  - ILMN: 73/110 (Watch) | timing 73/100
+  - INTU: 88/110 (Strong Buy) | timing 60/100
+  - IONQ: 51/110 (Hold) | timing 10/100
+  - IOT: 73/110 (Watch) | timing 81/100
+  - IR: 70/110 (Watch) | timing 93/100
+  - IRDM: 68/110 (Watch) | timing 50/100
+  - IREN: 43/110 (Reduce) | timing 15/100
+  - IRM: 57/110 (Hold) | timing 25/100
+  - ISRG: 72/110 (Watch) | timing 10/100
+  - ITW: 71/110 (Watch) | timing 87/100
+  - JBL: 49/110 (Hold) | timing 10/100
+  - JPM: 76/110 (Buy) | timing 81/100
+  - KEYS: 75/110 (Buy) | timing 11/100
+  - KKR: 70/110 (Watch) | timing 79/100
+  - KLAC: 74/110 (Watch) | timing 11/100
+  - KLIC: 62/110 (Watch) | timing 7/100
+  - KMI: 65/110 (Watch) | timing 15/100
+  - KTOS: 54/110 (Hold) | timing 10/100
+  - LAC: 40/110 (Reduce) | timing 0/100
+  - LDOS: 60/110 (Watch) | timing 44/100
+  - LECO: 71/110 (Watch) | timing 55/100
+  - LEN: 47/110 (Hold) | timing 11/100
+  - LEU: 48/110 (Hold) | timing 38/100
+  - LFUS: 70/110 (Watch) | timing 48/100
+  - LHX: 68/110 (Watch) | timing 5/100
+  - LIN: 68/110 (Watch) | timing 5/100
+  - LITE: 63/110 (Watch) | timing 20/100
+  - LLY: 80/110 (Buy) | timing 31/100
+  - LMT: 59/110 (Hold) | timing 77/100
+  - LNG: 58/110 (Hold) | timing 42/100
+  - LPLA: 74/110 (Watch) | timing 77/100
+  - LRCX: 79/110 (Buy) | timing 19/100
+  - LULU: 69/110 (Watch) | timing 40/100
+  - LUNR: 48/110 (Hold) | timing 0/100
+  - LYG: 69/110 (Watch) | timing 82/100
+  - LYSDY: 66/110 (Watch) | timing 5/100
+  - LYV: 52/110 (Hold) | timing 80/100
+  - MA: 86/110 (Buy) | timing 84/100
+  - MANH: 85/110 (Buy) | timing 85/100
+  - MAR: 72/110 (Watch) | timing 6/100
+  - MARA: 32/110 (Reduce) | timing 10/100
+  - MCD: 67/110 (Watch) | timing 10/100
+  - MCHP: 70/110 (Watch) | timing 0/100
+  - MCO: 80/110 (Buy) | timing 43/100
+  - MDB: 65/110 (Watch) | timing 50/100
+  - MDT: 74/110 (Watch) | timing 68/100
+  - MELI: 67/110 (Watch) | timing 73/100
+  - MET: 63/110 (Watch) | timing 95/100
+  - META: 84/110 (Buy) | timing 20/100
+  - MFG: 69/110 (Watch) | timing 65/100
+  - MKSI: 60/110 (Watch) | timing 11/100
+  - MO: 73/110 (Watch) | timing 20/100
+  - MOD: 61/110 (Watch) | timing 5/100
+  - MPC: 60/110 (Watch) | timing 80/100
+  - MPWR: 70/110 (Watch) | timing 16/100
+  - MRCY: 53/110 (Hold) | timing 30/100
+  - MRK: 76/110 (Buy) | timing 60/100
+  - MRVL: 71/110 (Watch) | timing 18/100
+  - MS: 74/110 (Watch) | timing 28/100
+  - MSCI: 77/110 (Buy) | timing 0/100
+  - MSFT: 86/110 (Buy) | timing 88/100
+  - MSTR: 54/110 (Hold) | timing 10/100
+  - MTCH: 78/110 (Buy) | timing 79/100
+  - MTRN: 56/110 (Hold) | timing 18/100
+  - MTSI: 64/110 (Watch) | timing 0/100
+  - MU: 82/110 (Buy) | timing 20/100
+  - MYRG: 59/110 (Hold) | timing 5/100
+  - NAT: 67/110 (Watch) | timing 77/100
+  - NBIS: 62/110 (Watch) | timing 39/100
+  - NDAQ: 88/110 (Strong Buy) | timing 78/100
+  - NDSN: 76/110 (Buy) | timing 72/100
+  - NEE: 64/110 (Watch) | timing 15/100
+  - NEM: 84/110 (Buy) | timing 10/100
+  - NET: 64/110 (Watch) | timing 95/100
+  - NFLX: 79/110 (Buy) | timing 10/100
+  - NKE: 58/110 (Hold) | timing 10/100
+  - NLY: 81/110 (Buy) | timing 66/100
+  - NOC: 56/110 (Hold) | timing 45/100
+  - NOVT: 60/110 (Watch) | timing 28/100
+  - NOW: 83/110 (Buy) | timing 75/100
+  - NRG: 55/110 (Hold) | timing 45/100
+  - NTAP: 78/110 (Buy) | timing 95/100
+  - NTRA: 64/110 (Watch) | timing 65/100
+  - NU: 79/110 (Buy) | timing 66/100
+  - NUE: 66/110 (Watch) | timing 65/100
+  - NVDA: 86/110 (Buy) | timing 43/100
+  - NVMI: 64/110 (Watch) | timing 5/100
+  - NVO: 80/110 (Buy) | timing 41/100
+  - NVS: 75/110 (Buy) | timing 51/100
+  - NVT: 69/110 (Watch) | timing 16/100
+  - NXE: 50/110 (Hold) | timing 10/100
+  - NXPI: 79/110 (Buy) | timing 5/100
+  - OKE: 61/110 (Watch) | timing 16/100
+  - OKLO: 52/110 (Hold) | timing 0/100
+  - OKTA: 75/110 (Buy) | timing 55/100
+  - OLED: 71/110 (Watch) | timing 15/100
+  - OMRNY: 55/110 (Hold) | timing 0/100
+  - ON: 61/110 (Watch) | timing 0/100
+  - ONTO: 61/110 (Watch) | timing 0/100
+  - ORCL: 69/110 (Watch) | timing 15/100
+  - ORLY: 64/110 (Watch) | timing 40/100
+  - OWL: 81/110 (Buy) | timing 84/100
+  - OXY: 65/110 (Watch) | timing 60/100
+  - PANW: 72/110 (Watch) | timing 65/100
+  - PATH: 87/110 (Buy) | timing 95/100
+  - PCAR: 62/110 (Watch) | timing 74/100
+  - PCOR: 73/110 (Watch) | timing 55/100
+  - PEG: 62/110 (Watch) | timing 0/100
+  - PEN: 64/110 (Watch) | timing 37/100
+  - PFE: 75/110 (Buy) | timing 56/100
+  - PG: 67/110 (Watch) | timing 32/100
+  - PGR: 65/110 (Watch) | timing 21/100
+  - PH: 72/110 (Watch) | timing 78/100
+  - PHM: 63/110 (Watch) | timing 57/100
+  - PINS: 80/110 (Buy) | timing 89/100
+  - PL: 52/110 (Hold) | timing 0/100
+  - PLTR: 81/110 (Buy) | timing 0/100
+  - PLXS: 61/110 (Watch) | timing 15/100
+  - PM: 76/110 (Buy) | timing 62/100
+  - PODD: 81/110 (Buy) | timing 69/100
+  - POWI: 53/110 (Hold) | timing 0/100
+  - PSX: 60/110 (Watch) | timing 76/100
+  - PTC: 84/110 (Buy) | timing 51/100
+  - PWR: 61/110 (Watch) | timing 16/100
+  - PYPL: 72/110 (Watch) | timing 80/100
+  - QCOM: 69/110 (Watch) | timing 0/100
+  - QLYS: 88/110 (Strong Buy) | timing 55/100
+  - QRVO: 62/110 (Watch) | timing 19/100
+  - QUBT: 41/110 (Reduce) | timing 10/100
+  - RBLX: 52/110 (Hold) | timing 20/100
+  - RBRK: 65/110 (Watch) | timing 35/100
+  - RCL: 70/110 (Watch) | timing 85/100
+  - RDDT: 84/110 (Buy) | timing 20/100
+  - RDW: 43/110 (Reduce) | timing 23/100
+  - REGN: 79/110 (Buy) | timing 72/100
+  - RGTI: 51/110 (Hold) | timing 10/100
+  - RIO: 69/110 (Watch) | timing 13/100
+  - RIOT: 43/110 (Reduce) | timing 30/100
+  - RIVN: 46/110 (Hold) | timing 22/100
+  - RKLB: 45/110 (Hold) | timing 0/100
+  - RL: 70/110 (Watch) | timing 17/100
+  - RMD: 83/110 (Buy) | timing 53/100
+  - RNMBY: 61/110 (Watch) | timing 28/100
+  - ROK: 68/110 (Watch) | timing 80/100
+  - ROP: 80/110 (Buy) | timing 67/100
+  - ROST: 74/110 (Watch) | timing 77/100
+  - RRX: 64/110 (Watch) | timing 15/100
+  - RSG: 61/110 (Watch) | timing 17/100
+  - RTX: 62/110 (Watch) | timing 82/100
+  - RY: 72/110 (Watch) | timing 81/100
+  - S: 68/110 (Watch) | timing 95/100
+  - SAIC: 58/110 (Hold) | timing 88/100
+  - SAIL: 62/110 (Watch) | timing 63/100
+  - SANM: 55/110 (Hold) | timing 5/100
+  - SBUX: 55/110 (Hold) | timing 44/100
+  - SCCO: 86/110 (Buy) | timing 54/100
+  - SCHW: 86/110 (Buy) | timing 84/100
+  - SE: 72/110 (Watch) | timing 88/100
+  - SHOP: 60/110 (Watch) | timing 35/100
+  - SHW: 70/110 (Watch) | timing 75/100
+  - SIEGY: 58/110 (Hold) | timing 62/100
+  - SIMO: 74/110 (Watch) | timing 17/100
+  - SITM: 45/110 (Hold) | timing 0/100
+  - SLB: 60/110 (Watch) | timing 21/100
+  - SMCI: 56/110 (Hold) | timing 21/100
+  - SMTC: 53/110 (Hold) | timing 11/100
+  - SNOW: 66/110 (Watch) | timing 85/100
+  - SNPS: 77/110 (Buy) | timing 0/100
+  - SNX: 59/110 (Hold) | timing 32/100
+  - SO: 55/110 (Hold) | timing 15/100
+  - SOFI: 72/110 (Watch) | timing 60/100
+  - SPGI: 85/110 (Buy) | timing 44/100
+  - SPOT: 70/110 (Watch) | timing 65/100
+  - SQM: 80/110 (Buy) | timing 0/100
+  - STX: 75/110 (Buy) | timing 27/100
+  - SWKS: 57/110 (Hold) | timing 15/100
+  - SYK: 77/110 (Buy) | timing 70/100
+  - TAL: 82/110 (Buy) | timing 66/100
+  - TBLA: 59/110 (Hold) | timing 55/100
+  - TD: 61/110 (Watch) | timing 49/100
+  - TDG: 74/110 (Watch) | timing 42/100
+  - TDY: 72/110 (Watch) | timing 67/100
+  - TEAM: 78/110 (Buy) | timing 73/100
+  - TECK: 70/110 (Watch) | timing 16/100
+  - TEL: 69/110 (Watch) | timing 13/100
+  - TENB: 67/110 (Watch) | timing 60/100
+  - TER: 77/110 (Buy) | timing 23/100
+  - THC: 74/110 (Watch) | timing 70/100
+  - TJX: 62/110 (Watch) | timing 17/100
+  - TLN: 66/110 (Watch) | timing 0/100
+  - TMDX: 70/110 (Watch) | timing 60/100
+  - TMO: 75/110 (Buy) | timing 95/100
+  - TMUS: 66/110 (Watch) | timing 15/100
+  - TOELY: 66/110 (Watch) | timing 17/100
+  - TOL: 63/110 (Watch) | timing 57/100
+  - TOST: 70/110 (Watch) | timing 87/100
+  - TRGP: 58/110 (Hold) | timing 19/100
+  - TRMB: 74/110 (Watch) | timing 60/100
+  - TRV: 76/110 (Buy) | timing 85/100
+  - TSCO: 59/110 (Hold) | timing 54/100
+  - TSEM: 63/110 (Watch) | timing 18/100
+  - TSLA: 47/110 (Hold) | timing 0/100
+  - TSM: 84/110 (Buy) | timing 6/100
+  - TT: 70/110 (Watch) | timing 20/100
+  - TTD: 71/110 (Watch) | timing 10/100
+  - TTEK: 68/110 (Watch) | timing 86/100
+  - TTMI: 58/110 (Hold) | timing 5/100
+  - TTWO: 66/110 (Watch) | timing 54/100
+  - TXN: 76/110 (Buy) | timing 0/100
+  - TXT: 56/110 (Hold) | timing 5/100
+  - TYL: 73/110 (Watch) | timing 50/100
+  - UAL: 64/110 (Watch) | timing 65/100
+  - UBER: 72/110 (Watch) | timing 10/100
+  - UCTT: 45/110 (Hold) | timing 25/100
+  - UEC: 48/110 (Hold) | timing 10/100
+  - UNP: 81/110 (Buy) | timing 59/100
+  - URI: 69/110 (Watch) | timing 82/100
+  - UTHR: 71/110 (Watch) | timing 0/100
+  - UUUU: 51/110 (Hold) | timing 0/100
+  - V: 93/110 (Strong Buy) | timing 76/100
+  - VALE: 57/110 (Hold) | timing 10/100
+  - VECO: 51/110 (Hold) | timing 0/100
+  - VEEV: 91/110 (Strong Buy) | timing 91/100
+  - VG: 64/110 (Watch) | timing 60/100
+  - VICR: 64/110 (Watch) | timing 0/100
+  - VKTX: 53/110 (Hold) | timing 18/100
+  - VLO: 76/110 (Buy) | timing 95/100
+  - VRNS: 61/110 (Watch) | timing 60/100
+  - VRT: 73/110 (Watch) | timing 5/100
+  - VRTX: 81/110 (Buy) | timing 55/100
+  - VST: 71/110 (Watch) | timing 45/100
+  - WBS: 67/110 (Watch) | timing 70/100
+  - WDAY: 83/110 (Buy) | timing 100/100
+  - WDC: 77/110 (Buy) | timing 34/100
+  - WELL: 68/110 (Watch) | timing 54/100
+  - WFC: 71/110 (Watch) | timing 72/100
+  - WM: 60/110 (Watch) | timing 35/100
+  - WMB: 64/110 (Watch) | timing 15/100
+  - WMT: 55/110 (Hold) | timing 0/100
+  - WPM: 86/110 (Buy) | timing 10/100
+  - WSM: 73/110 (Watch) | timing 91/100
+  - WST: 70/110 (Watch) | timing 51/100
+  - WULF: 37/110 (Reduce) | timing 15/100
+  - XEL: 57/110 (Hold) | timing 15/100
+  - XOM: 68/110 (Watch) | timing 51/100
+  - XYL: 67/110 (Watch) | timing 54/100
+  - XYZ: 56/110 (Hold) | timing 80/100
+  - YASKY: 53/110 (Hold) | timing 0/100
+  - ZBRA: 70/110 (Watch) | timing 82/100
+  - ZS: 72/110 (Watch) | timing 58/100
+  - ZTS: 75/110 (Buy) | timing 35/100
+
+## Watchlist sector concentration (Risk Manager input)
+  - Technology: 154 name(s) (33% of watchlist)
+  - Industrials: 81 name(s) (17% of watchlist)
+  - Financial Services: 56 name(s) (12% of watchlist)
+  - Healthcare: 45 name(s) (10% of watchlist)
+  - Consumer Cyclical: 34 name(s) (7% of watchlist)
+  - Energy: 31 name(s) (7% of watchlist)
+  - Basic Materials: 27 name(s) (6% of watchlist)
+  - Communication Services: 20 name(s) (4% of watchlist)
+  - Utilities: 13 name(s) (3% of watchlist)
+  - Consumer Defensive: 7 name(s) (1% of watchlist)
+  - Real Estate: 5 name(s) (1% of watchlist)
+
+## Watchlist thematic concentration (user-defined groupings, Risk Manager input)
+  - Quality Compounders: 45 (10%)
+  - Healthcare & Biotech: 43 (9%)
+  - Power & Grid: 33 (7%)
+  - AI Infrastructure: 31 (7%)
+  - Semiconductors & EDA: 30 (6%)
+  - Software & Data (extended): 28 (6%)
+  - Financials & Alt Managers: 28 (6%)
+  - Defense & Aerospace: 27 (6%)
+  - Automation & Robotics: 25 (5%)
+  - Energy & LNG: 25 (5%)
+  - Critical Minerals & Rare Earths: 23 (5%)
+  - Software & AI Applications: 20 (4%)
+  - Semiconductor Equipment: 18 (4%)
+  - Consumer & Travel: 17 (4%)
+  - Cybersecurity: 15 (3%)
+  - Networking & Optics: 10 (2%)
+  - Heavy Industry & Machinery: 9 (2%)
+  - Media & Telecom: 8 (2%)
+  - Space Economy: 7 (1%)
+  - Mega-cap Tech (original): 7 (1%)
+  - Quantum Computing: 5 (1%)
+  - Crypto Ecosystem: 5 (1%)
+  - Housing & Builders: 5 (1%)
+  - EV & Mobility: 3 (1%)
+  - Payments & Fintech: 3 (1%)
+  - Gold & Precious Metals: 3 (1%)
+  - Uncategorized: 1 (0%)
+
+## Market Regime Snapshot (raw)
+  - S&P 500: 757.67 (+1.42% d/d)
+  - Nasdaq 100: 700.07 (+1.76% d/d)
+  - VIX: 15.86 (-0.81% d/d)
+
+## Gapped daily sources
+  - ETF flow data: Data Status: GAPPED
+  - Macro release calendar detail: Data Status: GAPPED
