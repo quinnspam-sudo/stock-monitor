@@ -146,5 +146,79 @@
    "contract_quality": 98,
    "expected_value": 64
   }
+ },
+ {
+  "ticker": "QQQ",
+  "asset_class": "etf",
+  "actionable": true,
+  "judges": {
+   "vol_mispricing": true,
+   "trend": true,
+   "catalyst": null,
+   "flow_proxy": true
+  },
+  "evidence": {
+   "vol": {
+    "iv_rvf": 0.91,
+    "atm_iv": 0.2348,
+    "rv_forecast": 0.2577,
+    "iv_pctile_vs_1y_rv": 0.81
+   },
+   "trend": {
+    "above_smas": true,
+    "sma50_rising": true,
+    "mom_6m": 0.191,
+    "pct_of_52wk_high": 0.965,
+    "rs_vs_spy_6m": 0.06
+   },
+   "catalyst": {
+    "note": "ETF \u2014 no earnings catalyst"
+   },
+   "flow": {
+    "call_vol": 2699858,
+    "put_vol": 1583153,
+    "call_vol_oi_turnover": 11.73,
+    "call_put_ratio": 1.71
+   },
+   "skew": [
+    "Reference expiry 2026-09-18 (~45d): ATM IV 23.5%",
+    "25\u0394 put IV 22.4% vs 25\u0394 call IV 21.3% \u2014 skew +1.1% (balanced)",
+    "Same-day flow at this expiry: 59,047 call vol vs 50,794 put vol (C/P 1.16)"
+   ],
+   "contract_math": {
+    "breakeven_sigma": 0.22,
+    "zero_drift_fair_value": 45.58,
+    "premium_vs_fair": 1.01
+   }
+  },
+  "lead": "trend",
+  "contract": {
+   "expiry": "2026-09-30",
+   "strike": 690.0,
+   "delta": 0.698,
+   "bid": 45.52,
+   "ask": 46.3,
+   "mid": 45.91,
+   "iv": 0.2624,
+   "open_interest": 2910,
+   "volume": 2,
+   "spread_pct": 0.017,
+   "contract": "QQQ260930C00690000",
+   "breakeven_move": 0.0227,
+   "t_years": 0.1534
+  },
+  "score": 92,
+  "vetoes": [],
+  "reasons": [],
+  "ts": "2026-08-05T12:55:27",
+  "spot": 719.59,
+  "regime": "SPY>50d/200d, VIX 15.5 (max 28.0), term 0.827",
+  "confluence": "3/3 judges bullish (need >=100% of >=3)",
+  "components": {
+   "confluence": 100,
+   "vol_edge": 88,
+   "contract_quality": 92,
+   "expected_value": 79
+  }
  }
 ]
