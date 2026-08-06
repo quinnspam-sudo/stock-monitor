@@ -588,5 +588,15 @@
     "shares": 0.050373134,
     "note": "Paper auto-exec BUY $10.00 on buy_alert (score 78/100, conviction MEDIUM, earnings_gate=closed)",
     "spy_at_trade": 771.79
+  },
+  {
+    "date": "2026-08-06",
+    "ticker": "DDOG",
+    "action": "SELL",
+    "amount": 24.47,
+    "price": 231.356,
+    "shares": 0.105777708,
+    "note": "Paper auto-exec STOP_LOSS: down -17.6% vs $283.33, SPY>50d",
+    "spy_at_trade": 770.62
   }
 ]
