@@ -21,16 +21,16 @@
         "earnings in 14 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "AMD": {
     "overall": 70,
-    "timing": 28,
+    "timing": 30,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": 89,
     "sector": "Technology",
-    "blend": 40,
+    "blend": 41,
     "conviction": 54,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -45,7 +45,7 @@
         "earnings in 63 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "META": {
     "overall": 84,
@@ -55,22 +55,23 @@
     "days_to_earnings": 83,
     "sector": "Communication Services",
     "blend": 28,
-    "conviction": 43,
+    "conviction": 44,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 59,
-      "positivity": 49,
-      "beats": 3,
+      "positivity": 34,
+      "beats": 2,
       "beats_n": 4,
       "in_window": false,
       "positivity_pass": false,
       "actionable": false,
       "reasons": [
         "earnings in 59 business days (window: \u226410)",
-        "positivity 49/100 below strict bar 70"
+        "positivity 34/100 below strict bar 70",
+        "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "MSFT": {
     "overall": 85,
@@ -79,8 +80,8 @@
     "rating": "Buy",
     "days_to_earnings": 83,
     "sector": "Technology",
-    "blend": 71,
-    "conviction": 55,
+    "blend": 72,
+    "conviction": 57,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 59,
@@ -94,21 +95,21 @@
         "earnings in 59 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "AAPL": {
     "overall": 80,
-    "timing": 50,
+    "timing": 49,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": 84,
     "sector": "Technology",
-    "blend": 55,
-    "conviction": 61,
+    "blend": 54,
+    "conviction": 59,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 60,
-      "positivity": 66,
+      "positivity": 65,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
@@ -116,10 +117,10 @@
       "actionable": false,
       "reasons": [
         "earnings in 60 business days (window: \u226410)",
-        "positivity 66/100 below strict bar 70"
+        "positivity 65/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "GOOGL": {
     "overall": 80,
@@ -171,28 +172,27 @@
   },
   "AVGO": {
     "overall": 89,
-    "timing": 31,
+    "timing": 32,
     "confidence": 70,
     "rating": "Strong Buy",
     "days_to_earnings": 27,
     "sector": "Technology",
-    "blend": 45,
+    "blend": 46,
     "conviction": 62,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 19,
-      "positivity": 69,
+      "positivity": 70,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
-      "positivity_pass": false,
+      "positivity_pass": true,
       "actionable": false,
       "reasons": [
-        "earnings in 19 business days (window: \u226410)",
-        "positivity 69/100 below strict bar 70"
+        "earnings in 19 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "VRT": {
     "overall": 73,
@@ -220,12 +220,12 @@
   },
   "CEG": {
     "overall": 70,
-    "timing": 53,
+    "timing": 54,
     "confidence": 67,
     "rating": "Watch",
     "days_to_earnings": 0,
     "sector": "Utilities",
-    "blend": 49,
+    "blend": 50,
     "conviction": 44,
     "tier": "LOW",
     "earnings_gate": {
@@ -240,7 +240,7 @@
         "positivity 47/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "VST": {
     "overall": 68,
@@ -344,13 +344,13 @@
   },
   "PLTR": {
     "overall": 89,
-    "timing": 79,
+    "timing": 80,
     "confidence": 70,
     "rating": "Strong Buy",
     "days_to_earnings": 88,
     "sector": "Technology",
-    "blend": 69,
-    "conviction": 57,
+    "blend": 68,
+    "conviction": 54,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 62,
@@ -364,7 +364,7 @@
         "earnings in 62 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "LLY": {
     "overall": 80,
@@ -562,18 +562,18 @@
     "date": "2026-08-05 12:32"
   },
   "FCX": {
-    "overall": 68,
-    "timing": 49,
+    "overall": 69,
+    "timing": 65,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": 77,
     "sector": "Basic Materials",
-    "blend": 53,
+    "blend": 62,
     "conviction": 58,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 55,
-      "positivity": 81,
+      "positivity": 82,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
@@ -583,7 +583,7 @@
         "earnings in 55 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "CRWD": {
     "overall": 72,
@@ -713,28 +713,28 @@
   },
   "RGTI": {
     "overall": 51,
-    "timing": 10,
+    "timing": 11,
     "confidence": 62,
     "rating": "Hold",
     "days_to_earnings": 0,
     "sector": "Technology",
-    "blend": 21,
-    "conviction": 34,
+    "blend": 22,
+    "conviction": 35,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 0,
-      "positivity": 28,
+      "positivity": 29,
       "beats": 1,
       "beats_n": 4,
       "in_window": true,
       "positivity_pass": false,
       "actionable": false,
       "reasons": [
-        "positivity 28/100 below strict bar 70",
+        "positivity 29/100 below strict bar 70",
         "beat streak 1/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ABBNY": {
     "overall": 63,
@@ -788,12 +788,12 @@
   },
   "ORCL": {
     "overall": 68,
-    "timing": 11,
+    "timing": 12,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": 34,
     "sector": "Technology",
-    "blend": 26,
+    "blend": 27,
     "conviction": 45,
     "tier": "LOW",
     "earnings_gate": {
@@ -809,7 +809,7 @@
         "positivity 62/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "DELL": {
     "overall": 62,
@@ -857,7 +857,7 @@
         "earnings in 63 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "CCJ": {
     "overall": 48,
@@ -893,7 +893,7 @@
     "days_to_earnings": 90,
     "sector": "Utilities",
     "blend": 16,
-    "conviction": 35,
+    "conviction": 36,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 64,
@@ -909,7 +909,7 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "NEE": {
     "overall": 64,
@@ -974,7 +974,7 @@
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 63,
-      "positivity": 57,
+      "positivity": 56,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
@@ -982,10 +982,10 @@
       "actionable": false,
       "reasons": [
         "earnings in 63 business days (window: \u226410)",
-        "positivity 57/100 below strict bar 70"
+        "positivity 56/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "NOC": {
     "overall": 58,
@@ -1010,7 +1010,7 @@
         "positivity 62/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "FTNT": {
     "overall": 88,
@@ -1034,7 +1034,7 @@
         "earnings in 64 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "NET": {
     "overall": 60,
@@ -1182,7 +1182,7 @@
         "positivity 63/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "ENTG": {
     "overall": 60,
@@ -1263,13 +1263,13 @@
     "timing": 10,
     "confidence": 62,
     "rating": "Hold",
-    "days_to_earnings": 34,
+    "days_to_earnings": 28,
     "sector": "Industrials",
     "blend": 24,
     "conviction": 41,
     "tier": "LOW",
     "earnings_gate": {
-      "bdays_to_earnings": 24,
+      "bdays_to_earnings": 20,
       "positivity": 55,
       "beats": 3,
       "beats_n": 4,
@@ -1277,25 +1277,25 @@
       "positivity_pass": false,
       "actionable": false,
       "reasons": [
-        "earnings in 24 business days (window: \u226410)",
+        "earnings in 20 business days (window: \u226410)",
         "positivity 55/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "TSM": {
     "overall": 84,
-    "timing": 11,
+    "timing": 12,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": 70,
     "sector": "Technology",
-    "blend": 37,
+    "blend": 38,
     "conviction": 69,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 50,
-      "positivity": 83,
+      "positivity": 84,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
@@ -1305,7 +1305,7 @@
         "earnings in 50 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "MU": {
     "overall": 83,
@@ -1329,7 +1329,7 @@
         "earnings in 34 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ANET": {
     "overall": 85,
@@ -1338,8 +1338,8 @@
     "rating": "Buy",
     "days_to_earnings": 89,
     "sector": "Technology",
-    "blend": 77,
-    "conviction": 57,
+    "blend": 78,
+    "conviction": 59,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 63,
@@ -1353,7 +1353,7 @@
         "earnings in 63 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "MRVL": {
     "overall": 71,
@@ -1405,12 +1405,12 @@
   },
   "GD": {
     "overall": 65,
-    "timing": 77,
+    "timing": 76,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": 83,
     "sector": "Industrials",
-    "blend": 66,
+    "blend": 65,
     "conviction": 52,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -1425,11 +1425,11 @@
         "earnings in 59 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "V": {
     "overall": 93,
-    "timing": 84,
+    "timing": 83,
     "confidence": 70,
     "rating": "Strong Buy",
     "days_to_earnings": 82,
@@ -1439,7 +1439,7 @@
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 58,
-      "positivity": 68,
+      "positivity": 67,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
@@ -1447,10 +1447,10 @@
       "actionable": false,
       "reasons": [
         "earnings in 58 business days (window: \u226410)",
-        "positivity 68/100 below strict bar 70"
+        "positivity 67/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "COST": {
     "overall": 58,
@@ -1464,18 +1464,18 @@
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 35,
-      "positivity": 54,
-      "beats": 3,
+      "positivity": 59,
+      "beats": 4,
       "beats_n": 4,
       "in_window": false,
       "positivity_pass": false,
       "actionable": false,
       "reasons": [
         "earnings in 35 business days (window: \u226410)",
-        "positivity 54/100 below strict bar 70"
+        "positivity 59/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "JPM": {
     "overall": 77,
@@ -1743,21 +1743,21 @@
         "earnings in 64 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "MA": {
     "overall": 87,
-    "timing": 88,
+    "timing": 87,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": 84,
     "sector": "Financial Services",
-    "blend": 71,
+    "blend": 70,
     "conviction": 50,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 60,
-      "positivity": 66,
+      "positivity": 65,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
@@ -1765,10 +1765,10 @@
       "actionable": false,
       "reasons": [
         "earnings in 60 business days (window: \u226410)",
-        "positivity 66/100 below strict bar 70"
+        "positivity 65/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "TEAM": {
     "overall": 78,
@@ -1914,7 +1914,7 @@
         "positivity 64/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "EME": {
     "overall": 71,
@@ -1942,17 +1942,17 @@
   },
   "HWM": {
     "overall": 74,
-    "timing": 74,
+    "timing": 71,
     "confidence": 67,
     "rating": "Watch",
     "days_to_earnings": 0,
     "sector": "Industrials",
-    "blend": 69,
+    "blend": 67,
     "conviction": 62,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 0,
-      "positivity": 82,
+      "positivity": 81,
       "beats": 4,
       "beats_n": 4,
       "in_window": true,
@@ -1960,7 +1960,7 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "VRTX": {
     "overall": 79,
@@ -2060,7 +2060,7 @@
         "earnings in 14 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "MSCI": {
     "overall": 77,
@@ -2262,7 +2262,7 @@
   },
   "TDG": {
     "overall": 73,
-    "timing": 16,
+    "timing": 17,
     "confidence": 65,
     "rating": "Watch",
     "days_to_earnings": 91,
@@ -2283,7 +2283,7 @@
         "positivity 59/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ABBV": {
     "overall": 78,
@@ -2297,7 +2297,7 @@
     "tier": "HIGH",
     "earnings_gate": {
       "bdays_to_earnings": 60,
-      "positivity": 61,
+      "positivity": 60,
       "beats": 3,
       "beats_n": 4,
       "in_window": false,
@@ -2305,10 +2305,10 @@
       "actionable": false,
       "reasons": [
         "earnings in 60 business days (window: \u226410)",
-        "positivity 61/100 below strict bar 70"
+        "positivity 60/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "PH": {
     "overall": 72,
@@ -2355,7 +2355,7 @@
         "positivity 68/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "S": {
     "overall": 68,
@@ -2411,13 +2411,13 @@
   },
   "HUBS": {
     "overall": 75,
-    "timing": 15,
+    "timing": 20,
     "confidence": 67,
     "rating": "Buy",
     "days_to_earnings": 90,
     "sector": "Technology",
-    "blend": 29,
-    "conviction": 46,
+    "blend": 32,
+    "conviction": 47,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 64,
@@ -2432,7 +2432,7 @@
         "positivity 57/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "DLR": {
     "overall": 77,
@@ -2465,12 +2465,12 @@
     "rating": "Watch",
     "days_to_earnings": 20,
     "sector": "Technology",
-    "blend": 20,
-    "conviction": 33,
+    "blend": 21,
+    "conviction": 34,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 14,
-      "positivity": 61,
+      "positivity": 62,
       "beats": 3,
       "beats_n": 4,
       "in_window": false,
@@ -2478,13 +2478,13 @@
       "actionable": false,
       "reasons": [
         "earnings in 14 business days (window: \u226410)",
-        "positivity 61/100 below strict bar 70"
+        "positivity 62/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ONTO": {
-    "overall": 61,
+    "overall": 60,
     "timing": 10,
     "confidence": 67,
     "rating": "Watch",
@@ -2506,7 +2506,7 @@
         "beat streak 1/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "LITE": {
     "overall": 64,
@@ -2672,7 +2672,7 @@
         "earnings in 55 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "TENB": {
     "overall": 67,
@@ -2745,7 +2745,7 @@
         "earnings in 14 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "HPE": {
     "overall": 68,
@@ -2846,7 +2846,7 @@
   },
   "MDB": {
     "overall": 64,
-    "timing": 42,
+    "timing": 43,
     "confidence": 62,
     "rating": "Watch",
     "days_to_earnings": 26,
@@ -2866,7 +2866,7 @@
         "earnings in 18 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "FIX": {
     "overall": 61,
@@ -3014,7 +3014,7 @@
         "earnings in 63 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "BLK": {
     "overall": 83,
@@ -3063,7 +3063,7 @@
         "positivity 58/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "CLS": {
     "overall": 68,
@@ -3087,7 +3087,7 @@
         "earnings in 57 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "TXN": {
     "overall": 76,
@@ -3136,7 +3136,7 @@
         "positivity 62/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "FN": {
     "overall": 62,
@@ -3185,7 +3185,7 @@
         "positivity 60/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "IESC": {
     "overall": 71,
@@ -3408,16 +3408,16 @@
         "positivity 63/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "JBL": {
-    "overall": 50,
-    "timing": 15,
+    "overall": 52,
+    "timing": 37,
     "confidence": 65,
     "rating": "Hold",
     "days_to_earnings": 49,
     "sector": "Technology",
-    "blend": 31,
+    "blend": 43,
     "conviction": 51,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -3432,7 +3432,7 @@
         "earnings in 35 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ADI": {
     "overall": 82,
@@ -3454,7 +3454,7 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "MKSI": {
     "overall": 61,
@@ -3525,7 +3525,7 @@
         "positivity 63/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "MYRG": {
     "overall": 59,
@@ -3652,13 +3652,13 @@
     "date": "2026-08-06 07:17"
   },
   "GEN": {
-    "overall": 89,
-    "timing": 88,
+    "overall": 87,
+    "timing": 73,
     "confidence": 70,
-    "rating": "Strong Buy",
+    "rating": "Buy",
     "days_to_earnings": 0,
     "sector": "Technology",
-    "blend": 73,
+    "blend": 65,
     "conviction": 55,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -3671,7 +3671,7 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "GS": {
     "overall": 76,
@@ -3918,7 +3918,7 @@
   },
   "AKAM": {
     "overall": 61,
-    "timing": 13,
+    "timing": 12,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": 0,
@@ -3938,11 +3938,11 @@
         "positivity 58/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "SCHW": {
     "overall": 86,
-    "timing": 79,
+    "timing": 78,
     "confidence": 62,
     "rating": "Buy",
     "days_to_earnings": 70,
@@ -3963,7 +3963,7 @@
         "positivity 68/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "MPWR": {
     "overall": 69,
@@ -4183,7 +4183,7 @@
         "positivity 59/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ICE": {
     "overall": 86,
@@ -4208,21 +4208,21 @@
         "positivity 60/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "ESTC": {
     "overall": 82,
-    "timing": 79,
+    "timing": 80,
     "confidence": 65,
     "rating": "Buy",
     "days_to_earnings": 21,
     "sector": "Technology",
-    "blend": 64,
-    "conviction": 45,
+    "blend": 65,
+    "conviction": 46,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 15,
-      "positivity": 79,
+      "positivity": 80,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
@@ -4232,7 +4232,7 @@
         "earnings in 15 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "NTAP": {
     "overall": 76,
@@ -4278,21 +4278,21 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "UCTT": {
     "overall": 52,
-    "timing": 1,
+    "timing": 10,
     "confidence": 65,
     "rating": "Hold",
     "days_to_earnings": 89,
     "sector": "Technology",
-    "blend": 20,
-    "conviction": 44,
+    "blend": 26,
+    "conviction": 46,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 63,
-      "positivity": 83,
+      "positivity": 85,
       "beats": 3,
       "beats_n": 4,
       "in_window": false,
@@ -4302,21 +4302,21 @@
         "earnings in 63 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "DUOL": {
     "overall": 85,
-    "timing": 26,
+    "timing": 29,
     "confidence": 67,
     "rating": "Buy",
     "days_to_earnings": 90,
     "sector": "Technology",
-    "blend": 29,
+    "blend": 31,
     "conviction": 33,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 64,
-      "positivity": 41,
+      "positivity": 42,
       "beats": 2,
       "beats_n": 4,
       "in_window": false,
@@ -4324,11 +4324,11 @@
       "actionable": false,
       "reasons": [
         "earnings in 64 business days (window: \u226410)",
-        "positivity 41/100 below strict bar 70",
+        "positivity 42/100 below strict bar 70",
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "OKLO": {
     "overall": 52,
@@ -4416,7 +4416,7 @@
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 63,
-      "positivity": 84,
+      "positivity": 83,
       "beats": 3,
       "beats_n": 4,
       "in_window": false,
@@ -4426,7 +4426,7 @@
         "earnings in 63 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "HBM": {
     "overall": 76,
@@ -4452,7 +4452,7 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "RBRK": {
     "overall": 72,
@@ -4501,7 +4501,7 @@
         "positivity 53/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "GTLB": {
     "overall": 72,
@@ -4530,13 +4530,13 @@
   },
   "WDC": {
     "overall": 78,
-    "timing": 10,
+    "timing": 11,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": 91,
     "sector": "Technology",
-    "blend": 36,
-    "conviction": 67,
+    "blend": 33,
+    "conviction": 59,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 65,
@@ -4550,7 +4550,7 @@
         "earnings in 65 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ON": {
     "overall": 64,
@@ -4578,12 +4578,12 @@
   },
   "LFUS": {
     "overall": 68,
-    "timing": 41,
+    "timing": 42,
     "confidence": 67,
     "rating": "Watch",
     "days_to_earnings": 83,
     "sector": "Technology",
-    "blend": 50,
+    "blend": 51,
     "conviction": 61,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -4598,7 +4598,7 @@
         "earnings in 59 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "UBER": {
     "overall": 72,
@@ -4770,7 +4770,7 @@
         "earnings in 55 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "DT": {
     "overall": 78,
@@ -5060,7 +5060,7 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "MELI": {
     "overall": 67,
@@ -5175,7 +5175,7 @@
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 59,
-      "positivity": 52,
+      "positivity": 51,
       "beats": 3,
       "beats_n": 4,
       "in_window": false,
@@ -5183,10 +5183,10 @@
       "actionable": false,
       "reasons": [
         "earnings in 59 business days (window: \u226410)",
-        "positivity 52/100 below strict bar 70"
+        "positivity 51/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "CRS": {
     "overall": 71,
@@ -5385,7 +5385,7 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ILMN": {
     "overall": 74,
@@ -5409,7 +5409,7 @@
         "earnings in 60 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "GGG": {
     "overall": 79,
@@ -5490,12 +5490,12 @@
   },
   "GWRE": {
     "overall": 75,
-    "timing": 72,
+    "timing": 73,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": 28,
     "sector": "Technology",
-    "blend": 59,
+    "blend": 60,
     "conviction": 43,
     "tier": "LOW",
     "earnings_gate": {
@@ -5511,7 +5511,7 @@
         "positivity 55/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "QRVO": {
     "overall": 64,
@@ -5544,8 +5544,8 @@
     "rating": "Buy",
     "days_to_earnings": 82,
     "sector": "Consumer Cyclical",
-    "blend": 78,
-    "conviction": 69,
+    "blend": 77,
+    "conviction": 67,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 58,
@@ -5560,7 +5560,7 @@
         "positivity 62/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "DRS": {
     "overall": 59,
@@ -5684,7 +5684,7 @@
         "earnings in 58 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "ALGM": {
     "overall": 61,
@@ -5762,7 +5762,7 @@
   },
   "KEYS": {
     "overall": 77,
-    "timing": 37,
+    "timing": 38,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": 12,
@@ -5772,7 +5772,7 @@
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 8,
-      "positivity": 87,
+      "positivity": 88,
       "beats": 4,
       "beats_n": 4,
       "in_window": true,
@@ -5780,11 +5780,11 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "FAST": {
     "overall": 74,
-    "timing": 80,
+    "timing": 79,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": 69,
@@ -5806,7 +5806,7 @@
         "beat streak 0/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "PCOR": {
     "overall": 74,
@@ -5908,16 +5908,16 @@
         "no reported-quarter history to verify beat streak"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "GEHC": {
     "overall": 70,
-    "timing": 88,
+    "timing": 86,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": 83,
     "sector": "Healthcare",
-    "blend": 66,
+    "blend": 64,
     "conviction": 38,
     "tier": "LOW",
     "earnings_gate": {
@@ -5933,16 +5933,16 @@
         "positivity 56/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "NOVT": {
-    "overall": 58,
-    "timing": 25,
+    "overall": 64,
+    "timing": 80,
     "confidence": 67,
-    "rating": "Hold",
+    "rating": "Watch",
     "days_to_earnings": 89,
     "sector": "Technology",
-    "blend": 38,
+    "blend": 68,
     "conviction": 53,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -5957,7 +5957,7 @@
         "earnings in 63 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "WM": {
     "overall": 58,
@@ -6045,7 +6045,7 @@
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 65,
-      "positivity": 64,
+      "positivity": 65,
       "beats": 3,
       "beats_n": 4,
       "in_window": false,
@@ -6053,10 +6053,10 @@
       "actionable": false,
       "reasons": [
         "earnings in 65 business days (window: \u226410)",
-        "positivity 64/100 below strict bar 70"
+        "positivity 65/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "FSLR": {
     "overall": 76,
@@ -6085,12 +6085,12 @@
   },
   "XYL": {
     "overall": 69,
-    "timing": 71,
+    "timing": 69,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": -9,
     "sector": "Industrials",
-    "blend": 58,
+    "blend": 57,
     "conviction": 42,
     "tier": "LOW",
     "earnings_gate": {
@@ -6106,7 +6106,7 @@
         "positivity 68/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "RSG": {
     "overall": 61,
@@ -6115,8 +6115,8 @@
     "rating": "Watch",
     "days_to_earnings": 0,
     "sector": "Industrials",
-    "blend": 30,
-    "conviction": 45,
+    "blend": 32,
+    "conviction": 48,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 0,
@@ -6130,7 +6130,7 @@
         "positivity 54/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "SPOT": {
     "overall": 70,
@@ -6158,13 +6158,13 @@
     "date": "2026-08-06 07:47"
   },
   "PLXS": {
-    "overall": 62,
-    "timing": 38,
+    "overall": 63,
+    "timing": 37,
     "confidence": 67,
     "rating": "Watch",
     "days_to_earnings": 83,
     "sector": "Technology",
-    "blend": 44,
+    "blend": 43,
     "conviction": 51,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -6179,7 +6179,7 @@
         "earnings in 59 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "AMKR": {
     "overall": 56,
@@ -6259,13 +6259,13 @@
   },
   "SIEGY": {
     "overall": 57,
-    "timing": 48,
+    "timing": 49,
     "confidence": 67,
     "rating": "Hold",
     "days_to_earnings": 0,
     "sector": "Industrials",
-    "blend": 44,
-    "conviction": 39,
+    "blend": 45,
+    "conviction": 40,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 0,
@@ -6277,7 +6277,7 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "URI": {
     "overall": 70,
@@ -6327,7 +6327,7 @@
         "positivity 52/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "BHE": {
     "overall": 56,
@@ -6438,7 +6438,7 @@
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": null,
-      "positivity": 62,
+      "positivity": 66,
       "beats": null,
       "beats_n": 0,
       "in_window": false,
@@ -6447,11 +6447,11 @@
       "reasons": [
         "no confirmed upcoming earnings date",
         "only 1/5 positivity signals available (need \u22653)",
-        "positivity 62/100 below strict bar 70",
+        "positivity 66/100 below strict bar 70",
         "no reported-quarter history to verify beat streak"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "HD": {
     "overall": 65,
@@ -6624,7 +6624,7 @@
         "beat streak 0/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "TJX": {
     "overall": 63,
@@ -6674,7 +6674,7 @@
         "beat streak 1/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "VICR": {
     "overall": 64,
@@ -6752,7 +6752,7 @@
   },
   "ORLY": {
     "overall": 66,
-    "timing": 60,
+    "timing": 59,
     "confidence": 65,
     "rating": "Watch",
     "days_to_earnings": 83,
@@ -6774,21 +6774,21 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "DASH": {
-    "overall": 72,
-    "timing": 93,
+    "overall": 73,
+    "timing": 95,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": 90,
     "sector": "Consumer Cyclical",
-    "blend": 67,
-    "conviction": 36,
+    "blend": 69,
+    "conviction": 38,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 64,
-      "positivity": 59,
+      "positivity": 62,
       "beats": 2,
       "beats_n": 4,
       "in_window": false,
@@ -6796,11 +6796,11 @@
       "actionable": false,
       "reasons": [
         "earnings in 64 business days (window: \u226410)",
-        "positivity 59/100 below strict bar 70",
+        "positivity 62/100 below strict bar 70",
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "D": {
     "overall": 62,
@@ -6825,7 +6825,7 @@
         "positivity 69/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "WST": {
     "overall": 69,
@@ -6930,12 +6930,12 @@
   },
   "RMD": {
     "overall": 85,
-    "timing": 71,
+    "timing": 70,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": 0,
     "sector": "Healthcare",
-    "blend": 62,
+    "blend": 61,
     "conviction": 50,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -6950,7 +6950,7 @@
         "positivity 49/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "WMT": {
     "overall": 55,
@@ -7052,7 +7052,7 @@
         "positivity 63/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "PG": {
     "overall": 71,
@@ -7077,7 +7077,7 @@
         "positivity 52/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "HOOD": {
     "overall": 70,
@@ -7092,7 +7092,7 @@
     "earnings_gate": {
       "bdays_to_earnings": 64,
       "positivity": 84,
-      "beats": 4,
+      "beats": 3,
       "beats_n": 4,
       "in_window": false,
       "positivity_pass": true,
@@ -7101,7 +7101,7 @@
         "earnings in 64 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "BRK-B": {
     "overall": 66,
@@ -7179,7 +7179,7 @@
   },
   "GOOG": {
     "overall": 80,
-    "timing": 32,
+    "timing": 31,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": 83,
@@ -7199,7 +7199,7 @@
         "earnings in 59 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "NU": {
     "overall": 79,
@@ -7348,7 +7348,7 @@
         "positivity 68/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "ADSK": {
     "overall": 92,
@@ -7373,7 +7373,7 @@
         "positivity 61/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:47"
+    "date": "2026-08-06 08:02"
   },
   "FANG": {
     "overall": 84,
@@ -8002,8 +8002,8 @@
     "rating": "Strong Buy",
     "days_to_earnings": 0,
     "sector": "Basic Materials",
-    "blend": 43,
-    "conviction": 52,
+    "blend": 42,
+    "conviction": 51,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 0,
@@ -8017,7 +8017,7 @@
         "positivity 42/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "XOM": {
     "overall": 69,
@@ -9781,12 +9781,12 @@
   },
   "EOG": {
     "overall": 80,
-    "timing": 22,
+    "timing": 23,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": -2,
     "sector": "Energy",
-    "blend": 41,
+    "blend": 42,
     "conviction": 65,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -9801,16 +9801,16 @@
         "no confirmed upcoming earnings date"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "VLO": {
-    "overall": 72,
-    "timing": 64,
+    "overall": 73,
+    "timing": 66,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": 77,
     "sector": "Energy",
-    "blend": 64,
+    "blend": 65,
     "conviction": 63,
     "tier": "MEDIUM",
     "earnings_gate": {
@@ -9825,7 +9825,7 @@
         "earnings in 55 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "PGR": {
     "overall": 68,
@@ -9839,7 +9839,7 @@
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 49,
-      "positivity": 55,
+      "positivity": 56,
       "beats": 3,
       "beats_n": 4,
       "in_window": false,
@@ -9847,10 +9847,10 @@
       "actionable": false,
       "reasons": [
         "earnings in 49 business days (window: \u226410)",
-        "positivity 55/100 below strict bar 70"
+        "positivity 56/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "APO": {
     "overall": 71,
@@ -9875,7 +9875,7 @@
         "positivity 66/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ARES": {
     "overall": 66,
@@ -9901,16 +9901,16 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "AON": {
-    "overall": 75,
-    "timing": 63,
+    "overall": 74,
+    "timing": 51,
     "confidence": 70,
-    "rating": "Buy",
+    "rating": "Watch",
     "days_to_earnings": 85,
     "sector": "Financial Services",
-    "blend": 55,
+    "blend": 49,
     "conviction": 46,
     "tier": "LOW",
     "earnings_gate": {
@@ -9926,7 +9926,7 @@
         "positivity 55/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "LULU": {
     "overall": 71,
@@ -9951,16 +9951,16 @@
         "positivity 40/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "CMG": {
     "overall": 66,
-    "timing": 51,
+    "timing": 52,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": -8,
     "sector": "Consumer Cyclical",
-    "blend": 45,
+    "blend": 46,
     "conviction": 38,
     "tier": "LOW",
     "earnings_gate": {
@@ -9977,7 +9977,7 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "EXPE": {
     "overall": 79,
@@ -10001,7 +10001,7 @@
         "earnings in 65 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "GM": {
     "overall": 56,
@@ -10025,16 +10025,16 @@
         "earnings in 53 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "CLSK": {
-    "overall": 35,
-    "timing": 13,
+    "overall": 36,
+    "timing": 16,
     "confidence": 62,
     "rating": "Reduce",
     "days_to_earnings": 0,
     "sector": "Financial Services",
-    "blend": 25,
+    "blend": 27,
     "conviction": 40,
     "tier": "LOW",
     "earnings_gate": {
@@ -10050,17 +10050,17 @@
         "beat streak 1/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "DIS": {
     "overall": 65,
     "timing": 46,
-    "confidence": 67,
+    "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": -1,
     "sector": "Communication Services",
-    "blend": 48,
-    "conviction": 51,
+    "blend": 49,
+    "conviction": 52,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": null,
@@ -10075,7 +10075,7 @@
         "positivity 69/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "BABA": {
     "overall": 62,
@@ -10101,7 +10101,7 @@
         "beat streak 0/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "APLD": {
     "overall": 42,
@@ -10115,7 +10115,7 @@
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 45,
-      "positivity": 77,
+      "positivity": 78,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
@@ -10125,7 +10125,7 @@
         "earnings in 45 business days (window: \u226410)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "WULF": {
     "overall": 39,
@@ -10151,16 +10151,16 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ACHR": {
-    "overall": 41,
-    "timing": 21,
+    "overall": 43,
+    "timing": 45,
     "confidence": 59,
     "rating": "Reduce",
     "days_to_earnings": 4,
     "sector": "Industrials",
-    "blend": 26,
+    "blend": 40,
     "conviction": 33,
     "tier": "LOW",
     "earnings_gate": {
@@ -10175,7 +10175,7 @@
         "positivity 64/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "AZN": {
     "overall": 69,
@@ -10200,11 +10200,11 @@
         "positivity 58/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "NVS": {
     "overall": 75,
-    "timing": 52,
+    "timing": 51,
     "confidence": 70,
     "rating": "Buy",
     "days_to_earnings": 82,
@@ -10214,7 +10214,7 @@
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 58,
-      "positivity": 53,
+      "positivity": 52,
       "beats": 2,
       "beats_n": 4,
       "in_window": false,
@@ -10222,11 +10222,11 @@
       "actionable": false,
       "reasons": [
         "earnings in 58 business days (window: \u226410)",
-        "positivity 53/100 below strict bar 70",
+        "positivity 52/100 below strict bar 70",
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "LAC": {
     "overall": 40,
@@ -10251,16 +10251,16 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "APD": {
-    "overall": 60,
-    "timing": 47,
+    "overall": 59,
+    "timing": 45,
     "confidence": 65,
-    "rating": "Watch",
+    "rating": "Hold",
     "days_to_earnings": -7,
     "sector": "Basic Materials",
-    "blend": 46,
+    "blend": 45,
     "conviction": 44,
     "tier": "LOW",
     "earnings_gate": {
@@ -10276,11 +10276,11 @@
         "positivity 61/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "ECL": {
     "overall": 69,
-    "timing": 78,
+    "timing": 77,
     "confidence": 65,
     "rating": "Watch",
     "days_to_earnings": 82,
@@ -10302,17 +10302,17 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "GLXY": {
     "overall": 48,
-    "timing": 5,
+    "timing": 0,
     "confidence": 57,
     "rating": "Hold",
     "days_to_earnings": 75,
     "sector": "Financial Services",
-    "blend": 14,
-    "conviction": 25,
+    "blend": 10,
+    "conviction": 22,
     "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 53,
@@ -10328,7 +10328,7 @@
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "AEM": {
     "overall": 90,
@@ -10337,8 +10337,8 @@
     "rating": "Strong Buy",
     "days_to_earnings": 83,
     "sector": "Basic Materials",
-    "blend": 44,
-    "conviction": 54,
+    "blend": 45,
+    "conviction": 58,
     "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 59,
@@ -10353,21 +10353,21 @@
         "positivity 51/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "MTCH": {
-    "overall": 74,
-    "timing": 45,
+    "overall": 72,
+    "timing": 23,
     "confidence": 65,
     "rating": "Watch",
     "days_to_earnings": 89,
     "sector": "Communication Services",
-    "blend": 66,
-    "conviction": 92,
+    "blend": 54,
+    "conviction": 91,
     "tier": "HIGH",
     "earnings_gate": {
       "bdays_to_earnings": 63,
-      "positivity": 54,
+      "positivity": 53,
       "beats": 2,
       "beats_n": 4,
       "in_window": false,
@@ -10375,11 +10375,11 @@
       "actionable": false,
       "reasons": [
         "earnings in 63 business days (window: \u226410)",
-        "positivity 54/100 below strict bar 70",
+        "positivity 53/100 below strict bar 70",
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "MFG": {
     "overall": 69,
@@ -10436,12 +10436,12 @@
     "rating": "Hold",
     "days_to_earnings": 90,
     "sector": "Communication Services",
-    "blend": 20,
-    "conviction": null,
-    "tier": null,
+    "blend": 39,
+    "conviction": 63,
+    "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 64,
-      "positivity": 65,
+      "positivity": 64,
       "beats": 4,
       "beats_n": 4,
       "in_window": false,
@@ -10449,35 +10449,36 @@
       "actionable": false,
       "reasons": [
         "earnings in 64 business days (window: \u226410)",
-        "positivity 65/100 below strict bar 70"
+        "positivity 64/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "MET": {
-    "overall": 61,
-    "timing": 85,
+    "overall": 62,
+    "timing": 89,
     "confidence": 70,
     "rating": "Watch",
     "days_to_earnings": -1,
     "sector": "Financial Services",
-    "blend": 85,
-    "conviction": null,
-    "tier": null,
+    "blend": 77,
+    "conviction": 62,
+    "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": null,
-      "positivity": 62,
-      "beats": 3,
+      "positivity": 50,
+      "beats": 2,
       "beats_n": 4,
       "in_window": false,
       "positivity_pass": false,
       "actionable": false,
       "reasons": [
         "no confirmed upcoming earnings date",
-        "positivity 62/100 below strict bar 70"
+        "positivity 50/100 below strict bar 70",
+        "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "AAL": {
     "overall": 59,
@@ -10552,28 +10553,28 @@
     "date": "2026-08-05 12:32"
   },
   "DLO": {
-    "overall": 86,
-    "timing": 57,
+    "overall": 87,
+    "timing": 74,
     "confidence": 67,
     "rating": "Buy",
     "days_to_earnings": 7,
     "sector": "Technology",
-    "blend": 57,
-    "conviction": null,
-    "tier": null,
+    "blend": 66,
+    "conviction": 56,
+    "tier": "MEDIUM",
     "earnings_gate": {
       "bdays_to_earnings": 5,
-      "positivity": 59,
+      "positivity": 63,
       "beats": 3,
       "beats_n": 4,
       "in_window": true,
       "positivity_pass": false,
       "actionable": false,
       "reasons": [
-        "positivity 59/100 below strict bar 70"
+        "positivity 63/100 below strict bar 70"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "WBS": {
     "overall": 68,
@@ -10607,9 +10608,9 @@
     "rating": "Hold",
     "days_to_earnings": 7,
     "sector": "Healthcare",
-    "blend": 55,
-    "conviction": null,
-    "tier": null,
+    "blend": 43,
+    "conviction": 29,
+    "tier": "LOW",
     "earnings_gate": {
       "bdays_to_earnings": 5,
       "positivity": 93,
@@ -10620,21 +10621,21 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "LYG": {
     "overall": 70,
-    "timing": 87,
+    "timing": 86,
     "confidence": 59,
     "rating": "Watch",
     "days_to_earnings": 84,
     "sector": "Financial Services",
-    "blend": 87,
+    "blend": 86,
     "conviction": null,
     "tier": null,
     "earnings_gate": {
       "bdays_to_earnings": 60,
-      "positivity": 45,
+      "positivity": 55,
       "beats": 2,
       "beats_n": 4,
       "in_window": false,
@@ -10642,11 +10643,11 @@
       "actionable": false,
       "reasons": [
         "earnings in 60 business days (window: \u226410)",
-        "positivity 45/100 below strict bar 70",
+        "positivity 55/100 below strict bar 70",
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-06 07:02"
+    "date": "2026-08-06 08:02"
   },
   "NLY": {
     "overall": 81,
@@ -10772,29 +10773,30 @@
     "date": "2026-08-05 08:32"
   },
   "NTR": {
-    "overall": 65,
-    "timing": 45,
+    "overall": 63,
+    "timing": 18,
     "confidence": 70,
     "rating": "Watch",
-    "days_to_earnings": 0,
+    "days_to_earnings": 90,
     "sector": "Basic Materials",
-    "blend": 53,
-    "conviction": 62,
-    "tier": "MEDIUM",
+    "blend": 18,
+    "conviction": null,
+    "tier": null,
     "earnings_gate": {
-      "bdays_to_earnings": 0,
-      "positivity": 40,
+      "bdays_to_earnings": 64,
+      "positivity": 43,
       "beats": 2,
       "beats_n": 4,
-      "in_window": true,
+      "in_window": false,
       "positivity_pass": false,
       "actionable": false,
       "reasons": [
-        "positivity 40/100 below strict bar 70",
+        "earnings in 64 business days (window: \u226410)",
+        "positivity 43/100 below strict bar 70",
         "beat streak 2/4 quarters (strict bar: \u22653/4)"
       ]
     },
-    "date": "2026-08-05 11:02"
+    "date": "2026-08-06 08:02"
   },
   "BBD": {
     "overall": 65,
@@ -10994,17 +10996,17 @@
     "date": "2026-08-05 08:32"
   },
   "MNST": {
-    "overall": 81,
-    "timing": 55,
+    "overall": 79,
+    "timing": 35,
     "confidence": 70,
     "rating": "Buy",
-    "days_to_earnings": 1,
+    "days_to_earnings": 0,
     "sector": "Consumer Defensive",
-    "blend": 57,
-    "conviction": 59,
-    "tier": "MEDIUM",
+    "blend": 35,
+    "conviction": null,
+    "tier": null,
     "earnings_gate": {
-      "bdays_to_earnings": 1,
+      "bdays_to_earnings": 0,
       "positivity": 70,
       "beats": 3,
       "beats_n": 4,
@@ -11013,7 +11015,7 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-05 11:02"
+    "date": "2026-08-06 08:02"
   },
   "TD": {
     "overall": 63,
@@ -11040,28 +11042,29 @@
     "date": "2026-08-05 08:32"
   },
   "UNH": {
-    "overall": 59,
-    "timing": 59,
+    "overall": 55,
+    "timing": 25,
     "confidence": 70,
     "rating": "Hold",
-    "days_to_earnings": 83,
+    "days_to_earnings": null,
     "sector": "Healthcare",
-    "blend": 58,
-    "conviction": 56,
-    "tier": "MEDIUM",
+    "blend": 25,
+    "conviction": null,
+    "tier": null,
     "earnings_gate": {
-      "bdays_to_earnings": 59,
+      "bdays_to_earnings": null,
       "positivity": 92,
       "beats": 3,
       "beats_n": 4,
       "in_window": false,
-      "positivity_pass": true,
+      "positivity_pass": false,
       "actionable": false,
       "reasons": [
-        "earnings in 59 business days (window: \u226410)"
+        "no confirmed upcoming earnings date",
+        "only 2/5 positivity signals available (need \u22653)"
       ]
     },
-    "date": "2026-08-05 11:02"
+    "date": "2026-08-06 08:02"
   },
   "CVS": {
     "overall": 56,
@@ -11138,17 +11141,17 @@
   },
   "NXST": {
     "overall": 68,
-    "timing": 58,
+    "timing": 61,
     "confidence": 70,
     "rating": "Watch",
-    "days_to_earnings": 1,
+    "days_to_earnings": 0,
     "sector": "Communication Services",
-    "blend": 51,
-    "conviction": 43,
-    "tier": "LOW",
+    "blend": 61,
+    "conviction": null,
+    "tier": null,
     "earnings_gate": {
-      "bdays_to_earnings": 1,
-      "positivity": 70,
+      "bdays_to_earnings": 0,
+      "positivity": 71,
       "beats": 3,
       "beats_n": 4,
       "in_window": true,
@@ -11156,7 +11159,7 @@
       "actionable": true,
       "reasons": []
     },
-    "date": "2026-08-05 11:02"
+    "date": "2026-08-06 08:02"
   },
   "THC": {
     "overall": 74,
